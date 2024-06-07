@@ -44,6 +44,9 @@ jobs:
       - name: Terraform Format
         run: terraform fmt -check -recursive
 
+      - name: terraform validate
+        uses: dflook/terraform-validate@v1
+
       - name: Terraform Init
         run: terraform init
 #
