@@ -1,9 +1,23 @@
 name: Deploy Resources
 on:
-  workflow_dispatch:
-
-env:
-  TF_VAR_environment: "dev"
+  workflow_call:
+    secrets:
+      WORKLOAD_IDENTITY_PROVIDER:
+        required: true
+    inputs:
+      gcp-project-id:
+        type: string
+        required: true
+      gcp-region:
+        type: string
+        required: true
+      environment:
+        type: string
+        required: true
+      do-validation-checks:
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: read
@@ -12,7 +26,7 @@ permissions:
 
 jobs:
   deploy-resources:
-    name: Deploy GCP Resources to ${{ env.TF_VAR_environment }}
+    name: Deploy GCP Resources to ${{ inputs.environment }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -43,9 +57,11 @@ jobs:
         run: terraform init
 
       - name: Terraform Format
+        if: ${{ inputs.do-validation-checks }}
         run: terraform fmt -check -recursive
 
       - name: terraform validate
+        if: ${{ inputs.do-validation-checks }}
         uses: dflook/terraform-validate@v1
 
       - name: Terraform Plan
