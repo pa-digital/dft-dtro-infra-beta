@@ -1,12 +1,10 @@
-name: Build Feature
-
+name: Deploy Resources
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - feature/*
-      - bug/*
-      - hotfix/*
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
 
 permissions:
   contents: read
@@ -14,8 +12,8 @@ permissions:
   actions: read
 
 jobs:
-  build-feature:
-    name: Test and Validate Feature Branch
+  deploy-resources:
+    name: Deploy GCP Resources to ${{ inputs.environment }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -42,23 +40,11 @@ jobs:
         with:
           terraform_version: 1.8.2
 
-      - name: Terraform Format
-        run: terraform fmt -check -recursive
-
-      - name: terraform validate
-        uses: dflook/terraform-validate@v1
-
       - name: Terraform Init
         run: terraform init
 
-#      - name: terraform validate
-#        uses: dflook/terraform-validate@v1
-#
-#      - name: Terraform Plan
-#        run: terraform plan -input=false -out=plan.out && terraform show -json plan.out > plan.out.json
-#
-#      - name: terraform-compliance
-#        uses: terraform-compliance/github_action@main
-#        with:
-#          plan: plan.out.json
-#          features: ssh://git@github.com/terraform-compliance/user-friendly-features.git
+      - name: Terraform Plan
+        run: terraform plan -input=false -out terraform-plan-gcp
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -input=false terraform-plan-gcp

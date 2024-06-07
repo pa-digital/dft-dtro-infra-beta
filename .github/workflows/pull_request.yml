@@ -1,12 +1,7 @@
-name: Build Feature
+name: Pull Request
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - feature/*
-      - bug/*
-      - hotfix/*
+  pull_request:
 
 permissions:
   contents: read
@@ -14,8 +9,8 @@ permissions:
   actions: read
 
 jobs:
-  build-feature:
-    name: Test and Validate Feature Branch
+  pull-request:
+    name: Pull Request
     runs-on: ubuntu-latest
     permissions:
       id-token: write
