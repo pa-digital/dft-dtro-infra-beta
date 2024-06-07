@@ -49,7 +49,7 @@ locals {
     {
       DEPLOYED = timestamp()
 
-      PROJECTID        = var.project
+      PROJECTID         = var.project
       CONSUMESERVICEURL = "https://${var.consume_service_domain}"
 
       EnableRedisCache = var.feature_enable_redis_cache

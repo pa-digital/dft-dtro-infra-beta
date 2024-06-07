@@ -3,7 +3,7 @@ resource "google_apigee_organization" "org" {
   analytics_region   = var.region
   display_name       = "npp-apigee-org"
   description        = "Terraform-provisioned NPP Apigee Org."
-  authorized_network =  module.network.project_id
+  authorized_network = module.network.project_id
   retention          = "MINIMUM"
   billing_type       = "PAYG"
   depends_on         = [module.network]

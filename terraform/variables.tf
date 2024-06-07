@@ -12,7 +12,7 @@ variable "project" {
 }
 
 variable "environment" {
-  type = string
+  type        = string
   description = "GCP environment to which resources will be deployed."
   default     = "dev"
 }

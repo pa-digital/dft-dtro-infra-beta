@@ -1,6 +1,6 @@
 terraform {
-   backend "gcs" {
-     bucket = "dft-dtro-terraform"
-     prefix = "terraform/state"
+  backend "gcs" {
+    bucket = "dft-dtro-terraform"
+    prefix = "terraform/state"
   }
 }
