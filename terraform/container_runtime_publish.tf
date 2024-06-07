@@ -104,7 +104,6 @@ resource "google_cloud_run_v2_service" "publish_service" {
   }
 
   depends_on = [
-    null_resource.docker_build,
     # Access to secrets is required to start the container
     google_secret_manager_secret_iam_member.cloud_run_secrets,
   ]

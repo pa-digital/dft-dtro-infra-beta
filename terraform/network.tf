@@ -53,12 +53,12 @@ resource "google_compute_region_network_endpoint_group" "publish_service_serverl
   }
 }
 
-resource "google_compute_region_network_endpoint_group" "search_service_serverless_neg" {
-  name                  = "${var.search_service_image}-serverless-neg"
+resource "google_compute_region_network_endpoint_group" "consume_service_serverless_neg" {
+  name                  = "${var.consume_service_image}-serverless-neg"
   network_endpoint_type = "SERVERLESS"
   region                = var.region
 
   cloud_run {
-    service = var.search_service_image
+    service = var.consume_service_image
   }
 }

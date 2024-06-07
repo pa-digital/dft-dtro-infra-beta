@@ -11,7 +11,7 @@ output "publish_service_url" {
   value       = "https://${var.publish_service_domain}"
 }
 
-output "search_service_url" {
-  description = "Link to the prototype search service"
-  value       = "https://${var.search_service_domain}"
+output "consume_service_url" {
+  description = "Link to the prototype consume service"
+  value       = "https://${var.consume_service_domain}"
 }

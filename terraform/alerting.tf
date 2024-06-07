@@ -9,7 +9,7 @@ resource "google_monitoring_uptime_check_config" "uptime_check" {
     content = "Healthy"
   }
 
-  selected_regions = ["EUROPE", "USA", "SOUTH_AMERICA"]
+  selected_regions = ["EUROPE"]
 
   http_check {
     path         = "/health"

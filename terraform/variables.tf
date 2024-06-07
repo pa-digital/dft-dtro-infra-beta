@@ -1,3 +1,4 @@
+# Core D-TRO variables
 variable "region" {
   type        = string
   description = "GCP region to which resources will be deployed."
@@ -7,25 +8,19 @@ variable "region" {
 variable "project" {
   type        = string
   description = "GCP project ID to which resources will be deployed."
-  default     = "pa-dft-dtro-sandbox"
+  default     = "dft-dtro-dev-01"
 }
 
-variable "firestore_region" {
-  type        = string
-  description = "GCP region to which Firestore will be deployed."
-  default     = "eur3"
-}
-
-variable "firestore_app_engine_integration_enabled" {
-  type        = string
-  description = "Controls whether app engine integration is enabled for firestore"
-  default     = "ENABLED"
+variable "environment" {
+  type = string
+  description = "GCP environment to which resources will be deployed."
+  default     = "dev"
 }
 
 variable "repository_id" {
   type        = string
   description = "Repository name for artifact repository."
-  default     = "dtro"
+  default     = "dft-dtro-dev"
 }
 
 variable "application_name" {
@@ -40,10 +35,10 @@ variable "publish_service_image" {
   default     = "dtro-prototype-publish"
 }
 
-variable "search_service_image" {
+variable "consume_service_image" {
   type        = string
-  description = "The name of an image being pushed for search service."
-  default     = "dtro-prototype-search"
+  description = "The name of an image being pushed for consume service."
+  default     = "dtro-prototype-consume"
 }
 
 variable "db_connections_per_cloud_run_instance" {
@@ -70,7 +65,7 @@ variable "publish_service_domain" {
   default     = "dtro-alpha-publishing-prototype.dft.gov.uk"
 }
 
-variable "search_service_domain" {
+variable "consume_service_domain" {
   type        = string
   description = "Name of the domain where the prototype is published"
   default     = "dtro-alpha-access-prototype.dft.gov.uk"
@@ -182,4 +177,24 @@ variable "redis_memory_size" {
   type        = string
   description = "Redis memory size in GiB"
   default     = 1
+}
+
+variable "service_name" {
+  type        = string
+  description = "Name of the monitored service."
+}
+
+variable "service_url" {
+  type        = string
+  description = "URL of the monitored service."
+}
+
+variable "notification_channels" {
+  type        = set(string)
+  description = "GCP Notifications Channels that should receive the alerts."
+}
+
+variable "uptime_check_credentials" {
+  type        = object({ header_name = string, header_value = string })
+  description = "Credentials for the uptime checker."
 }

@@ -1,14 +1,14 @@
-# Search service
-resource "google_cloud_run_service_iam_policy" "search_service_noauth" {
-  location = google_cloud_run_v2_service.search_service.location
-  project  = google_cloud_run_v2_service.search_service.project
-  service  = google_cloud_run_v2_service.search_service.name
+# consume service
+resource "google_cloud_run_service_iam_policy" "consume_service_noauth" {
+  location = google_cloud_run_v2_service.consume_service.location
+  project  = google_cloud_run_v2_service.consume_service.project
+  service  = google_cloud_run_v2_service.consume_service.name
 
   policy_data = data.google_iam_policy.noauth.policy_data
 }
 
-resource "google_cloud_run_v2_service" "search_service" {
-  name     = var.search_service_image
+resource "google_cloud_run_v2_service" "consume_service" {
+  name     = var.consume_service_image
   location = var.region
   ingress  = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
 
@@ -26,7 +26,7 @@ resource "google_cloud_run_v2_service" "search_service" {
     }
 
     containers {
-      image = "${var.region}-docker.pkg.dev/${var.project}/dtro/${var.search_service_image}:${var.tag}"
+      image = "${var.region}-docker.pkg.dev/${var.project}/dtro/${var.consume_service_image}:${var.tag}"
 
       dynamic "env" {
         for_each = local.common_service_envs
@@ -104,7 +104,6 @@ resource "google_cloud_run_v2_service" "search_service" {
   }
 
   depends_on = [
-    null_resource.docker_build,
     # Access to secrets is required to start the container
     google_secret_manager_secret_iam_member.cloud_run_secrets,
   ]

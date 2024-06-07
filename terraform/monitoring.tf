@@ -39,8 +39,8 @@ locals {
   ]
 
   services_with_alerting = zipmap(
-    [var.publish_service_image, var.search_service_image],
-    [var.publish_service_domain, var.search_service_domain]
+    [var.publish_service_image, var.consume_service_image],
+    [var.publish_service_domain, var.consume_service_domain]
   )
 }
 

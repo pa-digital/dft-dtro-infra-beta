@@ -1,6 +1,6 @@
 # Environmental variables and secrets
 locals {
-  # At most `database_max_connections` in total can be opened, there are 2 services (publish and search) 
+  # At most `database_max_connections` in total can be opened, there are 2 services (publish and consume)
   max_instance_count = floor(var.database_max_connections / var.db_connections_per_cloud_run_instance / 2)
 
   # Postgres database
@@ -50,10 +50,8 @@ locals {
       DEPLOYED = timestamp()
 
       PROJECTID        = var.project
-      BUCKETNAME       = "${random_id.bucket_prefix.hex}-dtro-storage-bucket"
-      SEARCHSERVICEURL = "https://${var.search_service_domain}"
+      CONSUMESERVICEURL = "https://${var.consume_service_domain}"
 
-      WriteToBucket    = var.feature_write_to_bucket
       EnableRedisCache = var.feature_enable_redis_cache
   })
   common_secret_files = merge(
@@ -74,17 +72,6 @@ locals {
 }
 
 # Policies
-resource "google_project_iam_member" "storage_bucket_objects" {
-  project = var.project
-  role    = "roles/storage.objectAdmin"
-  member  = local.cloud_run_account
-
-  condition {
-    title      = "allow-storage-bucket"
-    expression = "resource.name.startsWith(\"projects/_/buckets/${google_storage_bucket.bucket.name}\")"
-  }
-}
-
 resource "google_project_iam_member" "storage_firestore" {
   project = var.project
   role    = "roles/datastore.user"
