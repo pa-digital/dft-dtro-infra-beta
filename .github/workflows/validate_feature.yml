@@ -41,11 +41,11 @@ jobs:
         with:
           terraform_version: 1.8.2
 
-      - name: Terraform Init
-        run: terraform init
-
       - name: Terraform Format
         run: terraform fmt -check
+
+      - name: Terraform Init
+        run: terraform init
 #
 #      - name: terraform validate
 #        uses: dflook/terraform-validate@v1
