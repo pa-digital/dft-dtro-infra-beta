@@ -72,12 +72,6 @@ locals {
 }
 
 # Policies
-resource "google_project_iam_member" "storage_firestore" {
-  project = var.project
-  role    = "roles/datastore.user"
-  member  = local.cloud_run_account
-}
-
 resource "google_project_iam_member" "logging" {
   project = var.project
   role    = "roles/logging.logWriter"
