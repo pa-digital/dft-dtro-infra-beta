@@ -2,7 +2,7 @@
 variable "region" {
   type        = string
   description = "GCP region to which resources will be deployed."
-  default     = "europe-west2"
+  default     = "europe-west1"
 }
 
 variable "project" {
@@ -15,12 +15,6 @@ variable "environment" {
   type        = string
   description = "GCP environment to which resources will be deployed."
   default     = "dev"
-}
-
-variable "repository_id" {
-  type        = string
-  description = "Repository name for artifact repository."
-  default     = "dft-dtro-dev"
 }
 
 variable "application_name" {
@@ -91,7 +85,7 @@ variable "feature_enable_redis_cache" {
 variable "database_zone" {
   type        = string
   description = "Primary zone for the Postgres database"
-  default     = "europe-west2-a"
+  default     = "europe-west1-a"
 }
 
 variable "database_availability_type" {

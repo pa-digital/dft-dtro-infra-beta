@@ -21,6 +21,11 @@ on:
         required: false
         default: false
 
+env:
+  TF_VAR_environment: ${{ inputs.environment }}
+  TF_VAR_region: ${{ inputs.gcp-region }}
+  TF_VAR_project: ${{ inputs.gcp-project-id }}
+
 permissions:
   contents: read
   packages: read
