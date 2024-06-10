@@ -4,7 +4,7 @@ locals {
 
 module "network" {
   source  = "terraform-google-modules/network/google"
-  version = "7.1.0"
+  version = "9.1.0"
 
   project_id   = var.project
   network_name = "${var.application_name}-network"
@@ -18,15 +18,15 @@ module "network" {
   ]
 }
 
-module "cloudsql_private_service_access" {
-  source  = "GoogleCloudPlatform/sql-db/google//modules/private_service_access"
-  version = "15.1.0"
-
-  project_id  = var.project
-  vpc_network = module.network.network_name
-
-  depends_on = [module.network]
-}
+# module "cloudsql_private_service_access" {
+#   source  = "GoogleCloudPlatform/sql-db/google//modules/private_service_access"
+#   version = "15.1.0"
+#
+#   project_id  = var.project
+#   vpc_network = module.network.network_name
+#
+#   depends_on = [module.network]
+# }
 
 resource "google_vpc_access_connector" "serverless_connector" {
   name    = "default-connector"

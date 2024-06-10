@@ -47,7 +47,7 @@ locals {
 # Alerting
 module "publish_service_alerting" {
   for_each = local.services_with_alerting
-  source   = "../../terraform/modules/alerting"
+  source   = "modules/alerting"
 
   project      = var.project
   service_name = each.key
