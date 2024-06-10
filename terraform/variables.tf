@@ -77,15 +77,10 @@ variable "logs_retention_in_days" {
   default     = 180
 }
 
-variable "emails_to_notify" {
-  type        = set(string)
-  description = "Emails to notify about infrastructure issues"
-}
-
-variable "feature_write_to_bucket" {
-  type        = bool
-  description = "Feature flag, when enabled data is written to Cloud Storage bucket"
-}
+# variable "emails_to_notify" {
+#   type        = set(string)
+#   description = "Emails to notify about infrastructure issues"
+# }
 
 variable "feature_enable_redis_cache" {
   type        = bool
