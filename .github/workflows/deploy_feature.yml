@@ -8,7 +8,8 @@ jobs:
     name: Deploy Feature Branch
     uses: ./.github/workflows/deploy_resources.yml
     secrets:
-      WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+      workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_PA }}
+      wip_service_account: ${{ secrets.WIP_SERVICE_ACCOUNT_PA }}
     with:
       gcp-project-id: ${{ vars.GCP_PROJECT_ID_DEV }}
       gcp-region: ${{ vars.DEFAULT_GCP_REGION }}
