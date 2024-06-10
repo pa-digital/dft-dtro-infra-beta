@@ -1,4 +1,4 @@
-name: Build Feature
+name: Validate Feature
 
 on:
   workflow_dispatch:
