@@ -36,37 +36,23 @@ resource "google_cloud_run_v2_service" "publish_service" {
         }
       }
 
-      env {
-        name = local.db_password_env_name
-        value_source {
-          secret_key_ref {
-            secret  = google_secret_manager_secret.postgres_password.secret_id
-            version = "latest"
-          }
-        }
-      }
+      #       env {
+      #         name = local.db_password_env_name
+      #         value_source {
+      #           secret_key_ref {
+      #             secret  = google_secret_manager_secret.postgres_password.secret_id
+      #             version = "latest"
+      #           }
+      #         }
+      #       }
 
-      dynamic "env" {
-        for_each = var.feature_enable_redis_cache ? [1] : []
-
-        content {
-          name = local.redis_auth_string_env_name
-          value_source {
-            secret_key_ref {
-              secret  = one(google_secret_manager_secret.redis_auth_string).secret_id
-              version = "latest"
-            }
-          }
-        }
-      }
-
-      dynamic "volume_mounts" {
-        for_each = local.common_secret_files
-        content {
-          name       = volume_mounts.key
-          mount_path = volume_mounts.value.mount_point
-        }
-      }
+      #       dynamic "volume_mounts" {
+      #         for_each = local.common_secret_files
+      #         content {
+      #           name       = volume_mounts.key
+      #           mount_path = volume_mounts.value.mount_point
+      #         }
+      #       }
 
       startup_probe {
         period_seconds    = 4
@@ -86,25 +72,25 @@ resource "google_cloud_run_v2_service" "publish_service" {
       }
     }
 
-    dynamic "volumes" {
-      for_each = local.common_secret_files
-      content {
-        name = volumes.key
-        secret {
-          secret       = volumes.value.secret
-          default_mode = 0444
-          items {
-            version = "latest"
-            path    = "value"
-            mode    = 0400
-          }
-        }
-      }
-    }
+    #     dynamic "volumes" {
+    #       for_each = local.common_secret_files
+    #       content {
+    #         name = volumes.key
+    #         secret {
+    #           secret       = volumes.value.secret
+    #           default_mode = 0444
+    #           items {
+    #             version = "latest"
+    #             path    = "value"
+    #             mode    = 0400
+    #           }
+    #         }
+    #       }
+    #     }
   }
 
-  depends_on = [
-    # Access to secrets is required to start the container
-    google_secret_manager_secret_iam_member.cloud_run_secrets,
-  ]
+  #   depends_on = [
+  #     # Access to secrets is required to start the container
+  #     google_secret_manager_secret_iam_member.cloud_run_secrets
+  #   ]
 }
