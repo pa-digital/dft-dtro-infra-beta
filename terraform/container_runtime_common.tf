@@ -1,6 +1,10 @@
 # Environmental variables and secrets
 locals {
+  #
   service_name_prefix = "${var.application_name}-${var.environment}"
+
+  #
+  cloud_run_account = "serviceAccount:${var.cloud_run_service_account}"
 
   # At most `database_max_connections` in total can be opened, there are 2 services (publish and consume)
   max_instance_count = floor(var.database_max_connections / var.db_connections_per_cloud_run_instance / 2)
@@ -42,17 +46,6 @@ locals {
   #   common_secret_files = merge(
   #     local.db_connection_secret_files
   #   )
-}
-
-# Service account
-resource "google_service_account" "cloud_run" {
-  account_id   = "${var.application_name}-cloud-run"
-  display_name = "${var.application_name}-cloud-run"
-  description  = "Service Account for ${var.application_name} to run in Cloud Run"
-}
-
-locals {
-  cloud_run_account = "serviceAccount:${google_service_account.cloud_run.email}"
 }
 
 # Policies
