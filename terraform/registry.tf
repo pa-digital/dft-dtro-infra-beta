@@ -4,6 +4,6 @@ resource "google_artifact_registry_repository" "artifact_repository" {
   description   = "Repository for housing prototype images"
   format        = "DOCKER"
   docker_config {
-    immutable_tags = true
+    immutable_tags = false
   }
 }
