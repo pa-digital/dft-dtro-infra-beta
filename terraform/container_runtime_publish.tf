@@ -26,7 +26,7 @@ resource "google_cloud_run_v2_service" "publish_service" {
     }
 
     containers {
-      image = "${var.region}-docker.pkg.dev/${var.project}/${var.project}/cr-world:${var.tag}"
+      image = "europe-west1-docker.pkg.dev/pa-tc-sandbox-341312/pa-tc-sandbox-341312/cr-hello:latest"
       #       image = "${var.region}-docker.pkg.dev/${var.project}/${var.project}/${var.publish_service_image}:${var.tag}"
 
       dynamic "env" {
