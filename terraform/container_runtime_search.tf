@@ -26,7 +26,7 @@ resource "google_cloud_run_v2_service" "consume_service" {
     }
 
     containers {
-      image = "${var.region}-docker.pkg.dev/${var.project}/${var.project}/hello:${var.tag}"
+      image = "${var.region}-docker.pkg.dev/${var.project}/${var.project}/hello-world:${var.tag}"
       #       image = "${var.region}-docker.pkg.dev/${var.project}/dtro/${var.consume_service_image}:${var.tag}"
 
       dynamic "env" {
