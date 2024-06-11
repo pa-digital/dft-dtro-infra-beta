@@ -26,7 +26,8 @@ resource "google_cloud_run_v2_service" "publish_service" {
     }
 
     containers {
-      image = "${var.region}-docker.pkg.dev/${var.project}/dtro/${var.publish_service_image}:${var.tag}"
+      image = "${var.region}-docker.pkg.dev/${var.project}/${var.project}/hello:${var.tag}"
+      #       image = "${var.region}-docker.pkg.dev/${var.project}/${var.project}/${var.publish_service_image}:${var.tag}"
 
       dynamic "env" {
         for_each = local.common_service_envs
