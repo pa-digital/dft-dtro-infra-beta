@@ -49,12 +49,6 @@ locals {
 }
 
 # Policies
-resource "google_project_iam_member" "logging" {
-  project = var.project
-  role    = "roles/logging.logWriter"
-  member  = local.cloud_run_account
-}
-
 # resource "google_secret_manager_secret_iam_member" "cloud_run_secrets" {
 #   for_each = {
 #     for i, value in flatten([
@@ -74,11 +68,11 @@ resource "google_project_iam_member" "logging" {
 #   member    = local.cloud_run_account
 # }
 
-data "google_iam_policy" "noauth" {
-  binding {
-    role = "roles/run.invoker"
-    members = [
-      "allUsers",
-    ]
-  }
+# data "google_iam_policy" "noauth" {
+#   binding {
+#     role = "roles/run.invoker"
+#     members = [
+#       "allUsers",
+#     ]
+#   }
 }
