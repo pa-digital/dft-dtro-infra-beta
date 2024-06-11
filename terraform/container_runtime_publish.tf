@@ -8,7 +8,7 @@ resource "google_cloud_run_service_iam_policy" "publish_service_noauth" {
 }
 
 resource "google_cloud_run_v2_service" "publish_service" {
-  name     = "${local.name_prefix}-${var.publish_service_image}"
+  name     = "${local.service_name_prefix}-${var.publish_service_image}"
   location = var.region
   ingress  = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
 
