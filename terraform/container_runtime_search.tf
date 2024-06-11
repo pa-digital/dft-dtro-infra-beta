@@ -1,11 +1,11 @@
 # consume service
-resource "google_cloud_run_service_iam_policy" "consume_service_noauth" {
-  location = google_cloud_run_v2_service.consume_service.location
-  project  = google_cloud_run_v2_service.consume_service.project
-  service  = google_cloud_run_v2_service.consume_service.name
-
-  policy_data = data.google_iam_policy.noauth.policy_data
-}
+# resource "google_cloud_run_service_iam_policy" "consume_service_noauth" {
+#   location = google_cloud_run_v2_service.consume_service.location
+#   project  = google_cloud_run_v2_service.consume_service.project
+#   service  = google_cloud_run_v2_service.consume_service.name
+#
+#   policy_data = data.google_iam_policy.noauth.policy_data
+# }
 
 resource "google_cloud_run_v2_service" "consume_service" {
   name     = "${local.service_name_prefix}-${var.consume_service_image}"
