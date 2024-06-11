@@ -1,5 +1,7 @@
 # Environmental variables and secrets
 locals {
+  name_prefix = "${var.application_name}-${var.environment}"
+
   # At most `database_max_connections` in total can be opened, there are 2 services (publish and consume)
   max_instance_count = floor(var.database_max_connections / var.db_connections_per_cloud_run_instance / 2)
 

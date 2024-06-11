@@ -1,5 +1,6 @@
 locals {
   serverless_subnet_name = "serverless-subnet"
+  name_prefix            = "${var.application_name}-${var.environment}"
 }
 
 module "network" {
@@ -7,7 +8,7 @@ module "network" {
   version = "~> 9.1"
 
   project_id   = var.project
-  network_name = "${var.application_name}-network"
+  network_name = "${local.name_prefix}-network"
 
   subnets = [
     {
@@ -29,7 +30,7 @@ module "network" {
 # }
 
 resource "google_vpc_access_connector" "serverless_connector" {
-  name    = "default-connector"
+  name    = "${local.name_prefix}-serverless-connector"
   project = var.project
   region  = var.region
 
@@ -44,21 +45,21 @@ resource "google_vpc_access_connector" "serverless_connector" {
 }
 
 resource "google_compute_region_network_endpoint_group" "publish_service_serverless_neg" {
-  name                  = "${var.publish_service_image}-serverless-neg"
+  name                  = "${local.name_prefix}-${var.publish_service_image}-serverless-neg"
   network_endpoint_type = "SERVERLESS"
   region                = var.region
 
   cloud_run {
-    service = var.publish_service_image
+    service = "${local.name_prefix}-${var.publish_service_image}"
   }
 }
 
 resource "google_compute_region_network_endpoint_group" "consume_service_serverless_neg" {
-  name                  = "${var.consume_service_image}-serverless-neg"
+  name                  = "${local.name_prefix}-${var.consume_service_image}-serverless-neg"
   network_endpoint_type = "SERVERLESS"
   region                = var.region
 
   cloud_run {
-    service = var.consume_service_image
+    service = "${local.name_prefix}-${var.consume_service_image}"
   }
 }

@@ -26,13 +26,18 @@ variable "application_name" {
 variable "publish_service_image" {
   type        = string
   description = "The name of an image being pushed for publish service."
-  default     = "dtro-prototype-publish"
+  default     = "dtro-publish-service"
 }
 
 variable "consume_service_image" {
   type        = string
   description = "The name of an image being pushed for consume service."
-  default     = "dtro-prototype-consume"
+  default     = "dtro-consume-service"
+}
+
+variable "cloud_run_service_account" {
+  type        = string
+  description = "Service account for Cloud Run applications."
 }
 
 variable "db_connections_per_cloud_run_instance" {

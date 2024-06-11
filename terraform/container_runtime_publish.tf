@@ -8,12 +8,12 @@ resource "google_cloud_run_service_iam_policy" "publish_service_noauth" {
 }
 
 resource "google_cloud_run_v2_service" "publish_service" {
-  name     = var.publish_service_image
+  name     = "${local.name_prefix}-${var.publish_service_image}"
   location = var.region
   ingress  = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
 
   template {
-    service_account = google_service_account.cloud_run.email
+    service_account = var.cloud_run_service_account
 
     scaling {
       min_instance_count = 0
