@@ -30,7 +30,7 @@ module "network" {
 # }
 
 resource "google_vpc_access_connector" "serverless_connector" {
-  name    = "${local.name_prefix}-serverless-connector"
+  name    = "${local.name_prefix}-connector"
   project = var.project
   region  = var.region
 
