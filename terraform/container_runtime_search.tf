@@ -10,7 +10,7 @@
 resource "google_cloud_run_v2_service" "consume_service" {
   name     = "${local.service_name_prefix}-${var.consume_service_image}"
   location = var.region
-  ingress  = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
+#   ingress  = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
 
   template {
     service_account = var.cloud_run_service_account
@@ -21,8 +21,11 @@ resource "google_cloud_run_v2_service" "consume_service" {
     }
 
     vpc_access {
-      connector = google_vpc_access_connector.serverless_connector.id
-      egress    = "PRIVATE_RANGES_ONLY"
+#       connector = google_vpc_access_connector.serverless_connector.id
+#       egress    = "PRIVATE_RANGES_ONLY"
+      network_interfaces {
+        network = google_vpc_access_connector.serverless_connector.id
+      }
     }
 
     containers {
