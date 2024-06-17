@@ -5,8 +5,9 @@ locals {
 
 #ALB VPC
 module "alb_vpc_network" {
-  source  = "terraform-google-modules/network/google"
-  version = "~> 9.1"
+  depends_on = [google_vpc_access_connector.serverless_connector]
+  source     = "terraform-google-modules/network/google"
+  version    = "~> 9.1"
 
   project_id   = var.project
   network_name = "${local.name_prefix}-alb-network"
