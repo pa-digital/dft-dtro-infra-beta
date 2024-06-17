@@ -22,14 +22,14 @@ resource "google_cloud_run_v2_service" "publish_service" {
     }
 
 
-    vpc_access {
-      connector = google_vpc_access_connector.serverless_connector.id
-      egress    = "PRIVATE_RANGES_ONLY"
-      # Direct egress
-      #       network_interfaces {
-      #         network = google_vpc_access_connector.serverless_connector.id
-      #       }
-    }
+    #     vpc_access {
+    #       connector = google_vpc_access_connector.serverless_connector.id
+    #       egress    = "PRIVATE_RANGES_ONLY"
+    #       # Direct egress
+    #       #       network_interfaces {
+    #       #         network = google_vpc_access_connector.serverless_connector.id
+    #       #       }
+    #     }
 
     containers {
       image = "europe-west1-docker.pkg.dev/pa-tc-sandbox-341312/pa-tc-sandbox-341312/cr-hello:latest"
