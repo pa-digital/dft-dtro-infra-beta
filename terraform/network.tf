@@ -1,6 +1,6 @@
 locals {
-  alb_vpc_subnet_name = "alb-subnet"
-  name_prefix         = "${var.application_name}-${var.environment}"
+  serverless_subnet_name = "serverless-subnet"
+  name_prefix            = "${var.application_name}-${var.environment}"
 }
 
 #ALB VPC
@@ -13,7 +13,7 @@ module "alb_vpc_network" {
 
   subnets = [
     {
-      subnet_name   = local.alb_vpc_subnet_name
+      subnet_name   = "alb-subnet"
       subnet_ip     = var.alb_vpc_ip_range
       subnet_region = var.region
     }
@@ -33,6 +33,11 @@ module "backend_vpc_network" {
       subnet_name   = "backend-subnet"
       subnet_ip     = var.backend_vpc_ip_range
       subnet_region = var.region
+    },
+    {
+      subnet_name   = local.serverless_subnet_name
+      subnet_ip     = var.backend_vpc_ip_range
+      subnet_region = var.region
     }
   ]
 }
@@ -49,20 +54,20 @@ module "backend_vpc_network" {
 # }
 
 ## This could be redundant, we can use Direct VPC egress to connect to the database VPC instead of this.
-# resource "google_vpc_access_connector" "serverless_connector" {
-#   name    = "${local.name_prefix}-connector"
-#   project = var.project
-#   region  = var.region
-#
-#   subnet {
-#     project_id = var.project
-#     name       = module.alb_vpc_network.subnets["${var.region}/${local.alb_vpc_subnet_name}"].name
-#   }
-#
-#   machine_type  = var.serverless_connector_config.machine_type
-#   min_instances = var.serverless_connector_config.min_instances
-#   max_instances = var.serverless_connector_config.max_instances
-# }
+resource "google_vpc_access_connector" "serverless_connector" {
+  name    = "${local.name_prefix}-connector"
+  project = var.project
+  region  = var.region
+
+  subnet {
+    project_id = var.project
+    name       = module.backend_vpc_network.subnets["${var.region}/${local.serverless_subnet_name}"].name
+  }
+
+  machine_type  = var.serverless_connector_config.machine_type
+  min_instances = var.serverless_connector_config.min_instances
+  max_instances = var.serverless_connector_config.max_instances
+}
 
 resource "google_compute_region_network_endpoint_group" "publish_service_serverless_neg" {
   name                  = "${local.name_prefix}-${var.publish_service_image}-serverless-neg"
