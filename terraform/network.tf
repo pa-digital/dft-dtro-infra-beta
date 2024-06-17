@@ -20,6 +20,17 @@ module "alb_vpc_network" {
   ]
 }
 
+module "alb_vpc_network_firewall_rules" {
+  source       = "terraform-google-modules/network/google//modules/firewall-rules"
+  project_id   = var.project
+  network_name = module.alb_vpc_network.network_name
+
+  ingress = [{
+    name                    = "deny-all"
+    deny = [{protocol = "all" ports = []}]
+  }]
+}
+
 #Backend VPC
 module "backend_vpc_network" {
   source  = "terraform-google-modules/network/google"
