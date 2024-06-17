@@ -26,8 +26,9 @@ module "alb_vpc_network_firewall_rules" {
   network_name = module.alb_vpc_network.network_name
 
   ingress = [{
-    name                    = "deny-all"
-    deny = [{protocol = "all" ports = []}]
+    name = "deny-all"
+    deny = [{ protocol = "all"
+    ports = [] }]
   }]
 }
 
