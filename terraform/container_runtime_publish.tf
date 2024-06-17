@@ -7,6 +7,7 @@
 #   policy_data = data.google_iam_policy.noauth.policy_data
 # }
 
+# Consider Direct Egress to connect Cloud Run to Cloud SQL
 resource "google_cloud_run_v2_service" "publish_service" {
   name     = "${local.service_name_prefix}-${var.publish_service_image}"
   location = var.region
@@ -20,9 +21,11 @@ resource "google_cloud_run_v2_service" "publish_service" {
       max_instance_count = local.max_instance_count
     }
 
+
     vpc_access {
       connector = google_vpc_access_connector.serverless_connector.id
       egress    = "PRIVATE_RANGES_ONLY"
+      # Direct egress
       #       network_interfaces {
       #         network = google_vpc_access_connector.serverless_connector.id
       #       }

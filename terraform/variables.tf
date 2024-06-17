@@ -161,6 +161,18 @@ variable "serverless_connector_config" {
   }
 }
 
+variable "backend_vpc_ip_range" {
+  type        = string
+  description = "IP range for Backend VPC"
+  default     = "10.0.0.0/16"
+}
+
+variable "alb_vpc_ip_range" {
+  type        = string
+  description = "IP range for ALB VPC"
+  default     = "10.200.0.0/16"
+}
+
 variable "serverless_connector_ip_range" {
   type        = string
   description = "IP range for Serverless VPC Access Connector"
