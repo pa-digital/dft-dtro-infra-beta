@@ -1,5 +1,6 @@
 locals {
-  name_prefix = "${var.application_name}-${var.environment}"
+  alb_vpc_subnet_name = "alb-subnet"
+  name_prefix         = "${var.application_name}-${var.environment}"
 }
 
 #ALB VPC
@@ -12,7 +13,7 @@ module "alb_vpc_network" {
 
   subnets = [
     {
-      subnet_name   = "alb-subnet"
+      subnet_name   = local.alb_vpc_subnet_name
       subnet_ip     = var.alb_vpc_ip_range
       subnet_region = var.region
     }
@@ -53,6 +54,11 @@ resource "google_vpc_access_connector" "serverless_connector" {
   project = var.project
   region  = var.region
 
+  subnet {
+    project_id = var.project
+    name       = module.backend_vpc_network.subnets["${var.region}/${local.alb_vpc_subnet_name}"].name
+  }
+
   machine_type  = var.serverless_connector_config.machine_type
   min_instances = var.serverless_connector_config.min_instances
   max_instances = var.serverless_connector_config.max_instances
@@ -78,4 +84,4 @@ resource "google_compute_region_network_endpoint_group" "consume_service_serverl
   }
 }
 
-// Add firewall here
+// Add firewall here(?)
