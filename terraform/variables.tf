@@ -170,13 +170,13 @@ variable "backend_vpc_ip_range" {
 variable "alb_vpc_ip_range" {
   type        = string
   description = "IP range for ALB VPC"
-  default     = "10.200.0.0/28"
+  default     = "10.64.0.0/28"
 }
 
 variable "serverless_connector_ip_range" {
   type        = string
   description = "IP range for Serverless VPC Access Connector"
-  default     = "10.64.0.0/28" # CIDR block with "/28" netmask is required
+  default     = "10.200.0.0/28" # CIDR block with "/28" netmask is required
 }
 
 variable "redis_memory_size" {

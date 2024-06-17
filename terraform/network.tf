@@ -1,13 +1,12 @@
 locals {
-  serverless_subnet_name = "serverless-subnet"
-  name_prefix            = "${var.application_name}-${var.environment}"
+  backend_subnet_name = "backend-subnet"
+  name_prefix         = "${var.application_name}-${var.environment}"
 }
 
 #ALB VPC
 module "alb_vpc_network" {
-  depends_on = [google_vpc_access_connector.serverless_connector]
-  source     = "terraform-google-modules/network/google"
-  version    = "~> 9.1"
+  source  = "terraform-google-modules/network/google"
+  version = "~> 9.1"
 
   project_id   = var.project
   network_name = "${local.name_prefix}-alb-network"
@@ -31,12 +30,7 @@ module "backend_vpc_network" {
 
   subnets = [
     {
-      subnet_name   = "backend-subnet"
-      subnet_ip     = var.backend_vpc_ip_range
-      subnet_region = var.region
-    },
-    {
-      subnet_name   = local.serverless_subnet_name
+      subnet_name   = local.backend_subnet_name
       subnet_ip     = var.backend_vpc_ip_range
       subnet_region = var.region
     }
@@ -62,7 +56,7 @@ resource "google_vpc_access_connector" "serverless_connector" {
 
   subnet {
     project_id = var.project
-    name       = module.backend_vpc_network.subnets["${var.region}/${local.serverless_subnet_name}"].name
+    name       = module.backend_vpc_network.subnets["${var.region}/${local.backend_subnet_name}"].name
   }
 
   machine_type  = var.serverless_connector_config.machine_type
