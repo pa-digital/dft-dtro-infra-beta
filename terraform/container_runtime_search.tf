@@ -20,13 +20,13 @@ resource "google_cloud_run_v2_service" "consume_service" {
       max_instance_count = local.max_instance_count
     }
 
-    #     vpc_access {
-    #       connector = google_vpc_access_connector.serverless_connector.id
-    #       egress    = "PRIVATE_RANGES_ONLY"
-    #       #       network_interfaces {
-    #       #         network = google_vpc_access_connector.serverless_connector.id
-    #       #       }
-    #     }
+    vpc_access {
+      connector = google_vpc_access_connector.serverless_connector.id
+      egress    = "PRIVATE_RANGES_ONLY"
+      #       network_interfaces {
+      #         network = google_vpc_access_connector.serverless_connector.id
+      #       }
+    }
 
     containers {
       image = "europe-west1-docker.pkg.dev/pa-tc-sandbox-341312/pa-tc-sandbox-341312/cr-hello:latest"
