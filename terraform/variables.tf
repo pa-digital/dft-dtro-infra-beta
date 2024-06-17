@@ -170,7 +170,7 @@ variable "backend_vpc_ip_range" {
 variable "alb_vpc_ip_range" {
   type        = string
   description = "IP range for ALB VPC"
-  default     = "10.200.0.0/16"
+  default     = "10.200.0.0/28"
 }
 
 variable "serverless_connector_ip_range" {
