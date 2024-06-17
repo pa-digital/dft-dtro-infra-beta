@@ -56,7 +56,7 @@ resource "google_vpc_access_connector" "serverless_connector" {
 
   subnet {
     project_id = var.project
-    name       = module.backend_vpc_network.subnets["${var.region}/${local.alb_vpc_subnet_name}"].name
+    name       = module.alb_vpc_network.subnets["${var.region}/${local.alb_vpc_subnet_name}"].name
   }
 
   machine_type  = var.serverless_connector_config.machine_type
