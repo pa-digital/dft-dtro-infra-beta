@@ -77,4 +77,4 @@ jobs:
 #      - name: Terraform Apply
 #        run: terraform apply -auto-approve -input=false terraform-plan-gcp
       - name: Terraform Destroy
-        run: terraform apply -destroy -auto-approve terraform-plan-gcp
+        run: terraform apply -destroy -auto-approve
