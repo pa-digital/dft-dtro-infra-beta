@@ -4,43 +4,43 @@ locals {
 }
 
 #ALB VPC
-# module "alb_vpc_network" {
-#   source  = "terraform-google-modules/network/google"
-#   version = "~> 9.1"
-#
-#   project_id   = var.project
-#   network_name = "${local.name_prefix}-alb-network"
-#
-#   subnets = [
-#     {
-#       subnet_name   = "alb-subnet"
-#       subnet_ip     = var.alb_vpc_ip_range
-#       subnet_region = var.region
-#     }
-#   ]
-# }
-#
-# #Backend VPC
-# module "backend_vpc_network" {
-#   source  = "terraform-google-modules/network/google"
-#   version = "~> 9.1"
-#
-#   project_id   = var.project
-#   network_name = "${local.name_prefix}-backend-network"
-#
-#   subnets = [
-#     {
-#       subnet_name   = "backend-subnet"
-#       subnet_ip     = var.backend_vpc_ip_range
-#       subnet_region = var.region
-#     },
-#     {
-#       subnet_name   = local.serverless_subnet_name
-#       subnet_ip     = var.backend_vpc_ip_range
-#       subnet_region = var.region
-#     }
-#   ]
-# }
+module "alb_vpc_network" {
+  source  = "terraform-google-modules/network/google"
+  version = "~> 9.1"
+
+  project_id   = var.project
+  network_name = "${local.name_prefix}-alb-network"
+
+  subnets = [
+    {
+      subnet_name   = "alb-subnet"
+      subnet_ip     = var.alb_vpc_ip_range
+      subnet_region = var.region
+    }
+  ]
+}
+
+#Backend VPC
+module "backend_vpc_network" {
+  source  = "terraform-google-modules/network/google"
+  version = "~> 9.1"
+
+  project_id   = var.project
+  network_name = "${local.name_prefix}-backend-network"
+
+  subnets = [
+    {
+      subnet_name   = "backend-subnet"
+      subnet_ip     = var.backend_vpc_ip_range
+      subnet_region = var.region
+    },
+    {
+      subnet_name   = local.serverless_subnet_name
+      subnet_ip     = var.backend_vpc_ip_range
+      subnet_region = var.region
+    }
+  ]
+}
 
 #  VPC peering link to Cloud SQL VPC
 # module "cloudsql_private_service_access" {
