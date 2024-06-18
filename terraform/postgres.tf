@@ -7,7 +7,6 @@ module "postgres_db" {
 
   project_id        = var.project
   region            = var.region
-  zone              = var.database_zone
   availability_type = var.database_availability_type
 
   database_version = "POSTGRES_15"

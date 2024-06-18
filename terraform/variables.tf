@@ -96,7 +96,7 @@ variable "database_zone" {
 variable "database_availability_type" {
   type        = string
   description = "Availability of Postgres database instance"
-  default     = "ZONAL"
+  default     = "REGIONAL"
 }
 
 variable "database_instance_type" {
