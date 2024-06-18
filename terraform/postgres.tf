@@ -1,5 +1,4 @@
 locals {
-  backend_subnet_name  = "backend-subnet"
   database_name_prefix = "${var.application_name}-${var.environment}"
 }
 module "postgres_db" {
