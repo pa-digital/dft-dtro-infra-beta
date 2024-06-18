@@ -1,7 +1,3 @@
-locals {
-  name_prefix = "${var.application_name}-${var.environment}"
-}
-
 module "postgres_db" {
   source  = "GoogleCloudPlatform/sql-db/google//modules/postgresql"
   version = "15.1.0"

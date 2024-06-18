@@ -1,6 +1,5 @@
 locals {
   backend_subnet_name = "backend-subnet"
-  name_prefix         = "${var.application_name}-${var.environment}"
 }
 
 #ALB VPC
