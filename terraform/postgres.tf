@@ -3,7 +3,7 @@ locals {
 }
 module "postgres_db" {
   source  = "GoogleCloudPlatform/sql-db/google//modules/postgresql"
-  version = "15.1.0"
+  version = "20.1.0"
 
   project_id        = var.project
   region            = var.region

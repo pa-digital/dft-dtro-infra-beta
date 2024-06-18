@@ -49,16 +49,16 @@ module "backend_vpc_network" {
   ]
 }
 
-#  VPC peering link to Cloud SQL VPC
-# module "cloudsql_private_service_access" {
-#   source  = "GoogleCloudPlatform/sql-db/google//modules/private_service_access"
-#   version = "15.1.0"
-#
-#   project_id  = var.project
-#   vpc_network = module.backend_vpc_network.network_name
-#
-#   depends_on = [module.backend_vpc_network]
-# }
+#VPC peering link to Cloud SQL VPC
+module "cloudsql_private_service_access" {
+  source  = "GoogleCloudPlatform/sql-db/google//modules/private_service_access"
+  version = "20.1.0"
+
+  project_id  = var.project
+  vpc_network = module.backend_vpc_network.network_name
+
+  depends_on = [module.backend_vpc_network]
+}
 
 ## This could be redundant, we can use Direct VPC egress to connect to the database VPC instead of this.
 resource "google_vpc_access_connector" "serverless_connector" {
