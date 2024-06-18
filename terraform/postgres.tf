@@ -1,3 +1,7 @@
+locals {
+  backend_subnet_name  = "backend-subnet"
+  database_name_prefix = "${var.application_name}-${var.environment}"
+}
 module "postgres_db" {
   source  = "GoogleCloudPlatform/sql-db/google//modules/postgresql"
   version = "15.1.0"
@@ -10,8 +14,8 @@ module "postgres_db" {
   database_version = "POSTGRES_15"
   tier             = var.database_instance_type
 
-  name      = "${local.name_prefix}-postgres"
-  db_name   = "${local.name_prefix}-database"
+  name      = "${local.database_name_prefix}-postgres"
+  db_name   = "${local.database_name_prefix}-database"
   user_name = var.application_name
 
   deletion_protection         = false # WIll be set to true on DfT
@@ -64,6 +68,6 @@ module "postgres_db" {
 }
 
 resource "google_sql_ssl_cert" "db_client_cert" {
-  common_name = "${local.name_prefix}-client-certificate"
+  common_name = "${local.database_name_prefix}-client-certificate"
   instance    = module.postgres_db.instance_name
 }
