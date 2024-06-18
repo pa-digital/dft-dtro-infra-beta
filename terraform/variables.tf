@@ -108,13 +108,13 @@ variable "database_instance_type" {
 variable "database_disk_initial_size" {
   type        = string
   description = "Initial size of the Postgres databases disk"
-  default     = 10
+  default     = 100
 }
 
 variable "database_disk_autoresize_limit" {
   type        = string
   description = "Upper limit for Postgres database disk auto resize"
-  default     = 30
+  default     = 1000
 }
 
 variable "database_max_connections" {

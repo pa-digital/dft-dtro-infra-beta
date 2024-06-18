@@ -1,5 +1,5 @@
 locals {
-  database_name = "${var.application_name}-database"
+  name_prefix = "${var.application_name}-${var.environment}"
 }
 
 module "postgres_db" {
@@ -14,12 +14,12 @@ module "postgres_db" {
   database_version = "POSTGRES_15"
   tier             = var.database_instance_type
 
-  name      = "${var.application_name}-postgres"
-  db_name   = local.database_name
+  name      = "${local.name_prefix}-postgres"
+  db_name   = "${local.name_prefix}-database"
   user_name = var.application_name
 
-  deletion_protection         = true
-  deletion_protection_enabled = true
+  deletion_protection         = false # WIll be set to true on DfT
+  deletion_protection_enabled = false # WIll be set to true on DfT
 
   disk_size                      = var.database_disk_initial_size
   disk_type                      = "PD_SSD"
@@ -38,7 +38,7 @@ module "postgres_db" {
     authorized_networks                           = []
     enable_private_path_for_google_cloud_services = true
     ipv4_enabled                                  = false
-    private_network                               = module.network.network_self_link
+    private_network                               = module.backend_vpc_network.network_self_link
     require_ssl                                   = true
   }
 
@@ -68,6 +68,6 @@ module "postgres_db" {
 }
 
 resource "google_sql_ssl_cert" "db_client_cert" {
-  common_name = "${var.application_name}-client-certificate"
+  common_name = "${local.name_prefix}-client-certificate"
   instance    = module.postgres_db.instance_name
 }
