@@ -20,6 +20,7 @@ module "alb_vpc_network" {
   ]
 }
 
+#Firewall rules for ALB VPC
 module "alb_vpc_network_firewall_rules" {
   source       = "terraform-google-modules/network/google//modules/firewall-rules"
   project_id   = var.project
@@ -96,4 +97,40 @@ resource "google_compute_region_network_endpoint_group" "consume_service_serverl
   }
 }
 
-// Add firewall here(?)
+# ## VPC Service Control
+# # Manage access policy
+# module "org_policy" {
+#   source      = "terraform-google-modules/vpc-service-controls/google"
+#   parent_id   = var.orgainisation # Orgainisation name
+#   policy_name = var.policy_name
+# }
+#
+# module "access_level_members" {
+#   source  = "terraform-google-modules/vpc-service-controls/google//modules/access_level"
+#   policy  = module.org_policy.policy_id
+#   name    = "terraform_members"
+#   members = var.access_level_members # List of members with access to the policy (service accounts)
+# }
+#
+# #  Acording to the docs, there may be a delay between a successful response and the change taking effect.
+# #  This dealy value is from the docs and allows time for the resource to come online
+# resource "null_resource" "wait_for_members" {
+#   provisioner "local-exec" {
+#     command = "sleep 60"
+#   }
+#   depends_on = [module.access_level_members]
+# }
+#
+# # Regular perimeter: Regular service perimeters protect services on the projects they contain.
+# module "regular_service_perimeter_1" {
+#   source              = "terraform-google-modules/vpc-service-controls/google//modules/regular_service_perimeter"
+#   policy              = module.org_policy.policy_id
+#   perimeter_name      = "regular_perimeter_1"
+#   description         = "Perimeter shielding projects"
+#   resources           = [var.project_id, "alb-vpc", "backend-vpc"]
+#   access_levels       = [module.access_level_members.name]
+#   restricted_services = ["vpcaccess.googleapis.com", "sqladmin.googleapis.com", "run.googleapis.com", "artifactregistry.googleapis.com"]
+#   shared_resources    = {
+#     all = ["11111111"]
+#   }
+# }

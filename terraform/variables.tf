@@ -5,7 +5,18 @@ variable "region" {
   default     = "europe-west1"
 }
 
+variable "orgainisation" {
+  type        = string
+  description = "GCP orgainisation where the DTRO project can be found."
+  default     = "paconsulting.com/133988432162"
+}
+
 variable "project" {
+  type        = string
+  description = "GCP project ID to which resources will be deployed."
+  default     = "dft-dtro-dev-01"
+}
+variable "project_id" {
   type        = string
   description = "GCP project ID to which resources will be deployed."
   default     = "dft-dtro-dev-01"
@@ -18,6 +29,12 @@ variable "environment" {
 }
 
 variable "application_name" {
+  type        = string
+  description = "The name the application."
+  default     = "dtro"
+}
+
+variable "access_level_members" {
   type        = string
   description = "The name the application."
   default     = "dtro"
