@@ -14,7 +14,7 @@ variable "orgainisation" {
 variable "project" {
   type        = string
   description = "GCP project ID to which resources will be deployed."
-  default     = "dft-dtro-dev-01"
+  default     = "dft-dtro-dev"
 }
 variable "project_id" {
   type        = string
