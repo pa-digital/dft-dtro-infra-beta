@@ -87,16 +87,6 @@ resource "google_compute_region_network_endpoint_group" "publish_service_serverl
   }
 }
 
-resource "google_compute_region_network_endpoint_group" "consume_service_serverless_neg" {
-  name                  = "${local.network_name_prefix}-${var.consume_service_image}-serverless-neg"
-  network_endpoint_type = "SERVERLESS"
-  region                = var.region
-
-  cloud_run {
-    service = "${local.network_name_prefix}-${var.consume_service_image}"
-  }
-}
-
 # ## VPC Service Control
 # # Manage access policy
 # module "org_policy" {

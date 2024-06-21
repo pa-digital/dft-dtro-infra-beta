@@ -46,12 +46,6 @@ variable "publish_service_image" {
   default     = "dtro-publish-service"
 }
 
-variable "consume_service_image" {
-  type        = string
-  description = "The name of an image being pushed for consume service."
-  default     = "dtro-consume-service"
-}
-
 variable "cloud_run_service_account" {
   type        = string
   description = "Service account for Cloud Run applications."
@@ -79,12 +73,6 @@ variable "publish_service_domain" {
   type        = string
   description = "Name of the domain where the prototype is published"
   default     = "dtro-alpha-publishing-prototype.dft.gov.uk"
-}
-
-variable "consume_service_domain" {
-  type        = string
-  description = "Name of the domain where the prototype is published"
-  default     = "dtro-alpha-access-prototype.dft.gov.uk"
 }
 
 variable "logs_retention_in_days" {
