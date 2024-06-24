@@ -8,9 +8,17 @@ on:
 
 jobs:
 
-  build:
-
+  docker-build-push:
+    name: Authenticate with Google and push the container to the Artifact Registry
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      packages: read
+      actions: read
+    defaults:
+      run:
+        shell: bash
 
     steps:
       - name: Checkout this infra respository
@@ -36,9 +44,9 @@ jobs:
         run: gcloud auth configure-docker europe-west1-docker.pkg.dev
 
       - name: Build and push Docker image to Artifact Registry
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v6
         with:
-          context: ./dft-dtro-beta
+          file: ./dft-dtro-beta/Src/DfT.DTRO/Dockerfile
           push: true
           tags: europe-west1-docker.pkg.dev/pa-tc-sandbox-341312/pa-tc-sandbox-341312/dft-dtro-beta:${{ github.sha }}
 
