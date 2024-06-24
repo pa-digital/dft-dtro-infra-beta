@@ -32,7 +32,7 @@ jobs:
           path: dft-dtro-beta
 
       - name: Set up Docker
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
@@ -46,6 +46,7 @@ jobs:
       - name: Build and push Docker image to Artifact Registry
         uses: docker/build-push-action@v6
         with:
+          context: ./dft-dtro-beta
           file: ./dft-dtro-beta/Src/DfT.DTRO/Dockerfile
           push: true
           tags: europe-west1-docker.pkg.dev/pa-tc-sandbox-341312/pa-tc-sandbox-341312/dft-dtro-beta:${{ github.sha }}
