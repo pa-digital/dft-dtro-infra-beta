@@ -47,8 +47,7 @@ jobs:
       - name: Build and push Docker image to Artifact Registry
         uses: docker/build-push-action@v6
         with:
-          context: ./dft-dtro-beta
-          file: ./dft-dtro-beta/Src/DfT.DTRO/Dockerfile
+          context: ./dft-dtro-beta/dft-dtro-beta/Src/DfT.DTRO
           push: true
           tags: europe-west1-docker.pkg.dev/pa-tc-sandbox-341312/pa-tc-sandbox-341312/dft-dtro-beta:${{ github.sha }}
 
