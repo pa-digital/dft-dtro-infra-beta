@@ -92,7 +92,7 @@ resource "google_cloud_run_v2_service" "publish_service" {
     volumes {
       name = "cloudsql"
       cloud_sql_instance {
-        instances = "pa-tc-sandbox-341312:europe-west1:dtro-dev-postgres"
+        instances = ["pa-tc-sandbox-341312:europe-west1:dtro-dev-postgres"]
       }
     }
 
