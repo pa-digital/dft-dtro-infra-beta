@@ -1,14 +1,9 @@
 name: Build and push Docker image to Artifact Registry
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
-
   docker-build-push:
     name: Authenticate with Google and push the container to the Artifact Registry
     runs-on: ubuntu-latest
@@ -52,4 +47,3 @@ jobs:
           push: true
           provenance: false
           tags: europe-west1-docker.pkg.dev/pa-tc-sandbox-341312/pa-tc-sandbox-341312/dft-dtro-beta:latest
-
