@@ -25,6 +25,9 @@ jobs:
       - name: Checkout this infra respository
         uses: actions/checkout@v4
 
+      - name: Remove existing dtro-beta directory (if exists)
+        run: rm -rf dft-dtro-beta
+
       - name: Checkout the dtro-beta repository
         uses: actions/checkout@v4
         with:
