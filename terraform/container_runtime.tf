@@ -89,6 +89,13 @@ resource "google_cloud_run_v2_service" "publish_service" {
       max_instance_count = local.max_instance_count
     }
 
+    volumes {
+      name = "cloudsql"
+      cloud_sql_instance {
+        instances = "pa-tc-sandbox-341312:europe-west1:dtro-dev-postgres"
+      }
+    }
+
     vpc_access {
       connector = google_vpc_access_connector.serverless_connector.id
       egress    = "PRIVATE_RANGES_ONLY"
@@ -98,7 +105,7 @@ resource "google_cloud_run_v2_service" "publish_service" {
     }
 
     containers {
-      image = "europe-west1-docker.pkg.dev/pa-tc-sandbox-341312/pa-tc-sandbox-341312/ollama:latest"
+      image = "europe-west1-docker.pkg.dev/pa-tc-sandbox-341312/pa-tc-sandbox-341312/dft-dtro-beta:latest"
       #       image = "${var.region}-docker.pkg.dev/${var.project}/dtro/${var.publish_service_image}:${var.tag}"
 
       dynamic "env" {
