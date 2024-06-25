@@ -56,6 +56,7 @@ locals {
 
       POSTGRES_MAX_POOL_SIZE = null
 
+      WRITE_TO_BUCKET = "false"
 
   })
   #   common_secret_files = merge(
