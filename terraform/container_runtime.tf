@@ -42,6 +42,21 @@ locals {
 
       EnableRedisCache = var.feature_enable_redis_cache
 
+      POSTGRES_HOST = module.postgres_db.private_ip_address
+
+      POSTGRES_PORT = 5432
+
+      POSTGRES_USER = "sean"
+
+      POSTGRES_PASSWORD = "adminpw"
+
+      POSTGRES_DBNAME = "dtro-dev-postgres"
+
+      POSTGRES_USE_SSL = true
+
+      POSTGRES_MAX_POOL_SIZE = var.db_connections_per_cloud_run_instance
+
+
   })
   #   common_secret_files = merge(
   #     local.db_connection_secret_files
