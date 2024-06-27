@@ -1,7 +1,7 @@
 name: Build and push Docker image to Artifact Registry
 
 on:
-  workflow_call:
+  workflow_dispatch:
 
 jobs:
   docker-build-push:
