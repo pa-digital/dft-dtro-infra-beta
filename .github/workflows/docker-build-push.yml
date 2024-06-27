@@ -1,7 +1,10 @@
 name: Build and push Docker image to Artifact Registry
 
 on:
-  workflow_call:
+  workflow_dispatch:
+
+
+    # Created this pipelne as I had trouble buidling the container on my local machine (Mac).
 
 jobs:
   docker-build-push:
@@ -34,8 +37,8 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_ }}
-          service_account: ${{ secrets.WIP_SERVICE_ACCOUNT }}
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_PA }}
+          service_account: ${{ secrets.WIP_SERVICE_ACCOUNT_PA }}
 
       - name: Authenticate Docker with the Artifact Registry repository
         run: gcloud auth configure-docker europe-west1-docker.pkg.dev
