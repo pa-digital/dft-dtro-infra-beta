@@ -5,7 +5,7 @@ module "postgres_db" {
   source  = "GoogleCloudPlatform/sql-db/google//modules/postgresql"
   version = "20.1.0"
 
-  project_id        = var.project_id
+  project_id        = var.project
   region            = var.region
   availability_type = var.database_availability_type
 
@@ -65,7 +65,7 @@ module "postgres_db" {
   module_depends_on = [module.cloudsql_private_service_access.peering_completed]
 }
 
-resource "google_sql_ssl_cert" "dtro_db_client_cert" {
-  common_name = "${local.database_name_prefix}-db-client-certificate"
+resource "google_sql_ssl_cert" "db_client_cert" {
+  common_name = "${local.database_name_prefix}-client-certificate"
   instance    = module.postgres_db.instance_name
 }
