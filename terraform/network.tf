@@ -64,11 +64,11 @@ module "cloudsql_private_service_access" {
 ## This could be redundant, we can use Direct VPC egress to connect to the database VPC instead of this.
 resource "google_vpc_access_connector" "serverless_connector" {
   name    = "${local.network_name_prefix}-connector"
-  project = var.project
+  project = var.project_id
   region  = var.region
 
   subnet {
-    project_id = var.project
+    project_id = var.project_id
     name       = module.backend_vpc_network.subnets["${var.region}/${local.backend_subnet_name}"].name
   }
 
