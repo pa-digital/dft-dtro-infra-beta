@@ -26,7 +26,7 @@ on:
 env:
   TF_VAR_environment: ${{ inputs.environment }}
   TF_VAR_region: ${{ inputs.gcp-region }}
-  TF_VAR_project: ${{ inputs.gcp-project-id }}
+  TF_VAR_project_id: ${{ inputs.gcp-project-id }}
   TF_VAR_cloud_run_service_account: ${{ secrets.cloud_run_service_account }}
 
 permissions:
