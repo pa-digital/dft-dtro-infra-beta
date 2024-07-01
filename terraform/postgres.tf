@@ -65,7 +65,7 @@ module "postgres_db" {
   module_depends_on = [module.cloudsql_private_service_access.peering_completed]
 }
 
-resource "google_sql_ssl_cert" "db_client_cert" {
+resource "google_sql_ssl_cert" "dtro_db_client_cert" {
   common_name = "${local.database_name_prefix}-db-client-certificate"
   instance    = module.postgres_db.instance_name
 }
