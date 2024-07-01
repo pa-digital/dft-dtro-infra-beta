@@ -66,6 +66,6 @@ module "postgres_db" {
 }
 
 resource "google_sql_ssl_cert" "db_client_cert" {
-  common_name = "${local.database_name_prefix}-client-certificate"
+  common_name = "${local.database_name_prefix}-db-client-certificate"
   instance    = module.postgres_db.instance_name
 }
