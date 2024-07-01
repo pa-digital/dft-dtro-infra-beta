@@ -38,7 +38,7 @@ locals {
     {
       DEPLOYED = timestamp()
 
-      PROJECTID = var.project
+      PROJECTID = var.project_id
 
       EnableRedisCache = var.feature_enable_redis_cache
 

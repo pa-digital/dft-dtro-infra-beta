@@ -8,7 +8,7 @@ module "alb_vpc_network" {
   source  = "terraform-google-modules/network/google"
   version = "~> 9.1"
 
-  project_id   = var.project
+  project_id   = var.project_id
   network_name = "${local.network_name_prefix}-alb-network"
 
   subnets = [
@@ -23,7 +23,7 @@ module "alb_vpc_network" {
 #Firewall rules for ALB VPC
 module "alb_vpc_network_firewall_rules" {
   source       = "terraform-google-modules/network/google//modules/firewall-rules"
-  project_id   = var.project
+  project_id   = var.project_id
   network_name = module.alb_vpc_network.network_name
 
   rules = [{
@@ -38,7 +38,7 @@ module "backend_vpc_network" {
   source  = "terraform-google-modules/network/google"
   version = "~> 9.1"
 
-  project_id   = var.project
+  project_id   = var.project_id
   network_name = "${local.network_name_prefix}-backend-network"
 
   subnets = [
@@ -55,7 +55,7 @@ module "cloudsql_private_service_access" {
   source  = "GoogleCloudPlatform/sql-db/google//modules/private_service_access"
   version = "20.1.0"
 
-  project_id  = var.project
+  project_id  = var.project_id
   vpc_network = module.backend_vpc_network.network_name
 
   depends_on = [module.backend_vpc_network]
