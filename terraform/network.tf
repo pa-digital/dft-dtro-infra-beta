@@ -78,12 +78,12 @@ resource "google_vpc_access_connector" "serverless_connector" {
 }
 
 resource "google_compute_region_network_endpoint_group" "publish_service_serverless_neg" {
-  name                  = "${local.network_name_prefix}-${var.publish_service_image}-serverless-neg"
+  name                  = "${local.network_name_prefix}-${var.dtro_service_image}-serverless-neg"
   network_endpoint_type = "SERVERLESS"
   region                = var.region
 
   cloud_run {
-    service = "${local.network_name_prefix}-${var.publish_service_image}"
+    service = "${local.network_name_prefix}-${var.dtro_service_image}"
   }
 }
 

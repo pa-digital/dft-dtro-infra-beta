@@ -78,7 +78,7 @@ locals {
 # }
 
 resource "google_cloud_run_v2_service" "publish_service" {
-  name     = "${local.service_name_prefix}-${var.publish_service_image}"
+  name     = "${local.service_name_prefix}-${var.dtro_service_image}"
   location = var.region
   #   ingress  = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
 
@@ -93,7 +93,7 @@ resource "google_cloud_run_v2_service" "publish_service" {
     volumes {
       name = "cloudsql"
       cloud_sql_instance {
-        instances = ["pa-tc-sandbox-341312:europe-west1:dtro-dev-postgres"]
+        instances = [module.postgres_db.instance_connection_name]
       }
     }
 
@@ -106,9 +106,8 @@ resource "google_cloud_run_v2_service" "publish_service" {
     }
 
     containers {
-      image = "europe-west1-docker.pkg.dev/dft-dtro-dev-01/dft-dtro-dev/dft-dtro-beta:gabriel"
-      #       image = "europe-west1-docker.pkg.dev/pa-tc-sandbox-341312/pa-tc-sandbox-341312/dft-dtro-beta:latest"
-      #       image = "${var.region}-docker.pkg.dev/${var.project}/dtro/${var.publish_service_image}:${var.tag}"
+      #      image = "europe-west1-docker.pkg.dev/pa-tc-sandbox-341312/pa-tc-sandbox-341312/dft-dtro-beta:latest"
+      image = "${var.region}-docker.pkg.dev/${var.project_id}/${var.project}/${var.dtro_service_image}:gabriel"
 
       dynamic "env" {
         for_each = local.common_service_envs

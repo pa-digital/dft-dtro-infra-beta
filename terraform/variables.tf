@@ -40,10 +40,10 @@ variable "access_level_members" {
   default     = "dtro"
 }
 
-variable "publish_service_image" {
+variable "dtro_service_image" {
   type        = string
   description = "The name of an image being pushed for publish service."
-  default     = "dtro-publish-service"
+  default     = "dft-dtro-beta"
 }
 
 variable "cloud_run_service_account" {
