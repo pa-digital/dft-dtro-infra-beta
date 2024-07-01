@@ -17,7 +17,7 @@ module "postgres_db" {
   user_name = var.application_name
 
   deletion_protection         = false # WIll be set to true on DfT
-  deletion_protection_enabled = false # WIll be set to true on DfT
+  deletion_protection_enabled = false
 
   disk_size                      = var.database_disk_initial_size
   disk_type                      = "PD_SSD"

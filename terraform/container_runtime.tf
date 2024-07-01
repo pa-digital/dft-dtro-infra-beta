@@ -121,7 +121,8 @@ resource "google_cloud_run_v2_service" "publish_service" {
     }
 
     containers {
-      image = "europe-west1-docker.pkg.dev/pa-tc-sandbox-341312/pa-tc-sandbox-341312/dft-dtro-beta:latest"
+      image = "europe-west1-docker.pkg.dev/dft-dtro-dev-01/dft-dtro-dev/dft-dtro-beta:gabriel"
+      #       image = "europe-west1-docker.pkg.dev/pa-tc-sandbox-341312/pa-tc-sandbox-341312/dft-dtro-beta:latest"
       #       image = "${var.region}-docker.pkg.dev/${var.project}/dtro/${var.publish_service_image}:${var.tag}"
 
       dynamic "env" {
@@ -185,8 +186,7 @@ resource "google_cloud_run_v2_service" "publish_service" {
     #     }
   }
 
-  #   depends_on = [
-  #     # Access to secrets is required to start the container
-  #     google_secret_manager_secret_iam_member.cloud_run_secrets
-  #   ]
+  depends_on = [
+    module.postgres_db
+  ]
 }
