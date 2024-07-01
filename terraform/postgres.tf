@@ -5,7 +5,7 @@ module "postgres_db" {
   source  = "GoogleCloudPlatform/sql-db/google//modules/postgresql"
   version = "20.1.0"
 
-  project_id        = var.project
+  project_id        = var.project_id
   region            = var.region
   availability_type = var.database_availability_type
 

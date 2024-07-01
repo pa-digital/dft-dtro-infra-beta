@@ -71,9 +71,8 @@ jobs:
         if: ${{ inputs.do-validation-checks }}
         uses: dflook/terraform-validate@v1
 
-#      - name: Terraform Plan
-#        run: terraform plan -input=false -out terraform-plan-gcp
+      - name: Terraform Plan
+        run: terraform plan -input=false -out terraform-plan-gcp
 
       - name: Terraform Apply
-#        run: terraform apply -auto-approve -input=false terraform-plan-gcp
-        run: terraform apply -destroy -auto-approve
+        run: terraform apply -auto-approve -input=false terraform-plan-gcp
