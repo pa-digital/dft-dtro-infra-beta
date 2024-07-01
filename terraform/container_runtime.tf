@@ -106,7 +106,7 @@ resource "google_cloud_run_v2_service" "publish_service" {
     }
 
     containers {
-#       image = "europe-west1-docker.pkg.dev/dft-dtro-dev-01/dft-dtro-dev/dft-dtro-beta:gabriel"
+      #       image = "europe-west1-docker.pkg.dev/dft-dtro-dev-01/dft-dtro-dev/dft-dtro-beta:gabriel"
       image = "${var.region}-docker.pkg.dev/${var.project_id}/${var.project}/${var.dtro_service_image}:gabriel"
 
       dynamic "env" {
