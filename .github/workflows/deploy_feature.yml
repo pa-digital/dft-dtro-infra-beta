@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  docker-build-push:
-    name: Build and push Docker image to Artifact Registry
-    uses: ./.github/workflows/docker-build-push.yml
+#  docker-build-push:
+#    name: Build and push Docker image to Artifact Registry
+#    uses: ./.github/workflows/docker-build-push.yml
 
 #  deploy-feature-dev-pa:
 #    name: Deploy Feature Branch
