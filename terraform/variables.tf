@@ -13,7 +13,7 @@ variable "region" {
 variable "organisation_id" {
   type        = string
   description = "GCP ID of the organisation where the DTRO project can be found."
-  default     = "133988432162"
+  default     = "0"
 }
 
 variable "access_policy_id" {
