@@ -1,4 +1,9 @@
 # Core D-TRO variables
+variable "tf_state_bucket" {
+  type        = string
+  description = "Name of bucket where Terraform stores it's state file."
+}
+
 variable "region" {
   type        = string
   description = "GCP region to which resources will be deployed."

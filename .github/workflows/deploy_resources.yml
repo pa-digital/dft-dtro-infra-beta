@@ -37,6 +37,7 @@ env:
   TF_VAR_project_number: ${{ secrets.project_number }}
   TF_VAR_cloud_run_service_account: ${{ secrets.cloud_run_service_account }}
   TF_VAR_wip_service_account: ${{ secrets.wip_service_account }}
+  TF_VAR_tf_state_bucket: dft-d-tro-terraform-${var.TF_VAR_environment}
 
 permissions:
   contents: read
@@ -70,7 +71,7 @@ jobs:
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -backend-config "bucket=${var.TF_VAR_tf_state_bucket}"
 
       - name: Terraform Format
         if: ${{ inputs.do-validation-checks }}
@@ -83,5 +84,5 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -input=false -out terraform-plan-gcp
 
-      - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false terraform-plan-gcp
+#      - name: Terraform Apply
+#        run: terraform apply -auto-approve -input=false terraform-plan-gcp
