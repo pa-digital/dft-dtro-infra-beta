@@ -26,7 +26,9 @@ jobs:
       workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
       wip_service_account: ${{ secrets.WIP_SERVICE_ACCOUNT }}
       cloud_run_service_account: ${{ secrets.CLOUD_RUN_SERVICE_ACCOUNT }}
+      project_number: ${{ secrets.GCP_PROJECT_NUMBER_DEV }}
     with:
       gcp-project-id: ${{ vars.GCP_PROJECT_ID_DEV }}
+      gcp-project-name: ${{ vars.GCP_PROJECT_NAME_DEV }}
       gcp-region: ${{ vars.DEFAULT_GCP_REGION }}
       environment: dev

@@ -5,21 +5,37 @@ variable "region" {
   default     = "europe-west1"
 }
 
-variable "orgainisation" {
+variable "organisation_id" {
   type        = string
-  description = "GCP orgainisation where the DTRO project can be found."
-  default     = "paconsulting.com/133988432162"
+  description = "GCP ID of the organisation where the DTRO project can be found."
+  default     = "133988432162"
 }
 
-variable "project" {
+variable "access_policy_id" {
+  type        = string
+  description = "Access level policy ID for the organisation"
+}
+
+variable "access_level_name" {
+  type        = string
+  description = "Access level name for the organisation"
+}
+
+variable "project_name" {
   type        = string
   description = "GCP project ID to which resources will be deployed."
   default     = "dft-dtro-dev"
 }
+
 variable "project_id" {
   type        = string
   description = "GCP project ID to which resources will be deployed."
   default     = "dft-dtro-dev-01"
+}
+
+variable "project_number" {
+  type        = string
+  description = "GCP project number to which resources will be deployed."
 }
 
 variable "environment" {
@@ -34,16 +50,15 @@ variable "application_name" {
   default     = "dtro"
 }
 
-variable "access_level_members" {
-  type        = string
-  description = "The name the application."
-  default     = "dtro"
-}
-
 variable "dtro_service_image" {
   type        = string
   description = "The name of an image being pushed for publish service."
   default     = "dft-dtro-beta"
+}
+
+variable "wip_service_account" {
+  type        = string
+  description = "Service account from Workflow Identity Provider for Terraform to deploy resources."
 }
 
 variable "cloud_run_service_account" {
