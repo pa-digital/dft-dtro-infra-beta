@@ -42,7 +42,7 @@ jobs:
       - name: Authenticate Docker with the Artifact Registry repository
         run: gcloud auth configure-docker europe-west1-docker.pkg.dev
 
-      - name: Build and push Docker image to Artifact Registry
+      - name: Build and push DTRO Docker image to Artifact Registry
         uses: docker/build-push-action@v6.1.0
         with:
           context: dft-dtro-beta/Src/DfT.DTRO
@@ -50,3 +50,13 @@ jobs:
           provenance: false
           #          tags: europe-west1-docker.pkg.dev/dft-dtro-dev-01/dft-dtro-dev-repository/dft-dtro-beta:latest
           tags: europe-west1-docker.pkg.dev/pa-tc-sandbox-341312/pa-tc-sandbox-341312/dft-dtro-beta:latest
+
+      - name: Build and push Migration Docker image to Artifact Registry
+        uses: docker/build-push-action@v6.1.0
+        with:
+            context: dft-dtro-beta/Src/DfT.DTRO
+            file: dft-dtro-beta/Src/DfT.DTRO/Dockerfile.migration
+            push: true
+            provenance: false
+            #          tags: europe-west1-docker.pkg.dev/dft-dtro-dev-01/dft-dtro-dev-repository/dft-dtro-beta:migration
+            tags: europe-west1-docker.pkg.dev/pa-tc-sandbox-341312/pa-tc-sandbox-341312/dft-dtro-beta:migration
