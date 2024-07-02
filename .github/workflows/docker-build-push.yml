@@ -49,4 +49,5 @@ jobs:
           context: dft-dtro-beta/Src/DfT.DTRO
           push: true
           provenance: false
-          tags: europe-west1-docker.pkg.dev/pa-tc-sandbox-341312/pa-tc-sandbox-341312/dft-dtro-beta:latest
+          tags: europe-west1-docker.pkg.dev/dft-dtro-dev-01/dft-dtro-dev-repository/dft-dtro-beta:latest
+#          tags: europe-west1-docker.pkg.dev/pa-tc-sandbox-341312/pa-tc-sandbox-341312/dft-dtro-beta:latest
