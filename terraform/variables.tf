@@ -10,6 +10,12 @@ variable "region" {
   default     = "europe-west1"
 }
 
+variable "organisation" {
+  type        = string
+  description = "GCP Organisation where the DTRO project can be found."
+  default     = "dft"
+}
+
 variable "organisation_id" {
   type        = string
   description = "GCP ID of the organisation where the DTRO project can be found."

@@ -122,7 +122,7 @@ module "dtro_regular_service_perimeter" {
   perimeter_name      = "dtro_regular_service_perimeter"
   description         = "Perimeter shielding DTRO project"
   resources           = [var.project_id, "alb-vpc", "backend-vpc"]
-  access_levels       = [module.access_level_members.name]
+  access_levels       = [module.access_level_members[0].name]
   restricted_services = ["Apigee API", "BigQuery API", "Artifact Registry API", "Compute Engine API", "Cloud Run Admin API", "Cloud SQL", "Cloud SQL Admin API", "Security Token Service API", "IAM Service Account Credentials API", "Cloud Source Repositories API", "Serverless VPC Access API", "Cloud Deployment Manager V2 API", "Cloud Logging API", "Service Networking API", "Cloud Resource Manager API", "Certificate Manager API", "Network Management API"]
   shared_resources = {
     all = ["${var.project_id}/${var.project_number}"]
