@@ -38,7 +38,7 @@ locals {
     {
       DEPLOYED = timestamp()
 
-      PROJECTID = var.project_id
+      PROJECTID = data.google_project.project.project_id
 
       EnableRedisCache = var.feature_enable_redis_cache
 
@@ -121,7 +121,7 @@ resource "google_cloud_run_v2_service" "publish_service" {
     }
 
     containers {
-      image      = "${var.region}-docker.pkg.dev/${var.project_id}/${local.artifact_registry_name}/${var.dtro_service_image}:${var.tag}"
+      image      = "${var.region}-docker.pkg.dev/${local.project_id}/${local.artifact_registry_name}/${var.dtro_service_image}:${var.tag}"
       depends_on = ["cloud-sql-proxy"]
 
       dynamic "env" {
