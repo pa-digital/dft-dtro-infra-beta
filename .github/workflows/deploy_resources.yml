@@ -8,17 +8,9 @@ on:
         required: true
       cloud_run_service_account:
         required: true
-      project_number:
-        required: true
       access_level_members:
         required: true
     inputs:
-      gcp-project-id:
-        type: string
-        required: true
-      gcp-project-name:
-        type: string
-        required: true
       gcp-region:
         type: string
         required: true
@@ -33,11 +25,6 @@ on:
 env:
   TF_VAR_environment: ${{ inputs.environment }}
   TF_VAR_region: ${{ inputs.gcp-region }}
-  TF_VAR_organisation_id: ""
-#  TF_VAR_project: ${{ inputs.gcp-project }}
-#  TF_VAR_project_name: ${{ inputs.gcp-project-name }}
-#  TF_VAR_project_id: ${{ inputs.gcp-project-id }}
-#  TF_VAR_project_number: ${{ secrets.project_number }}
   TF_VAR_tf_state_bucket: dft-d-tro-terraform-${{ inputs.environment }}
   TF_VAR_cloud_run_service_account: ${{ secrets.cloud_run_service_account }}
   TF_VAR_wip_service_account: ${{ secrets.wip_service_account }}
