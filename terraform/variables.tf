@@ -4,16 +4,22 @@ variable "tf_state_bucket" {
   description = "Name of bucket where Terraform stores it's state file."
 }
 
+variable "environment" {
+  type        = string
+  description = "GCP environment to which resources will be deployed."
+  default     = "dev"
+}
+
 variable "region" {
   type        = string
   description = "GCP region to which resources will be deployed."
   default     = "europe-west1"
 }
 
-variable "environment" {
+variable "project_id" {
   type        = string
-  description = "GCP environment to which resources will be deployed."
-  default     = "dev"
+  description = "GCP project ID to which resources will be deployed."
+  default     = "dft-dtro-dev-01"
 }
 
 variable "org_domain" {

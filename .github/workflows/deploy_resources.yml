@@ -11,6 +11,9 @@ on:
       access_level_members:
         required: true
     inputs:
+      gcp-project-id:
+        type: string
+        required: true
       gcp-region:
         type: string
         required: true
@@ -23,9 +26,10 @@ on:
         default: false
 
 env:
+  TF_VAR_tf_state_bucket: dft-d-tro-terraform-${{ inputs.environment }}
   TF_VAR_environment: ${{ inputs.environment }}
   TF_VAR_region: ${{ inputs.gcp-region }}
-  TF_VAR_tf_state_bucket: dft-d-tro-terraform-${{ inputs.environment }}
+  TF_VAR_project_id: ${{ inputs.gcp-project-id }}
   TF_VAR_cloud_run_service_account: ${{ secrets.cloud_run_service_account }}
   TF_VAR_wip_service_account: ${{ secrets.wip_service_account }}
   TF_VAR_access_level_members: ${{ secrets.access_level_members }}
