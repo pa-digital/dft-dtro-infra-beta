@@ -10,29 +10,6 @@ variable "region" {
   default     = "europe-west1"
 }
 
-variable "organisation" {
-  type        = string
-  description = "GCP Organisation where the DTRO project can be found."
-  default     = "dft"
-}
-
-variable "project_name" {
-  type        = string
-  description = "GCP project ID to which resources will be deployed."
-  default     = "dft-dtro-dev"
-}
-
-variable "project_id" {
-  type        = string
-  description = "GCP project ID to which resources will be deployed."
-  default     = "dft-dtro-dev-01"
-}
-
-variable "project_number" {
-  type        = string
-  description = "GCP project number to which resources will be deployed."
-}
-
 variable "environment" {
   type        = string
   description = "GCP environment to which resources will be deployed."
