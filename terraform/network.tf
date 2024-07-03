@@ -101,7 +101,7 @@ module "access_level_members" {
   source  = "terraform-google-modules/vpc-service-controls/google//modules/access_level"
   policy  = module.org_policy[0].policy_id
   name    = "dtro_env_access_members"
-  members = ["serviceAccount:${var.wip_service_account}", "user:${}"]
+  members = ["serviceAccount:${var.wip_service_account}", "user:${var.access_level_members}"]
 }
 
 #  According to the docs(https://github.com/terraform-google-modules/terraform-google-vpc-service-controls?tab=readme-ov-file#known-limitations),
@@ -116,12 +116,12 @@ resource "null_resource" "wait_for_members" {
 
 # Regular perimeter: Regular service perimeters protect services on the projects they contain.
 module "dtro_regular_service_perimeter" {
-  count               = 0
-  source              = "terraform-google-modules/vpc-service-controls/google//modules/regular_service_perimeter"
-  policy              = module.org_policy[0].policy_id
-  perimeter_name      = "dtro_regular_service_perimeter"
-  description         = "Perimeter shielding DTRO project"
-  resources           = [data.google_project.project.number]
-  access_levels       = [module.access_level_members[0].name]
+  count                       = 0
+  source                      = "terraform-google-modules/vpc-service-controls/google//modules/regular_service_perimeter"
+  policy                      = module.org_policy[0].policy_id
+  perimeter_name              = "dtro_regular_service_perimeter"
+  description                 = "Perimeter shielding DTRO project"
+  resources                   = [data.google_project.project.number]
+  access_levels               = [module.access_level_members[0].name]
   restricted_services_dry_run = ["apigee.googleapis.com", "BigQuery API", "Artifact Registry API", "Compute Engine API", "Cloud Run Admin API", "Cloud SQL", "Cloud SQL Admin API", "Security Token Service API", "IAM Service Account Credentials API", "Cloud Source Repositories API", "Serverless VPC Access API", "Cloud Deployment Manager V2 API", "Cloud Logging API", "Service Networking API", "Cloud Resource Manager API", "Certificate Manager API", "Network Management API"]
 }

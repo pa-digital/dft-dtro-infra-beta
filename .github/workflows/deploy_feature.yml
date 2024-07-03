@@ -27,6 +27,7 @@ jobs:
       wip_service_account: ${{ secrets.WIP_SERVICE_ACCOUNT }}
       cloud_run_service_account: ${{ secrets.CLOUD_RUN_SERVICE_ACCOUNT }}
       project_number: ${{ secrets.GCP_PROJECT_NUMBER_DEV }}
+      access_level_members: ${{ secrets.ACCESS_LEVEL_MEMBERS }}
     with:
       gcp-project-id: ${{ vars.GCP_PROJECT_ID_DEV }}
       gcp-project-name: ${{ vars.GCP_PROJECT_NAME_DEV }}

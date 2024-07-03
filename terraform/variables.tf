@@ -114,6 +114,11 @@ variable "logs_retention_in_days" {
 #   description = "Emails to notify about infrastructure issues"
 # }
 
+variable "access_level_members" {
+  type        = string
+  description = "Users to be part of the Access Context Manager"
+}
+
 variable "feature_enable_redis_cache" {
   type        = bool
   description = "Feature flag, when enabled MemoryStore (Redis) cache instance is configured and used by the app"
