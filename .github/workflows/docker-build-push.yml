@@ -46,7 +46,7 @@ jobs:
         uses: docker/build-push-action@v6.1.0
         with:
           context: dft-dtro-beta/Src/DfT.DTRO
-          platform: linux/amd64
+          platforms: linux/amd64
           push: true
           provenance: false
           #          tags: europe-west1-docker.pkg.dev/dft-dtro-dev-01/dft-dtro-dev-repository/dft-dtro-beta:latest
