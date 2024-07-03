@@ -42,6 +42,20 @@ locals {
 
       EnableRedisCache = var.feature_enable_redis_cache
 
+      POSTGRES_DB = module.postgres_db.db_name
+
+      POSTGRES_USER = module.postgres_db.user_name
+
+      POSTGRES_PASSWORD = var.postgres_password
+
+      POSTGRES_HOST = var.postgres_host
+
+      POSTGRES_PORT = var.postgres_port
+
+      POSTGRES_SSL = var.postgres_use_ssl
+
+      POSTGRES_MAX_POOL_SIZE = var.db_connections_per_cloud_run_instance
+
   })
   #   common_secret_files = merge(
   #     local.db_connection_secret_files
@@ -152,6 +166,18 @@ resource "google_cloud_run_v2_service" "publish_service" {
         }
       }
     }
+
+      containers {
+        name  = "cloud-sql-proxy"
+        image = "gcr.io/cloud-sql-connectors/cloud-sql-proxy:latest"
+        args  = ["--private-ip", "pa-tc-sandbox-341312:europe-west1:dtro-dev-postgres"]
+
+        env {
+          name  = "CLOUDSQL_AUTH_PROXY_PRIVATE_IP"
+          value = "true"
+        }
+
+      }
 
     #     dynamic "volumes" {
     #       for_each = local.common_secret_files

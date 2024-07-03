@@ -215,3 +215,27 @@ variable "redis_memory_size" {
   description = "Redis memory size in GiB"
   default     = 1
 }
+
+variable "postgres_host" {
+  type        = string
+  description = "Postgres database host"
+  default     = "127.0.0.1"
+}
+
+variable "postgres_password" {
+  type        = string
+  description = "The password for the database user"
+  default     = "Zl\"\"UHXAP{mp?igR"
+}
+
+variable "postgres_port" {
+  type        = string
+  description = "The port on which the Database accepts connections"
+  default     = "5432"
+}
+
+variable "postgres_use_ssl" {
+  type        = string
+  description = "Whether or not to use SSL for the connection"
+  default     = "true"
+}
