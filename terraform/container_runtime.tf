@@ -121,7 +121,7 @@ resource "google_cloud_run_v2_service" "publish_service" {
     }
 
     containers {
-      image      = "${var.region}-docker.pkg.dev/${var.project_id}/${var.project_name}-repository/${var.dtro_service_image}:${var.tag}"
+      image      = "${var.region}-docker.pkg.dev/${var.project_id}/${local.artifact_registry_name}/${var.dtro_service_image}:${var.tag}"
       depends_on = ["cloud-sql-proxy"]
 
       dynamic "env" {

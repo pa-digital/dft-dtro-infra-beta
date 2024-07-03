@@ -8,7 +8,7 @@ module "alb_vpc_network" {
   source  = "terraform-google-modules/network/google"
   version = "~> 9.1"
 
-  project_id   = var.project_id
+  project_id   = data.google_project.project.project_id
   network_name = "${local.network_name_prefix}-alb-network"
 
   subnets = [
@@ -23,7 +23,7 @@ module "alb_vpc_network" {
 #Firewall rules for ALB VPC
 module "alb_vpc_network_firewall_rules" {
   source       = "terraform-google-modules/network/google//modules/firewall-rules"
-  project_id   = var.project_id
+  project_id   = data.google_project.project.project_id
   network_name = module.alb_vpc_network.network_name
 
   rules = [{
@@ -38,7 +38,7 @@ module "backend_vpc_network" {
   source  = "terraform-google-modules/network/google"
   version = "~> 9.1"
 
-  project_id   = var.project_id
+  project_id   = data.google_project.project.project_id
   network_name = "${local.network_name_prefix}-backend-network"
 
   subnets = [
@@ -55,7 +55,7 @@ module "cloudsql_private_service_access" {
   source  = "GoogleCloudPlatform/sql-db/google//modules/private_service_access"
   version = "20.1.0"
 
-  project_id  = var.project_id
+  project_id  = data.google_project.project.project_id
   vpc_network = module.backend_vpc_network.network_name
 
   depends_on = [module.backend_vpc_network]
@@ -64,11 +64,11 @@ module "cloudsql_private_service_access" {
 ## This could be redundant, we can use Direct VPC egress to connect to the database VPC instead of this.
 resource "google_vpc_access_connector" "serverless_connector" {
   name    = "${local.network_name_prefix}-connector"
-  project = var.project_id
+  project = data.google_project.project.project_id
   region  = var.region
 
   subnet {
-    project_id = var.project_id
+    project_id = data.google_project.project.project_id
     name       = module.backend_vpc_network.subnets["${var.region}/${local.backend_subnet_name}"].name
   }
 
@@ -92,7 +92,7 @@ resource "google_compute_region_network_endpoint_group" "publish_service_serverl
 module "org_policy" {
   count       = 0
   source      = "terraform-google-modules/vpc-service-controls/google"
-  parent_id   = var.organisation_id
+  parent_id   = data.google_organization.organisation.org_id
   policy_name = "${local.network_name_prefix}-vpc-sc-policy"
 }
 
@@ -101,7 +101,7 @@ module "access_level_members" {
   source  = "terraform-google-modules/vpc-service-controls/google//modules/access_level"
   policy  = module.org_policy[0].policy_id
   name    = "dtro_env_access_members"
-  members = ["serviceAccount:${var.cloud_run_service_account}", "serviceAccount:${var.wip_service_account}"] # List of members with access to the policy (service accounts)
+  members = ["serviceAccount:${var.wip_service_account}", "user:${}"]
 }
 
 #  According to the docs(https://github.com/terraform-google-modules/terraform-google-vpc-service-controls?tab=readme-ov-file#known-limitations),
@@ -121,87 +121,7 @@ module "dtro_regular_service_perimeter" {
   policy              = module.org_policy[0].policy_id
   perimeter_name      = "dtro_regular_service_perimeter"
   description         = "Perimeter shielding DTRO project"
-  resources           = [var.project_id, "alb-vpc", "backend-vpc"]
+  resources           = [data.google_project.project.number]
   access_levels       = [module.access_level_members[0].name]
-  restricted_services = ["Apigee API", "BigQuery API", "Artifact Registry API", "Compute Engine API", "Cloud Run Admin API", "Cloud SQL", "Cloud SQL Admin API", "Security Token Service API", "IAM Service Account Credentials API", "Cloud Source Repositories API", "Serverless VPC Access API", "Cloud Deployment Manager V2 API", "Cloud Logging API", "Service Networking API", "Cloud Resource Manager API", "Certificate Manager API", "Network Management API"]
-  shared_resources = {
-    all = ["${var.project_id}/${var.project_number}"]
-  }
-  ingress_policies = [
-    {
-      from = {
-        sources = [
-          {
-            access_level = "accessPolicies/${var.access_policy_id}/accessLevels/${var.access_level_name}"
-          }
-        ]
-      }
-      to = {
-        operations = [
-          {
-            service_name = "apigee.googleapis.com",
-            method_selectors = [
-              {
-                method = "*"
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      from = {
-        sources = [
-          {
-            service_account = "serviceAccount:${var.cloud_run_service_account}"
-          },
-          {
-            service_account = "serviceAccount:${var.wip_service_account}"
-          }
-        ]
-      }
-      to = {
-        operations = [
-          {
-            service_name = "run.googleapis.com",
-            method_selectors = [
-              {
-                method = "*"
-              }
-            ]
-          },
-          {
-            service_name = "sqladmin.googleapis.com",
-            method_selectors = [
-              {
-                method = "*"
-              }
-            ]
-          }
-        ]
-      }
-    }
-  ]
-
-  egress_policies = [
-    {
-      from = {
-        operations = [
-          {
-            service_name = "apigee.googleapis.com",
-            method_selectors = [
-              {
-                method = "*"
-              }
-            ]
-          }
-        ]
-      }
-      to = {
-        resources = [
-          "accessPolicies/${var.access_policy_id}/resources/ALB_RESOURCE"
-        ]
-      }
-    }
-  ]
+  restricted_services_dry_run = ["apigee.googleapis.com", "BigQuery API", "Artifact Registry API", "Compute Engine API", "Cloud Run Admin API", "Cloud SQL", "Cloud SQL Admin API", "Security Token Service API", "IAM Service Account Credentials API", "Cloud Source Repositories API", "Serverless VPC Access API", "Cloud Deployment Manager V2 API", "Cloud Logging API", "Service Networking API", "Cloud Resource Manager API", "Certificate Manager API", "Network Management API"]
 }

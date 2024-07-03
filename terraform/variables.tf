@@ -16,22 +16,6 @@ variable "organisation" {
   default     = "dft"
 }
 
-variable "organisation_id" {
-  type        = string
-  description = "GCP ID of the organisation where the DTRO project can be found."
-  default     = "0"
-}
-
-variable "access_policy_id" {
-  type        = string
-  description = "Access level policy ID for the organisation"
-}
-
-variable "access_level_name" {
-  type        = string
-  description = "Access level name for the organisation"
-}
-
 variable "project_name" {
   type        = string
   description = "GCP project ID to which resources will be deployed."
@@ -53,6 +37,12 @@ variable "environment" {
   type        = string
   description = "GCP environment to which resources will be deployed."
   default     = "dev"
+}
+
+variable "org_domain" {
+  type        = string
+  description = "DfT's main domain."
+  default     = "dft.gov.uk"
 }
 
 variable "application_name" {
@@ -77,22 +67,34 @@ variable "cloud_run_service_account" {
   description = "Service account for Cloud Run applications."
 }
 
-variable "db_connections_per_cloud_run_instance" {
-  type        = number
-  default     = 2
-  description = "Maximum size of DB connection pool for each Cloud Run instance"
-}
-
 variable "tag" {
   type        = string
   description = "The tag of the image to run."
   default     = "latest"
 }
 
+variable "cloud_run_max_concurrency" {
+  type        = string
+  description = "Maximum number of requests that each serving instance can receive."
+  default     = "50"
+}
+
+variable "cloud_run_min_instance_count" {
+  type        = string
+  description = "Minimum number of serving instances DTRO application should have."
+  default     = "1"
+}
+
 variable "allowed_ips" {
   description = "IPs permitted to access the prototype"
   type        = list(any)
   default     = []
+}
+
+variable "db_connections_per_cloud_run_instance" {
+  type        = number
+  default     = 2
+  description = "Maximum size of DB connection pool for each Cloud Run instance"
 }
 
 variable "publish_service_domain" {
