@@ -150,9 +150,9 @@ resource "google_cloud_run_v2_service" "publish_service" {
       #       }
 
       startup_probe {
-        period_seconds    = 4
-        failure_threshold = 5
-
+        timeout_seconds   = 3
+        period_seconds    = 15
+        failure_threshold = 10
         http_get {
           path = "/health"
           port = 8080
@@ -167,17 +167,18 @@ resource "google_cloud_run_v2_service" "publish_service" {
       }
     }
 
-      containers {
-        name  = "cloud-sql-proxy"
-        image = "gcr.io/cloud-sql-connectors/cloud-sql-proxy:latest"
-        args  = ["--private-ip", "pa-tc-sandbox-341312:europe-west1:dtro-dev-postgres"]
+    containers {
+      name  = "cloud-sql-proxy"
+      image = "gcr.io/cloud-sql-connectors/cloud-sql-proxy:latest"
+      args = ["--private-ip",
+      "pa-tc-sandbox-341312:europe-west1:dtro-dev-postgres"]
 
-        env {
-          name  = "CLOUDSQL_AUTH_PROXY_PRIVATE_IP"
-          value = "true"
-        }
-
+      env {
+        name  = "CLOUDSQL_AUTH_PROXY_PRIVATE_IP"
+        value = "true"
       }
+
+    }
 
     #     dynamic "volumes" {
     #       for_each = local.common_secret_files
