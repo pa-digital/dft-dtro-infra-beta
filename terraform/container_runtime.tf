@@ -168,17 +168,13 @@ resource "google_cloud_run_v2_service" "publish_service" {
     }
 
     containers {
+
       name  = "cloud-sql-proxy"
       image = "gcr.io/cloud-sql-connectors/cloud-sql-proxy:latest"
-      args = ["--private-ip",
-      "pa-tc-sandbox-341312:europe-west1:dtro-dev-postgres"]
-
-      env {
-        name  = "CLOUDSQL_AUTH_PROXY_PRIVATE_IP"
-        value = "true"
-      }
+      args  = ["--private-ip", "pa-tc-sandbox-341312:europe-west1:dtro-dev-postgres"]
 
     }
+
 
     #     dynamic "volumes" {
     #       for_each = local.common_secret_files
