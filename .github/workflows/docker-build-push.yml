@@ -51,14 +51,3 @@ jobs:
           provenance: false
           #          tags: europe-west1-docker.pkg.dev/dft-dtro-dev-01/dft-dtro-dev-repository/dft-dtro-beta:latest
           tags: europe-west1-docker.pkg.dev/pa-tc-sandbox-341312/pa-tc-sandbox-341312/dft-dtro-beta:latest
-
-      - name: Build and push Migration Docker image to Artifact Registry
-        uses: docker/build-push-action@v6.1.0
-        with:
-            context: dft-dtro-beta/Src/DfT.DTRO
-            platform: linux/amd64
-            file: dft-dtro-beta/Src/DfT.DTRO/Dockerfile.migration
-            push: true
-            provenance: false
-            #          tags: europe-west1-docker.pkg.dev/dft-dtro-dev-01/dft-dtro-dev-repository/dft-dtro-beta:migration
-            tags: europe-west1-docker.pkg.dev/pa-tc-sandbox-341312/pa-tc-sandbox-341312/dft-dtro-beta:migration
