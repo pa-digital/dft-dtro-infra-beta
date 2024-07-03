@@ -2,23 +2,21 @@ locals {
   service_name_prefix = "${var.application_name}-${var.environment}"
 
   # At most `database_max_connections` in total can be opened
-  max_instance_count = floor(var.database_max_connections / var.db_connections_per_cloud_run_instance )
+  max_instance_count   = floor(var.database_max_connections / var.db_connections_per_cloud_run_instance)
   db_password_env_name = "POSTGRES_PASSWORD"
 
   common_service_envs = merge(
     {
-      DEPLOYED = timestamp()
-      PROJECTID = data.google_project.project.project_id
-      EnableRedisCache = var.feature_enable_redis_cache
-      POSTGRES_DB = local.database_name
-      POSTGRES_USER = local.database_username
-      POSTGRES_HOST = var.postgres_host
-      POSTGRES_PORT = var.postgres_port
-      POSTGRES_SSL = var.postgres_use_ssl
+      DEPLOYED               = timestamp()
+      PROJECTID              = data.google_project.project.project_id
+      EnableRedisCache       = var.feature_enable_redis_cache
+      POSTGRES_DB            = local.database_name
+      POSTGRES_USER          = local.database_username
+      POSTGRES_HOST          = var.postgres_host
+      POSTGRES_PORT          = var.postgres_port
+      POSTGRES_SSL           = var.postgres_use_ssl
       POSTGRES_MAX_POOL_SIZE = var.db_connections_per_cloud_run_instance
-    }
-    local.db_password_env_name
-  )
+  })
 }
 
 ## TODO: Move this File to dft-dtro-beta repo
