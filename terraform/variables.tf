@@ -16,6 +16,18 @@ variable "region" {
   default     = "europe-west1"
 }
 
+variable "organisation" {
+  type        = string
+  description = "GCP Organisation where the DTRO project can be found."
+  default     = "dft"
+}
+
+variable "organisation_id" {
+  type        = string
+  description = "ID of the GCP Organisation where the DTRO project can be found."
+  default     = "0"
+}
+
 variable "project_id" {
   type        = string
   description = "GCP project ID to which resources will be deployed."

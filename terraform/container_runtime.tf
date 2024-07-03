@@ -1,95 +1,25 @@
-# Environmental variables and secrets
 locals {
-  #
   service_name_prefix = "${var.application_name}-${var.environment}"
 
-  #
-  cloud_run_account = "serviceAccount:${var.cloud_run_service_account}"
-
-  # At most `database_max_connections` in total can be opened, there are 2 services (publish and consume)
-  max_instance_count = floor(var.database_max_connections / var.db_connections_per_cloud_run_instance / 2)
-
-  # Postgres database
-  #   db_connection_envs = {
-  #     Postgres__Host        = module.postgres_db.private_ip_address
-  #     Postgres__Port        = "5432",
-  #     Postgres__User        = var.application_name
-  #     Postgres__DbName      = local.database_name
-  #     Postgres__UseSsl      = true
-  #     Postgres__MaxPoolSize = var.db_connections_per_cloud_run_instance
-  #     PGSSLCERT             = "/secrets/postgres-cert/value"
-  #     PGSSLKEY              = "/secrets/postgres-key/value"
-  #   }
-  #   db_password_env_name = "Postgres__Password"
-  #
-  #   db_connection_secret_files = {
-  #     secret_postgres_client_certificate = {
-  #       secret      = google_secret_manager_secret.postgres_client_certificate.secret_id,
-  #       mount_point = "/secrets/postgres-cert"
-  #     },
-  #     secret_postgres_client_key = {
-  #       secret      = google_secret_manager_secret.postgres_client_key.secret_id,
-  #       mount_point = "/secrets/postgres-key"
-  #     }
-  #   }
+  # At most `database_max_connections` in total can be opened
+  max_instance_count = floor(var.database_max_connections / var.db_connections_per_cloud_run_instance )
+  db_password_env_name = "POSTGRES_PASSWORD"
 
   common_service_envs = merge(
-    #     local.db_connection_envs,
     {
       DEPLOYED = timestamp()
-
       PROJECTID = data.google_project.project.project_id
-
       EnableRedisCache = var.feature_enable_redis_cache
-
-      POSTGRES_DB = module.postgres_db.db_name
-
-      POSTGRES_USER = module.postgres_db.user_name
-
-      POSTGRES_PASSWORD = var.postgres_password
-
+      POSTGRES_DB = local.database_name
+      POSTGRES_USER = local.database_username
       POSTGRES_HOST = var.postgres_host
-
       POSTGRES_PORT = var.postgres_port
-
       POSTGRES_SSL = var.postgres_use_ssl
-
       POSTGRES_MAX_POOL_SIZE = var.db_connections_per_cloud_run_instance
-
-  })
-  #   common_secret_files = merge(
-  #     local.db_connection_secret_files
-  #   )
+    }
+    local.db_password_env_name
+  )
 }
-
-# Policies
-# resource "google_secret_manager_secret_iam_member" "cloud_run_secrets" {
-#   for_each = {
-#     for i, value in flatten([
-#       google_secret_manager_secret.postgres_password,
-#       google_secret_manager_secret.postgres_client_certificate,
-#       google_secret_manager_secret.postgres_client_key,
-#       var.feature_enable_redis_cache ? [
-#         one(google_secret_manager_secret.redis_auth_string),
-#         one(google_secret_manager_secret.redis_server_ca)
-#       ] : [],
-#     ]) : i => value
-#   }
-#
-#   project   = var.project
-#   secret_id = each.value.secret_id
-#   role      = "roles/secretmanager.secretAccessor"
-#   member    = local.cloud_run_account
-# }
-
-# data "google_iam_policy" "noauth" {
-#   binding {
-#     role = "roles/run.invoker"
-#     members = [
-#       "allUsers",
-#     ]
-#   }
-# }
 
 ## TODO: Move this File to dft-dtro-beta repo
 resource "google_cloud_run_v2_service" "publish_service" {
@@ -132,23 +62,15 @@ resource "google_cloud_run_v2_service" "publish_service" {
         }
       }
 
-      #       env {
-      #         name = local.db_password_env_name
-      #         value_source {
-      #           secret_key_ref {
-      #             secret  = google_secret_manager_secret.postgres_password.secret_id
-      #             version = "latest"
-      #           }
-      #         }
-      #       }
-
-      #       dynamic "volume_mounts" {
-      #         for_each = local.common_secret_files
-      #         content {
-      #           name       = volume_mounts.key
-      #           mount_path = volume_mounts.value.mount_point
-      #         }
-      #       }
+      env {
+        name = local.db_password_env_name
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.postgres_password.secret_id
+            version = "latest"
+          }
+        }
+      }
 
       startup_probe {
         timeout_seconds   = 3
@@ -171,28 +93,7 @@ resource "google_cloud_run_v2_service" "publish_service" {
     containers {
       name  = "cloud-sql-proxy"
       image = "gcr.io/cloud-sql-connectors/cloud-sql-proxy:latest"
-      args  = ["--private-ip", "pa-tc-sandbox-341312:europe-west1:dtro-dev-postgres"]
+      args  = ["--private-ip", "${local.project_id}:${var.region}:${module.postgres_db.instance_name}"]
     }
-
-
-    #     dynamic "volumes" {
-    #       for_each = local.common_secret_files
-    #       content {
-    #         name = volumes.key
-    #         secret {
-    #           secret       = volumes.value.secret
-    #           default_mode = 0444
-    #           items {
-    #             version = "latest"
-    #             path    = "value"
-    #             mode    = 0400
-    #           }
-    #         }
-    #       }
-    #     }
   }
-
-  #   depends_on = [
-  #     module.postgres_db
-  #   ]
 }

@@ -1,5 +1,4 @@
 locals {
-  database_name_prefix = "${var.application_name}-${var.environment}"
 }
 module "postgres_db" {
   source  = "GoogleCloudPlatform/sql-db/google//modules/postgresql"
@@ -13,8 +12,8 @@ module "postgres_db" {
   tier             = var.database_instance_type
 
   name      = "${local.database_name_prefix}-postgres"
-  db_name   = "${local.database_name_prefix}-database"
-  user_name = var.application_name
+  db_name   = local.database_name
+  user_name = local.database_username
 
   deletion_protection         = false # WIll be set to true on DfT
   deletion_protection_enabled = false
