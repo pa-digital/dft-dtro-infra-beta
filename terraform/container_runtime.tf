@@ -121,7 +121,8 @@ resource "google_cloud_run_v2_service" "publish_service" {
     }
 
     containers {
-      image = "${var.region}-docker.pkg.dev/${var.project_id}/${var.project_name}-repository/${var.dtro_service_image}:${var.tag}"
+      image      = "${var.region}-docker.pkg.dev/${var.project_id}/${var.project_name}-repository/${var.dtro_service_image}:${var.tag}"
+      depends_on = ["cloud-sql-proxy"]
 
       dynamic "env" {
         for_each = local.common_service_envs
@@ -168,11 +169,9 @@ resource "google_cloud_run_v2_service" "publish_service" {
     }
 
     containers {
-
       name  = "cloud-sql-proxy"
       image = "gcr.io/cloud-sql-connectors/cloud-sql-proxy:latest"
       args  = ["--private-ip", "pa-tc-sandbox-341312:europe-west1:dtro-dev-postgres"]
-
     }
 
 
