@@ -35,6 +35,7 @@ module "postgres_db" {
     ipv4_enabled                                  = false
     private_network                               = module.backend_vpc_network.network_self_link
     require_ssl                                   = true
+    sslMode                                       = "TRUSTED_CLIENT_CERTIFICATE_REQUIRED"
   }
 
   maintenance_window_day          = 7
