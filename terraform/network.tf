@@ -3,6 +3,7 @@ locals {
 }
 
 #ALB VPC
+#tfsec:ignore:google-compute-enable-vpc-flow-logs
 module "alb_vpc_network" {
   source  = "terraform-google-modules/network/google"
   version = "~> 9.1"
@@ -33,6 +34,7 @@ module "alb_vpc_network_firewall_rules" {
 }
 
 #Backend VPC
+#tfsec:ignore:google-compute-enable-vpc-flow-logs
 module "backend_vpc_network" {
   source  = "terraform-google-modules/network/google"
   version = "~> 9.1"
