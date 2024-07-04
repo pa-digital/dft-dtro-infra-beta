@@ -79,8 +79,17 @@ jobs:
         if: ${{ inputs.do-validation-checks }}
         uses: dflook/terraform-validate@v1
 
-      - name: Terraform Plan
-        run: terraform plan -input=false -out terraform-plan-gcp
+#      - name: Terraform Plan
+#        run: terraform plan -input=false -out terraform-plan-gcp
+#
+#      - name: Terraform Apply
+#        run: terraform apply -auto-approve -input=false terraform-plan-gcp
 
-      - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false terraform-plan-gcp
+      - name: Terraform Plan
+        run: terraform plan -input=false -out=plan.out && terraform show -json plan.out > plan.out.json
+
+      - name: terraform-compliance
+        uses: terraform-compliance/github_action@main
+        with:
+          plan: plan.out.json
+          features: ssh://git@github.com/terraform-compliance/user-friendly-features.git
