@@ -47,8 +47,8 @@ resource "google_cloud_run_v2_service" "publish_service" {
     }
 
     containers {
-      image      = "${var.region}-docker.pkg.dev/${local.project_id}/${local.artifact_registry_name}/${var.dtro_service_image}:${var.tag}"
-      depends_on = ["cloud-sql-proxy"]
+      image = "${var.region}-docker.pkg.dev/${local.project_id}/${local.artifact_registry_name}/${var.dtro_service_image}:${var.tag}"
+      #       depends_on = ["cloud-sql-proxy"]
 
       dynamic "env" {
         for_each = local.common_service_envs
@@ -91,22 +91,22 @@ resource "google_cloud_run_v2_service" "publish_service" {
       image = "gcr.io/cloud-sql-connectors/cloud-sql-proxy:latest"
       args  = ["--private-ip", "${local.project_id}:${var.region}:${module.postgres_db.instance_name}"]
 
-      startup_probe {
-        timeout_seconds   = 3
-        period_seconds    = 15
-        failure_threshold = 10
-        http_get {
-          path = "/health"
-          port = 8080
-        }
-      }
-
-      liveness_probe {
-        http_get {
-          path = "/health"
-          port = 8080
-        }
-      }
+      #       startup_probe {
+      #         timeout_seconds   = 3
+      #         period_seconds    = 15
+      #         failure_threshold = 10
+      #         http_get {
+      #           path = "/health"
+      #           port = 8080
+      #         }
+      #       }
+      #
+      #       liveness_probe {
+      #         http_get {
+      #           path = "/health"
+      #           port = 8080
+      #         }
+      #       }
     }
   }
 }
