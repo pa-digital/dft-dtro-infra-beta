@@ -92,7 +92,7 @@ jobs:
           # CKV_SECRET*: not related to files within this repo
           #CKV2_GHA_1: to be addressed
           skip_check: CKV_TF_1,CKV_GCP_84,CKV_SECRET*,CKV2_GHA_1
-          output_format: github_failed_only
+          output_format: cli,github_failed_only
           output_file_path: console
 
 #      - name: Terraform Plan
