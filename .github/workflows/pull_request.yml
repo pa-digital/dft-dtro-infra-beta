@@ -52,11 +52,7 @@ jobs:
       - name: terraform validate
         uses: dflook/terraform-validate@v1
 
-      - name: Terraform Plan
-        run: terraform plan -input=false -out=plan.out && terraform show -json plan.out > plan.out.json
-
-      - name: terraform-compliance
-        uses: terraform-compliance/github_action@main
+      - name: Run Tfsec
+        uses: aquasecurity/tfsec-action@v1.0.0
         with:
-          plan: plan.out.json
-          features: ssh://git@github.com/terraform-compliance/user-friendly-features.git
+          github_token: ${{ github.token }}
