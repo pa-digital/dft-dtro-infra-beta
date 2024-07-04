@@ -66,11 +66,6 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Terraform Init
-        run: | 
-          terraform init \
-          -backend-config "bucket=${{env.TF_VAR_tf_state_bucket}}" \
-          -backend-config "prefix=terraform/state"
 
       - name: Terraform Format
         if: ${{ inputs.do-validation-checks }}
@@ -90,8 +85,14 @@ jobs:
           output_format: github_failed_only
           output_file_path: console
 
-      - name: Terraform Plan
-        run: terraform plan -input=false -out terraform-plan-gcp
+      - name: Terraform Init
+        run: |
+          terraform init \
+          -backend-config "bucket=${{env.TF_VAR_tf_state_bucket}}" \
+          -backend-config "prefix=terraform/state"
 
-      - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false terraform-plan-gcp
+#      - name: Terraform Plan
+#        run: terraform plan -input=false -out terraform-plan-gcp
+#
+#      - name: Terraform Apply
+#        run: terraform apply -auto-approve -input=false terraform-plan-gcp

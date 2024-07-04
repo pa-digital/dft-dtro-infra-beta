@@ -30,12 +30,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-#      - name: Authenticate to Google Cloud
-#        uses: google-github-actions/auth@v2
-#        with:
-#          create_credentials_file: true
-#          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
-#          service_account: ${{ secrets.WORKLOAD_IDENTITY_SERVICE_ACCOUNT }}
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.WIP_SERVICE_ACCOUNT }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -47,18 +46,3 @@ jobs:
 
       - name: terraform validate
         uses: dflook/terraform-validate@v1
-
-      - name: Terraform Init
-        run: terraform init
-
-#      - name: terraform validate
-#        uses: dflook/terraform-validate@v1
-#
-#      - name: Terraform Plan
-#        run: terraform plan -input=false -out=plan.out && terraform show -json plan.out > plan.out.json
-#
-#      - name: terraform-compliance
-#        uses: terraform-compliance/github_action@main
-#        with:
-#          plan: plan.out.json
-#          features: ssh://git@github.com/terraform-compliance/user-friendly-features.git

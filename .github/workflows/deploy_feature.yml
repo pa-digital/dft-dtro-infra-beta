@@ -32,4 +32,4 @@ jobs:
       gcp-project-id: ${{ vars.GCP_PROJECT_ID_DEV }}
       gcp-region: ${{ vars.DEFAULT_GCP_REGION }}
       environment: dev
-#      do-validation-checks: true
+      do-validation-checks: true

@@ -28,8 +28,8 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: ${{ secrets.workload_identity_provider }}
-          service_account: ${{ secrets.wip_service_account }}
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.WIP_SERVICE_ACCOUNT }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -45,12 +45,6 @@ jobs:
           terraform init \
           -backend-config "bucket=${{env.TF_VAR_tf_state_bucket}}" \
           -backend-config "prefix=terraform/state"
-
-      - name: Terraform Format
-        run: terraform fmt -check -recursive
-
-      - name: terraform validate
-        uses: dflook/terraform-validate@v1
 
       - name: Checkov GitHub Action
         uses: bridgecrewio/checkov-action@v12
