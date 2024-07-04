@@ -23,7 +23,9 @@ module "alb_vpc_network" {
 
 #Firewall rules for ALB VPC
 module "alb_vpc_network_firewall_rules" {
-  source       = "terraform-google-modules/network/google//modules/firewall-rules"
+  source  = "terraform-google-modules/network/google//modules/firewall-rules"
+  version = "~> 9.1"
+
   project_id   = data.google_project.project.project_id
   network_name = module.alb_vpc_network.network_name
 
@@ -93,8 +95,9 @@ resource "google_compute_region_network_endpoint_group" "publish_service_serverl
 ## VPC Service Control
 # Manage access policy
 module "org_policy" {
-  count  = 0
-  source = "terraform-google-modules/vpc-service-controls/google"
+  count   = 0
+  source  = "terraform-google-modules/vpc-service-controls/google"
+  version = "6.0.0"
   #   parent_id   = data.google_organization.organisation.org_id
   parent_id   = var.organisation_id
   policy_name = "${local.name_prefix}-vpc-sc-policy"
@@ -103,6 +106,7 @@ module "org_policy" {
 module "access_level_members" {
   count   = 0
   source  = "terraform-google-modules/vpc-service-controls/google//modules/access_level"
+  version = "6.0.0"
   policy  = module.org_policy[0].policy_id
   name    = "dtro_env_access_members"
   members = ["serviceAccount:${var.wip_service_account}", "user:${var.access_level_members}"]
@@ -122,6 +126,7 @@ resource "null_resource" "wait_for_members" {
 module "dtro_regular_service_perimeter" {
   count                       = 0
   source                      = "terraform-google-modules/vpc-service-controls/google//modules/regular_service_perimeter"
+  version                     = "6.0.0"
   policy                      = module.org_policy[0].policy_id
   perimeter_name              = "dtro_regular_service_perimeter"
   description                 = "Perimeter shielding DTRO project"
