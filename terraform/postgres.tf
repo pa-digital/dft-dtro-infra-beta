@@ -9,7 +9,7 @@ module "postgres_db" {
   database_version = "POSTGRES_15"
   tier             = var.database_instance_type
 
-  name      = "${local.database_name_prefix}-postgres"
+  name      = "${local.name_prefix}-postgres"
   db_name   = local.database_name
   user_name = local.database_username
 
@@ -64,6 +64,6 @@ module "postgres_db" {
 }
 
 resource "google_sql_ssl_cert" "db_client_cert" {
-  common_name = "${local.database_name_prefix}-client-certificate"
+  common_name = "${local.name_prefix}-client-certificate"
   instance    = module.postgres_db.instance_name
 }

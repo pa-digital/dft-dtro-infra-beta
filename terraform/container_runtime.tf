@@ -1,6 +1,4 @@
 locals {
-  service_name_prefix = "${var.application_name}-${var.environment}"
-
   # At most `database_max_connections` in total can be opened
   max_instance_count   = floor(var.database_max_connections / var.db_connections_per_cloud_run_instance)
   db_password_env_name = "POSTGRES_PASSWORD"
@@ -21,7 +19,7 @@ locals {
 
 ## TODO: Move this File to dft-dtro-beta repo
 resource "google_cloud_run_v2_service" "publish_service" {
-  name     = "${local.service_name_prefix}-${var.dtro_service_image}"
+  name     = local.cloud_run_service_name
   location = var.region
   #   ingress  = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
 
@@ -92,6 +90,23 @@ resource "google_cloud_run_v2_service" "publish_service" {
       name  = "cloud-sql-proxy"
       image = "gcr.io/cloud-sql-connectors/cloud-sql-proxy:latest"
       args  = ["--private-ip", "${local.project_id}:${var.region}:${module.postgres_db.instance_name}"]
+
+      startup_probe {
+        timeout_seconds   = 3
+        period_seconds    = 15
+        failure_threshold = 10
+        http_get {
+          path = "/health"
+          port = 8080
+        }
+      }
+
+      liveness_probe {
+        http_get {
+          path = "/health"
+          port = 8080
+        }
+      }
     }
   }
 }

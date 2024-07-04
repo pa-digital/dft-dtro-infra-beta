@@ -1,6 +1,5 @@
 locals {
   backend_subnet_name = "backend-subnet"
-  network_name_prefix = "${var.application_name}-${var.environment}"
 }
 
 #ALB VPC
@@ -9,7 +8,7 @@ module "alb_vpc_network" {
   version = "~> 9.1"
 
   project_id   = data.google_project.project.project_id
-  network_name = "${local.network_name_prefix}-alb-network"
+  network_name = "${local.name_prefix}-alb-network"
 
   subnets = [
     {
@@ -39,7 +38,7 @@ module "backend_vpc_network" {
   version = "~> 9.1"
 
   project_id   = data.google_project.project.project_id
-  network_name = "${local.network_name_prefix}-backend-network"
+  network_name = "${local.name_prefix}-backend-network"
 
   subnets = [
     {
@@ -63,7 +62,7 @@ module "cloudsql_private_service_access" {
 
 ## This could be redundant, we can use Direct VPC egress to connect to the database VPC instead of this.
 resource "google_vpc_access_connector" "serverless_connector" {
-  name    = "${local.network_name_prefix}-connector"
+  name    = "${local.name_prefix}-connector"
   project = data.google_project.project.project_id
   region  = var.region
 
@@ -78,12 +77,12 @@ resource "google_vpc_access_connector" "serverless_connector" {
 }
 
 resource "google_compute_region_network_endpoint_group" "publish_service_serverless_neg" {
-  name                  = "${local.network_name_prefix}-${var.dtro_service_image}-serverless-neg"
+  name                  = "${local.name_prefix}-${var.dtro_service_image}-serverless-neg"
   network_endpoint_type = "SERVERLESS"
   region                = var.region
 
   cloud_run {
-    service = "${local.network_name_prefix}-${var.dtro_service_image}"
+    service = local.cloud_run_service_name
   }
 }
 
@@ -94,7 +93,7 @@ module "org_policy" {
   source = "terraform-google-modules/vpc-service-controls/google"
   #   parent_id   = data.google_organization.organisation.org_id
   parent_id   = var.organisation_id
-  policy_name = "${local.network_name_prefix}-vpc-sc-policy"
+  policy_name = "${local.name_prefix}-vpc-sc-policy"
 }
 
 module "access_level_members" {
