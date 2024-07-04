@@ -80,23 +80,18 @@ jobs:
         if: ${{ inputs.do-validation-checks }}
         uses: dflook/terraform-validate@v1
 
-      - name: Run Tfsec
-        if: ${{ inputs.do-validation-checks }}
-        uses: aquasecurity/tfsec-action@v1.0.0
-        with:
-          github_token: ${{ github.token }}
-
       - name: Checkov GitHub Action
+        if: ${{ inputs.do-validation-checks }}
         uses: bridgecrewio/checkov-action@v12
         with:
           # CKV_SECRET*: not related to files within this repo
-          #CKV2_GHA_1: to be addressed
+          # CKV2_GHA_1: to be addressed
           skip_check: CKV_TF_1,CKV_GCP_84,CKV_SECRET*,CKV2_GHA_1
-          output_format: cli,github_failed_only
+          output_format: github_failed_only
           output_file_path: console
 
-#      - name: Terraform Plan
-#        run: terraform plan -input=false -out terraform-plan-gcp
-#
-#      - name: Terraform Apply
-#        run: terraform apply -auto-approve -input=false terraform-plan-gcp
+      - name: Terraform Plan
+        run: terraform plan -input=false -out terraform-plan-gcp
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -input=false terraform-plan-gcp

@@ -1,5 +1,3 @@
-## Ignoring issues within third-party modules
-#tfsec:ignore:google-sql-enable-pg-temp-file-logging tfsec:ignore:google-sql-pg-log-connections tfsec:ignore:google-sql-pg-log-lock-waits tfsec:ignore:google-sql-pg-log-disconnections tfsec:ignore:google-sql-pg-log-checkpoints
 module "postgres_db" {
   source  = "GoogleCloudPlatform/sql-db/google//modules/postgresql"
   version = "20.1.0"
