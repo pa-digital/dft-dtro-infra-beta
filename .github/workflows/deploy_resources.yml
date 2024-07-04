@@ -87,8 +87,9 @@ jobs:
 
       - name: Terraform Plan
         run: | 
-          terraform plan -input=false -out terraform-plan-gcp && terraform show -json terraform-plan-gcp > terraform-plan-gcp.json
-          ls
+          terraform plan -input=false -out terraform-plan-gcp 
+          terraform show -json terraform-plan-gcp > terraform-plan-gcp.json
+          ls -la
 
       - name: terraform-compliance
         uses: terraform-compliance/github_action@main
