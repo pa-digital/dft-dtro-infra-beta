@@ -90,9 +90,10 @@ resource "google_compute_region_network_endpoint_group" "publish_service_serverl
 ## VPC Service Control
 # Manage access policy
 module "org_policy" {
-  count       = 0
-  source      = "terraform-google-modules/vpc-service-controls/google"
-  parent_id   = data.google_organization.organisation.org_id
+  count  = 0
+  source = "terraform-google-modules/vpc-service-controls/google"
+  #   parent_id   = data.google_organization.organisation.org_id
+  parent_id   = var.organisation_id
   policy_name = "${local.network_name_prefix}-vpc-sc-policy"
 }
 
