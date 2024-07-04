@@ -48,6 +48,7 @@ jobs:
       contents: read
       packages: read
       actions: read
+      pull-requests: write
     defaults:
       run:
         shell: bash
@@ -79,20 +80,13 @@ jobs:
         if: ${{ inputs.do-validation-checks }}
         uses: dflook/terraform-validate@v1
 
+      - name: Run Tfsec
+        uses: aquasecurity/tfsec-action@v1.0.0
+        with:
+          github_token: ${{ github.token }}
+
 #      - name: Terraform Plan
 #        run: terraform plan -input=false -out terraform-plan-gcp
 #
 #      - name: Terraform Apply
 #        run: terraform apply -auto-approve -input=false terraform-plan-gcp
-
-      - name: Terraform Plan
-        run: | 
-          terraform plan -input=false -out terraform-plan-gcp 
-          terraform show -json terraform-plan-gcp > terraform-plan-gcp.json
-          ls -la
-
-      - name: terraform-compliance
-        uses: terraform-compliance/github_action@main
-        with:
-          plan: terraform-plan-gcp.json
-          features: ssh://git@github.com/terraform-compliance/user-friendly-features.git
