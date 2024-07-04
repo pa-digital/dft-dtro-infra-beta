@@ -86,10 +86,12 @@ jobs:
 #        run: terraform apply -auto-approve -input=false terraform-plan-gcp
 
       - name: Terraform Plan
-        run: terraform plan -input=false -out=plan.out && terraform show -json plan.out > plan.out.json
+        run: | 
+          terraform plan -input=false -out terraform-plan-gcp && terraform show -json terraform-plan-gcp > terraform-plan-gcp.json
+          ls
 
       - name: terraform-compliance
         uses: terraform-compliance/github_action@main
         with:
-          plan: plan.out.json
+          plan: terraform-plan-gcp.json
           features: ssh://git@github.com/terraform-compliance/user-friendly-features.git
