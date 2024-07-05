@@ -14,7 +14,7 @@ jobs:
     secrets:
       workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
       wip_service_account: ${{ secrets.WIP_SERVICE_ACCOUNT }}
-      cloud_run_service_account: ${{ secrets.CLOUD_RUN_SERVICE_ACCOUNT }}
+      execution_service_account: ${{ secrets.EXECUTION_SERVICE_ACCOUNT }}
       access_level_members: ${{ secrets.ACCESS_LEVEL_MEMBERS }}
     with:
       gcp-project-id: ${{ vars.GCP_PROJECT_ID_DEV }}
@@ -29,7 +29,7 @@ jobs:
     secrets:
       workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
       wip_service_account: ${{ secrets.WIP_SERVICE_ACCOUNT }}
-      cloud_run_service_account: ${{ secrets.CLOUD_RUN_SERVICE_ACCOUNT }}
+      execution_service_account: ${{ secrets.EXECUTION_SERVICE_ACCOUNT }}
       access_level_members: ${{ secrets.ACCESS_LEVEL_MEMBERS }}
     with:
       gcp-project-id: ${{ vars.GCP_PROJECT_ID_TEST }}

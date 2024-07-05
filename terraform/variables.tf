@@ -57,9 +57,9 @@ variable "wip_service_account" {
   description = "Service account from Workflow Identity Provider for Terraform to deploy resources."
 }
 
-variable "cloud_run_service_account" {
+variable "execution_service_account" {
   type        = string
-  description = "Service account for Cloud Run applications."
+  description = "Service account for executing GCP applications."
 }
 
 variable "tag" {
