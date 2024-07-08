@@ -20,19 +20,19 @@ module "alb_vpc_network" {
 }
 
 #Firewall rules for ALB VPC
-# module "alb_vpc_network_firewall_rules" {
-#   source  = "terraform-google-modules/network/google//modules/firewall-rules"
-#   version = "~> 9.1"
-#
-#   project_id   = data.google_project.project.project_id
-#   network_name = module.alb_vpc_network.network_name
-#
-#   rules = [{
-#     name = "deny-all"
-#     deny = [{ protocol = "all"
-#     ports = [] }]
-#   }]
-# }
+module "alb_vpc_network_firewall_rules" {
+  source  = "terraform-google-modules/network/google//modules/firewall-rules"
+  version = "~> 9.1"
+
+  project_id   = data.google_project.project.project_id
+  network_name = module.alb_vpc_network.network_name
+
+  rules = [{
+    name = "deny-all"
+    deny = [{ protocol = "all"
+    ports = [] }]
+  }]
+}
 
 #Backend VPC
 module "backend_vpc_network" {

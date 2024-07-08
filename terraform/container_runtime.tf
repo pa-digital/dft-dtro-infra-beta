@@ -3,7 +3,7 @@ locals {
   max_instance_count   = floor(var.database_max_connections / var.db_connections_per_cloud_run_instance)
   db_password_env_name = "POSTGRES_PASSWORD"
 
-  common_service_envs = merge(
+  cr_envs_vars = merge(
     {
       DEPLOYED               = timestamp()
       PROJECTID              = data.google_project.project.project_id
@@ -21,7 +21,7 @@ locals {
 resource "google_cloud_run_v2_service" "dtro_service" {
   name     = local.cloud_run_service_name
   location = var.region
-  #   ingress  = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
+  ingress  = "INGRESS_TRAFFIC_INTERNAL_ONLY"
 
   template {
     service_account = var.execution_service_account
@@ -50,7 +50,7 @@ resource "google_cloud_run_v2_service" "dtro_service" {
       image = "${var.region}-docker.pkg.dev/${local.project_id}/${local.artifact_registry_name}/${var.dtro_service_image}:${var.tag}"
 
       dynamic "env" {
-        for_each = local.common_service_envs
+        for_each = local.cr_envs_vars
         content {
           name  = env.key
           value = env.value
