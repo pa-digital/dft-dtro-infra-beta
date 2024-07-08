@@ -48,9 +48,9 @@ resource "google_cloud_run_v2_service" "dtro_service" {
 
     containers {
       image = "${var.region}-docker.pkg.dev/${local.project_id}/${local.artifact_registry_name}/${var.dtro_service_image}:${var.tag}"
-      ports {
-        container_port = 8080
-      }
+      #       ports {
+      #         container_port = 8080
+      #       }
 
       dynamic "env" {
         for_each = local.cr_envs_vars
