@@ -18,7 +18,7 @@ locals {
 }
 
 # TODO: Move this File to dft-dtro-beta repo
-resource "google_cloud_run_v2_service" "publish_service" {
+resource "google_cloud_run_v2_service" "dtro_service" {
   name     = local.cloud_run_service_name
   location = var.region
   #   ingress  = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
