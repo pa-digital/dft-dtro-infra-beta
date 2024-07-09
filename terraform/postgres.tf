@@ -1,4 +1,5 @@
 module "postgres_db" {
+  count   = 0
   source  = "GoogleCloudPlatform/sql-db/google//modules/postgresql"
   version = "20.1.0"
 
