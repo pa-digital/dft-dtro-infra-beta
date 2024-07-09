@@ -30,6 +30,7 @@ module "postgres_db" {
 
   ip_configuration = {
     allocated_ip_range                            = module.cloudsql_private_service_access.google_compute_global_address_name
+    authorized_networks                           = []
     enable_private_path_for_google_cloud_services = true
     ipv4_enabled                                  = false
     private_network                               = module.backend_vpc_network.network_self_link
