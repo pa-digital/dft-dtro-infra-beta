@@ -1,6 +1,6 @@
 # Apigee
 resource "google_apigee_organization" "apigee_org" {
-  project_id         = var.project_id
+  project_id         = local.project_id
   analytics_region   = var.region
   display_name       = "${local.name_prefix}-apigee-org"
   description        = "Terraform-provisioned D-TRO Apigee Org."
