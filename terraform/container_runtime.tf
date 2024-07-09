@@ -1,6 +1,6 @@
 locals {
   # At most `database_max_connections` in total can be opened
-  max_instance_count   = floor(var.database_max_connections / var.db_connections_per_cloud_run_instance)
+  max_instance_count   = floor(var.database_environment_configuration[var.environment].max_connections / var.db_connections_per_cloud_run_instance)
   db_password_env_name = "POSTGRES_PASSWORD"
 
   cr_envs_vars = merge(
