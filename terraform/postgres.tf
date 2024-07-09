@@ -60,5 +60,5 @@ module "postgres_db" {
     retention_unit                 = "COUNT"
   }
 
-  module_depends_on = [module.cloudsql_private_service_access.peering_completed]
+  #   module_depends_on = [module.cloudsql_private_service_access.peering_completed]
 }
