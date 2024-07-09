@@ -1,5 +1,5 @@
 locals {
-  backend_subnet_name = "backend-subnet"
+  serverless_connector_subnet_name = "serverless-connector-subnet"
 }
 
 #ALB VPC
@@ -44,9 +44,10 @@ module "backend_vpc_network" {
 
   subnets = [
     {
-      subnet_name   = local.backend_subnet_name
-      subnet_ip     = var.backend_vpc_ip_range
-      subnet_region = var.region
+      subnet_name           = local.serverless_connector_subnet_name
+      subnet_ip             = var.backend_vpc_ip_range
+      subnet_region         = var.region
+      subnet_private_access = true
     }
   ]
 }
@@ -70,7 +71,7 @@ resource "google_vpc_access_connector" "serverless_connector" {
 
   subnet {
     project_id = data.google_project.project.project_id
-    name       = module.backend_vpc_network.subnets["${var.region}/${local.backend_subnet_name}"].name
+    name       = module.backend_vpc_network.subnets["${var.region}/${local.serverless_connector_subnet_name}"].name
   }
 
   machine_type  = var.serverless_connector_config.machine_type
@@ -78,6 +79,7 @@ resource "google_vpc_access_connector" "serverless_connector" {
   max_instances = var.serverless_connector_config.max_instances
 }
 
+# Post-MVP, There may be a need to have a separate endpoint for Publish and Consume to reduce latency for Consume DSPs
 resource "google_compute_region_network_endpoint_group" "publish_service_serverless_neg" {
   name                  = "${local.name_prefix}-${var.dtro_service_image}-serverless-neg"
   network_endpoint_type = "SERVERLESS"

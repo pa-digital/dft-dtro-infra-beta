@@ -92,10 +92,10 @@ variable "db_connections_per_cloud_run_instance" {
   description = "Maximum size of DB connection pool for each Cloud Run instance"
 }
 
-variable "publish_service_domain" {
+variable "dtro_service_domain" {
   type        = string
-  description = "Name of the domain where the prototype is published"
-  default     = "dtro-alpha-publishing-prototype.dft.gov.uk"
+  description = "Name of the domain where the DTRO is published"
+  default     = "dtro.dft.gov.uk"
 }
 
 variable "logs_retention_in_days" {
@@ -120,41 +120,10 @@ variable "feature_enable_redis_cache" {
   default     = false
 }
 
-variable "database_zone" {
-  type        = string
-  description = "Primary zone for the Postgres database"
-  default     = "europe-west1-a"
-}
-
 variable "database_availability_type" {
   type        = string
   description = "Availability of Postgres database instance"
   default     = "REGIONAL"
-}
-
-variable "database_instance_type" {
-  type        = string
-  description = "Type of Postgres database instance"
-  default     = "db-f1-micro"
-}
-
-variable "database_disk_initial_size" {
-  type        = string
-  description = "Initial size of the Postgres databases disk"
-  default     = 100
-}
-
-variable "database_disk_autoresize_limit" {
-  type        = string
-  description = "Upper limit for Postgres database disk auto resize"
-  default     = 1000
-}
-
-variable "database_max_connections" {
-  type        = number
-  description = "Maximum number of connections allowed by the Postgres database"
-  # 25 is Cloud SQL's default value for tiny instance (https://cloud.google.com/sql/docs/postgres/flags#postgres-m)
-  default = 25
 }
 
 variable "database_backups_pitr_enabled" {
@@ -173,6 +142,37 @@ variable "database_backups_number_of_stored_backups" {
   type        = string
   description = "Retention policy that determines how many daily backups of Postgres database are stored"
   default     = 14
+}
+# Machine types for Cloud SQL Enterprise edition instances (https://cloud.google.com/sql/docs/postgres/create-instance)
+# Default value for database_max_connections is depended on Memory on largest instance (https://cloud.google.com/sql/docs/postgres/flags#postgres-m)
+variable "database_environment_configuration" {
+  type = map(object({
+    tier                  = string
+    disk_size             = number
+    disk_autoresize_limit = number
+    max_connections       = number
+  }))
+  description = "Configuration of Postgres DB for each environment"
+  default = {
+    dev = {
+      tier                  = "db-custom-1-3840" # vCPU:1  RAM MB:3840
+      disk_size             = 100
+      disk_autoresize_limit = 200
+      max_connections       = 100
+    }
+    test = {
+      tier                  = "db-custom-2-7680" # vCPU:2  RAM MB:7680
+      disk_size             = 250
+      disk_autoresize_limit = 500
+      max_connections       = 400
+    }
+    prod = {
+      tier                  = "db-custom-16-61440" # vCPU:16  RAM MB:61440
+      disk_size             = 5000
+      disk_autoresize_limit = 0 # The default value is 0, which specifies that there is no limit.(https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/sql_database_instance#disk_autoresize_limit)
+      max_connections       = 800
+    }
+  }
 }
 
 variable "serverless_connector_config" {

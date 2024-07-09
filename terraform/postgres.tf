@@ -7,19 +7,19 @@ module "postgres_db" {
   availability_type = var.database_availability_type
 
   database_version = "POSTGRES_15"
-  tier             = var.database_instance_type
+  tier             = var.database_environment_configuration[var.environment].tier
 
   name      = "${local.name_prefix}-postgres"
   db_name   = local.database_name
   user_name = local.database_username
 
-  deletion_protection         = false # WIll be set to true on DfT
+  deletion_protection         = false # TODO: WIll be set to true on DfT
   deletion_protection_enabled = false
 
-  disk_size                      = var.database_disk_initial_size
+  disk_size                      = var.database_environment_configuration[var.environment].disk_size
   disk_type                      = "PD_SSD"
   disk_autoresize                = true
-  disk_autoresize_limit          = var.database_disk_autoresize_limit
+  disk_autoresize_limit          = var.database_environment_configuration[var.environment].disk_autoresize_limit
   enable_random_password_special = true
 
   insights_config = {
@@ -45,7 +45,7 @@ module "postgres_db" {
   database_flags = [
     {
       name  = "max_connections"
-      value = var.database_max_connections
+      value = var.database_environment_configuration[var.environment].max_connections
     }
   ]
 
