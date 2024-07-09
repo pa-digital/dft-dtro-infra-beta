@@ -31,12 +31,12 @@ resource "google_cloud_run_v2_service" "dtro_service" {
       max_instance_count = local.max_instance_count
     }
 
-    #     volumes {
-    #       name = "cloudsql"
-    #       cloud_sql_instance {
-    #         instances = [module.postgres_db.instance_connection_name]
-    #       }
-    #     }
+    volumes {
+      name = "cloudsql"
+      cloud_sql_instance {
+        instances = [module.postgres_db.instance_connection_name]
+      }
+    }
 
     vpc_access {
       connector = google_vpc_access_connector.serverless_connector.id
@@ -89,10 +89,10 @@ resource "google_cloud_run_v2_service" "dtro_service" {
       }
     }
 
-    #     containers {
-    #       name  = "cloud-sql-proxy"
-    #       image = "gcr.io/cloud-sql-connectors/cloud-sql-proxy:latest"
-    #       args  = ["--private-ip", "${local.project_id}:${var.region}:${module.postgres_db.instance_name}"]
-    #     }
+    containers {
+      name  = "cloud-sql-proxy"
+      image = "gcr.io/cloud-sql-connectors/cloud-sql-proxy:latest"
+      args  = ["--private-ip", "${local.project_id}:${var.region}:${module.postgres_db.instance_name}"]
+    }
   }
 }

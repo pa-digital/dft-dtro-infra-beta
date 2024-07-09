@@ -29,15 +29,15 @@ module "postgres_db" {
     record_client_address   = true
   }
 
-  #   ip_configuration = {
-  #     allocated_ip_range                            = module.cloudsql_private_service_access.google_compute_global_address_name
-  #     authorized_networks                           = []
-  #     enable_private_path_for_google_cloud_services = true
-  #     ipv4_enabled                                  = false
-  #     private_network                               = module.backend_vpc_network.network_self_link
-  #     require_ssl                                   = true
-  #     ssl_mode                                      = "TRUSTED_CLIENT_CERTIFICATE_REQUIRED"
-  #   }
+  ip_configuration = {
+    allocated_ip_range                            = module.cloudsql_private_service_access.google_compute_global_address_name
+    authorized_networks                           = []
+    enable_private_path_for_google_cloud_services = true
+    ipv4_enabled                                  = false
+    private_network                               = module.backend_vpc_network.network_self_link
+    require_ssl                                   = true
+    ssl_mode                                      = "TRUSTED_CLIENT_CERTIFICATE_REQUIRED"
+  }
 
   maintenance_window_day          = 7
   maintenance_window_hour         = 3
@@ -61,5 +61,5 @@ module "postgres_db" {
     retention_unit                 = "COUNT"
   }
 
-  #   module_depends_on = [module.cloudsql_private_service_access.peering_completed]
+  module_depends_on = [module.cloudsql_private_service_access.peering_completed]
 }
