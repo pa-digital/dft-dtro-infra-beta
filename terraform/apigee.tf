@@ -1,6 +1,6 @@
 # Apigee
 resource "google_apigee_organization" "apigee_org" {
-  project_id         = data.google_project.project.id
+  project_id         = var.project_id
   analytics_region   = var.region
   display_name       = "${local.name_prefix}-apigee-org"
   description        = "Terraform-provisioned D-TRO Apigee Org."
@@ -26,7 +26,6 @@ resource "google_apigee_environment" "apigee_env" {
 }
 
 resource "google_apigee_instance_attachment" "attachment" {
-  for_each    = google_apigee_environment.apigee_env
   instance_id = google_apigee_instance.apigee_instance.id
   environment = google_apigee_environment.apigee_env.name
 }
