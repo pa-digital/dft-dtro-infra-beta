@@ -61,9 +61,6 @@ module "cloudsql_private_service_access" {
   vpc_network = module.backend_vpc_network.network_name
 
   depends_on = [module.backend_vpc_network]
-  lifecycle {
-    create_before_destroy = true
-  }
 }
 
 ## This could be redundant, we can use Direct VPC egress to connect to the database VPC instead of this.
