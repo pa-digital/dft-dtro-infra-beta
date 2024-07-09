@@ -31,12 +31,12 @@ resource "google_cloud_run_v2_service" "dtro_service" {
       max_instance_count = local.max_instance_count
     }
 
-    volumes {
-      name = "cloudsql"
-      cloud_sql_instance {
-        instances = [module.postgres_db.instance_connection_name]
-      }
-    }
+    #     volumes {
+    #       name = "cloudsql"
+    #       cloud_sql_instance {
+    #         instances = [module.postgres_db.instance_connection_name]
+    #       }
+    #     }
 
     vpc_access {
       connector = google_vpc_access_connector.serverless_connector.id
