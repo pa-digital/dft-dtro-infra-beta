@@ -1,6 +1,6 @@
 # Apigee
 resource "google_apigee_organization" "apigee_org" {
-  count   = 0
+  count              = 0
   project_id         = local.project_id
   analytics_region   = var.region
   display_name       = "${local.name_prefix}-apigee-org"
@@ -12,7 +12,7 @@ resource "google_apigee_organization" "apigee_org" {
 }
 
 resource "google_apigee_instance" "apigee_instance" {
-  count   = 0
+  count    = 0
   name     = "${var.application_name}-apigee-instance"
   location = var.region
   org_id   = google_apigee_organization.apigee_org.id
@@ -20,7 +20,7 @@ resource "google_apigee_instance" "apigee_instance" {
 }
 
 resource "google_apigee_environment" "apigee_env" {
-  count   = 0
+  count        = 0
   org_id       = google_apigee_organization.apigee_org.id
   name         = "${local.name_prefix}-apigee-environment"
   description  = "${var.environment} ${var.application_name} Apigee Environment"
@@ -29,20 +29,20 @@ resource "google_apigee_environment" "apigee_env" {
 }
 
 resource "google_apigee_instance_attachment" "attachment" {
-  count   = 0
+  count       = 0
   instance_id = google_apigee_instance.apigee_instance.id
   environment = google_apigee_environment.apigee_env.name
 }
 
 resource "google_apigee_envgroup" "env_group" {
-  count   = 0
+  count     = 0
   name      = "${local.name_prefix}-apigee-environment-group"
   hostnames = var.environment == "prod" ? ["dtro.${var.org_domain}"] : ["${var.environment}.${var.org_domain}"]
   org_id    = google_apigee_organization.apigee_org.id
 }
 
 resource "google_apigee_envgroup_attachment" "group_attachment" {
-  count   = 0
+  count       = 0
   envgroup_id = google_apigee_envgroup.env_group.id
   environment = google_apigee_environment.apigee_env.name
 }
