@@ -34,10 +34,8 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          #          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
-          #          service_account: ${{ secrets.WIP_SERVICE_ACCOUNT }}
-          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_PA }}
-          service_account: ${{ secrets.WIP_SERVICE_ACCOUNT_PA }}
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.WIP_SERVICE_ACCOUNT }}
 
       - name: Authenticate Docker with the Artifact Registry repository
         run: gcloud auth configure-docker europe-west1-docker.pkg.dev
@@ -49,5 +47,4 @@ jobs:
           platforms: linux/amd64
           push: true
           provenance: false
-          #          tags: europe-west1-docker.pkg.dev/dft-dtro-dev-01/dft-dtro-dev-repository/dft-dtro-beta:latest
-          tags: europe-west1-docker.pkg.dev/pa-tc-sandbox-341312/pa-tc-sandbox-341312/dft-dtro-beta:latest
+          tags: europe-west1-docker.pkg.dev/dft-dtro-dev-01/dft-dtro-dev-repository/dft-dtro-beta:latest
