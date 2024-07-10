@@ -34,6 +34,23 @@ module "alb_vpc_network_firewall_rules" {
   }]
 }
 
+# Private VPC connection with Apigee network
+resource "google_compute_global_address" "private_ip_address" {
+  project       = local.project_id
+  name          = "${local.name_prefix}-apigee-ip-address"
+  purpose       = "VPC_PEERING"
+  address_type  = "INTERNAL"
+  address       = var.google_compute_global_address_range
+  prefix_length = var.google_compute_global_address_prefix_length
+  network       = module.alb_vpc_network.network_id
+}
+
+resource "google_service_networking_connection" "private_vpc_connection" {
+  network                 = module.alb_vpc_network.network_id
+  service                 = "servicenetworking.googleapis.com"
+  reserved_peering_ranges = [google_compute_global_address.private_ip_address.name]
+}
+
 #Backend VPC
 module "backend_vpc_network" {
   source  = "terraform-google-modules/network/google"

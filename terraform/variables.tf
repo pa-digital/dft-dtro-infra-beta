@@ -212,6 +212,18 @@ variable "serverless_connector_ip_range" {
   default     = "10.200.0.0/28" # CIDR block with "/28" netmask is required
 }
 
+variable "google_compute_global_address_range" {
+  type        = string
+  description = "IP range for the Google global address to manage private VPC connection with Apigee"
+  default     = "10.9.0.0"
+}
+
+variable "google_compute_global_address_prefix_length" {
+  type        = number
+  description = "Prefix length of the google_compute_global_address_range"
+  default     = 16
+}
+
 variable "redis_memory_size" {
   type        = string
   description = "Redis memory size in GiB"
