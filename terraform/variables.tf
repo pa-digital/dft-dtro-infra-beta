@@ -46,6 +46,12 @@ variable "application_name" {
   default     = "dtro"
 }
 
+variable "default_machine_type" {
+  type        = string
+  description = "Defualt machine type to use for non-application Compute Engines."
+  default     = "e2-micro"
+}
+
 variable "dtro_service_image" {
   type        = string
   description = "The name of an image being pushed for publish service."
@@ -210,6 +216,12 @@ variable "serverless_connector_ip_range" {
   type        = string
   description = "IP range for Serverless VPC Access Connector"
   default     = "10.200.0.0/28" # CIDR block with "/28" netmask is required
+}
+
+variable "apigee_ip_range" {
+  type        = string
+  description = "IP range for Apigee"
+  default     = "10.10.0.0/16"
 }
 
 variable "google_compute_global_address_range" {
