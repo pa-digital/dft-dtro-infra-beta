@@ -62,7 +62,7 @@ resource "google_compute_instance_template" "apigee_mig" {
   machine_type = var.default_machine_type
   tags         = ["https-server", "${local.apigee-mig}-proxy", "gke-apigee-proxy"]
   disk {
-    source_image = "projects/debian-cloud/global/images/family/debian-10"
+    source_image = "projects/debian-cloud/global/images/family/debian-11"
     auto_delete  = true
     boot         = true
     disk_size_gb = 20
