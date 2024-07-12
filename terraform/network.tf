@@ -117,7 +117,7 @@ resource "google_compute_region_network_endpoint_group" "publish_service_serverl
 ## VPC Service Control
 # Manage access policy
 module "org_policy" {
-#   count = var.third_party_prefix == "" ? 1 : 0
+  #   count = var.third_party_prefix == "" ? 1 : 0
   count   = 0
   source  = "terraform-google-modules/vpc-service-controls/google"
   version = "6.0.0"

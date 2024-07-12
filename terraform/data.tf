@@ -6,5 +6,5 @@ data "google_project" "project" {}
 # }
 
 data "google_apigee_instance" "apigee_instance" {
-  name     = "${var.application_name}-apigee-instance"
+  name = "${var.application_name}-apigee-instance"
 }
