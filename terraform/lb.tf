@@ -36,6 +36,17 @@ module "loadbalancer" {
           max_utilization = var.cpu_max_utilization
         }
       ]
+
+      iap_config = {
+        enable               = false
+        oauth2_client_id     = ""
+        oauth2_client_secret = ""
+      }
+
+      log_config = {
+        enable      = false
+        sample_rate = null
+      }
     }
   }
 
