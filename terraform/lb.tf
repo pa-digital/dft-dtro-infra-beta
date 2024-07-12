@@ -53,6 +53,7 @@ module "loadbalancer" {
 
   # Create IPV4 HTTPS IP Address
   create_address                  = true
+  http_forward                    = false
   ssl                             = true
   managed_ssl_certificate_domains = [var.dtro_service_domain]
   create_url_map                  = true

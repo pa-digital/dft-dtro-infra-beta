@@ -20,26 +20,26 @@ module "alb_vpc_network" {
 }
 
 #Firewall rules for ALB VPC
-module "alb_vpc_network_firewall_rules" {
-  source  = "terraform-google-modules/network/google//modules/firewall-rules"
-  version = "~> 9.1"
-
-  project_id   = data.google_project.project.project_id
-  network_name = module.alb_vpc_network.network_name
-
-  rules = [{
-    name          = "allow-global-external-application-load-balancer"
-    description   = "Allow incoming from GXLB on TCP port 443 to Apigee Proxy"
-    source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
-    target_tags   = [local.apigee-mig-proxy]
-    allow = [{
-      protocol = "tcp"
-      ports    = ["443"]
-    }]
-    #     deny = [{ protocol = "all"
-    #     ports = [] }]
-  }]
-}
+# module "alb_vpc_network_firewall_rules" {
+#   source  = "terraform-google-modules/network/google//modules/firewall-rules"
+#   version = "~> 9.1"
+#
+#   project_id   = data.google_project.project.project_id
+#   network_name = module.alb_vpc_network.network_name
+#
+#   rules = [{
+#     name          = "allow-global-external-application-load-balancer"
+#     description   = "Allow incoming from GXLB on TCP port 443 to Apigee Proxy"
+#     source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
+#     target_tags   = [local.apigee-mig-proxy]
+#     allow = [{
+#       protocol = "tcp"
+#       ports    = ["443"]
+#     }]
+#     #     deny = [{ protocol = "all"
+#     #     ports = [] }]
+#   }]
+# }
 
 # Private VPC connection with Apigee network
 resource "google_compute_global_address" "private_ip_address" {
