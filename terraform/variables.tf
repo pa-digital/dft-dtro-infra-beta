@@ -236,6 +236,13 @@ variable "google_compute_global_address_prefix_length" {
   default     = 16
 }
 
+
+variable "cpu_max_utilization" {
+  type        = number
+  description = "Maximum utilisation of each CE before auto scaler steps in"
+  default     = 0.75
+}
+
 variable "redis_memory_size" {
   type        = string
   description = "Redis memory size in GiB"

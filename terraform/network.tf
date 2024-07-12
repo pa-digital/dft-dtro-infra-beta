@@ -28,9 +28,16 @@ module "alb_vpc_network_firewall_rules" {
   network_name = module.alb_vpc_network.network_name
 
   rules = [{
-    name = "deny-all"
-    deny = [{ protocol = "all"
-    ports = [] }]
+    name          = "allow-global-external-application-load-balancer"
+    description   = "Allow incoming from GXLB on TCP port 443 to Apigee Proxy"
+    source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
+    target_tags   = [local.apigee-mig-proxy]
+    allow = [{
+      protocol = "tcp"
+      ports    = ["443"]
+    }]
+    #     deny = [{ protocol = "all"
+    #     ports = [] }]
   }]
 }
 
