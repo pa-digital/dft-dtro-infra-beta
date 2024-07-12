@@ -10,6 +10,12 @@ variable "environment" {
   default     = "dev"
 }
 
+variable "third_party_prefix" {
+  type        = string
+  description = "Prefix to denote if resource is for 3rd Party test instance."
+  default     = ""
+}
+
 variable "region" {
   type        = string
   description = "GCP region to which resources will be deployed."

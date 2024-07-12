@@ -4,3 +4,7 @@ data "google_project" "project" {}
 # data "google_organization" "organisation" {
 #   domain = var.org_domain
 # }
+
+data "google_apigee_instance" "apigee_instance" {
+  name     = "${var.application_name}-apigee-instance"
+}
