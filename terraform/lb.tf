@@ -20,6 +20,7 @@ module "loadbalancer" {
       security_policy      = ""
       edge_security_policy = ""
       timeout_sec          = 302
+      enable_cdn           = false
 
       health_check = {
         check_interval_sec  = 30
