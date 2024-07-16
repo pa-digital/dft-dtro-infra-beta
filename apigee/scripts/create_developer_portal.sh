@@ -3,7 +3,7 @@
 # Script Variables
 ORG=$apigee_organisation
 TOKEN=$1
-env=$env
+env=$env^
 
 
   # Construct the description
@@ -20,9 +20,9 @@ env=$env
 
   # Error checking and handling
   if [ "$RESPONSE" -eq 200 ]; then
-    echo "Developer Portal successfully created in ${env}."
+    echo "Developer Portal successfully created in ${ORG}."
   elif [ "$RESPONSE" -eq 409 ]; then
-    echo "Developer Portal already exists in ${env}."
+    echo "Developer Portal already exists in ${ORG}."
   else
-    echo "Failed to create developer portal in ${env}. HTTP response code: $RESPONSE"
+    echo "Failed to create developer portal in ${ORG}. HTTP response code: $RESPONSE"
   fi
