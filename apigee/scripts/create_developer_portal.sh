@@ -3,19 +3,15 @@
 # Script Variables
 ORG=$apigee_organisation
 TOKEN=$1
-env=$env^
-
-
-  # Construct the description
-  DESCRIPTION="This is the ${env} Developer Portal for D-TRO"
+env=$env
 
   # Make the API call
   RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "https://apigee.googleapis.com/v1/organizations/${ORG}/sites" \
     -H "Authorization: Bearer ${TOKEN}" \
     -H "Content-Type: application/json" \
     -d '{
-      "name": "'"${env} Developer D-TRO Portal"'",
-      "description": "'"${DESCRIPTION}"'"
+      "name": "'"${env^} Developer D-TRO Portal"'",
+      "description": "'"This is the ${env^} Developer Portal for D-TRO"'"
     }')
 
   # Error checking and handling
