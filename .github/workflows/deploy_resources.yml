@@ -96,3 +96,64 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve -input=false terraform-plan-gcp
+
+  deploy-apigee-proxies-and-portal:
+    name: Deploy GCP Apigee proxies and portal to ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      packages: read
+      actions: read
+      pull-requests: write
+    defaults:
+      run:
+        shell: bash
+        working-directory: apigee
+    env:
+      name_prefix: dtro-${{ inputs.environment }}-apigee
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set executable permissions for environment script
+        run: chmod +x environments/*
+
+      - name: Load Env Vars for Apigee script
+        run: ./environments/load_environment_variables.sh
+        env:
+          github_ref: ${{ github.ref }}
+          environment: ${{ inputs.environment }}
+          service_account: ${{ secrets.wip_service_account }}
+          apigee_organisation: ${{ inputs.gcp-project-id }}
+
+      - name: Authenticate to Google Cloud
+        id: google-auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.workload_identity_provider }}
+          service_account: ${{ secrets.wip_service_account }}
+          token_format: access_token
+
+      - name: Set up ApigeeCLI
+        run: |
+          curl -L https://raw.githubusercontent.com/apigee/apigeecli/main/downloadLatest.sh | sh
+          echo "$HOME/.apigeecli/bin" >> $GITHUB_PATH
+
+      - name: Make scripts directory executable
+        run: chmod +x scripts/*
+
+      # Create new workflow to create portals with parameters. Use this for testing
+      - name: Create Developer Portal
+        run: scripts/create_developer_portal.sh ${{ steps.google-auth.outputs.access_token }}
+
+      - name: Create API bundle
+        working-directory: proxies/oauth-generator
+        run: zip -r proxy.zip apiproxy
+
+      - name: Upload and Deploy API Proxy Bundle
+        working-directory: proxies/oauth-generator
+        run: |
+          env=$env
+          apigeecli apis create bundle --name oauth-generator --proxy-zip proxy.zip --token "${{ steps.google-auth.outputs.access_token }}" --org "$apigee_organisation" --ovr --wait=true
+          apigeecli apis deploy --env "${{ env.name_prefix }}-environment" --name oauth-generator --token "${{ steps.google-auth.outputs.access_token }}" --org "$apigee_organisation" --ovr #--wait=true
