@@ -24,7 +24,7 @@
     </Flow>
   </Flows>
   <HTTPProxyConnection>
-    <BasePath>/v1/oauth-generator</BasePath>
+    <BasePath>/v1/d-tro</BasePath>
     <Properties/>
     <VirtualHost>default</VirtualHost>
   </HTTPProxyConnection>

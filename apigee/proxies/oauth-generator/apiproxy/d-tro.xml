@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<APIProxy revision="2" name="oauth-generator">
+<APIProxy revision="2" name="d-tro">
   <DisplayName/>
   <Description/>
   <CreatedAt>1721120314</CreatedAt>
   <LastModifiedAt>1721120314</LastModifiedAt>
-  <BasePaths>/v1/oauth-generator</BasePaths>
+  <BasePaths>/v1/d-tro</BasePaths>
   <Policies>
     <Policy>GenerateAccessToken</Policy>
   </Policies>
