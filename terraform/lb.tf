@@ -81,7 +81,7 @@ resource "google_compute_managed_ssl_certificate" "alb-cert" {
   project = local.project_id
   name    = "${local.name_prefix}-alb-cert"
   managed {
-    domains = local.domain
+    domains = [local.domain]
   }
 }
 
