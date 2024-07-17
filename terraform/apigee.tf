@@ -32,7 +32,7 @@ resource "google_apigee_instance_attachment" "attachment" {
 
 resource "google_apigee_envgroup" "env_group" {
   name      = "${local.name_prefix}-apigee-environment-group"
-  hostnames = local.domain
+  hostnames = [local.domain]
   org_id    = google_apigee_organization.apigee_org.id
 }
 
