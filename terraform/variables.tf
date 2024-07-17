@@ -98,12 +98,6 @@ variable "db_connections_per_cloud_run_instance" {
   description = "Maximum size of DB connection pool for each Cloud Run instance"
 }
 
-variable "dtro_service_domain" {
-  type        = string
-  description = "Name of the domain where the DTRO is published"
-  default     = "dtro.dft.gov.uk"
-}
-
 variable "logs_retention_in_days" {
   type        = number
   description = "Retention time of the application logs"

@@ -55,7 +55,7 @@ module "loadbalancer" {
   create_address                  = true
   http_forward                    = false
   ssl                             = true
-  managed_ssl_certificate_domains = [var.dtro_service_domain]
+  managed_ssl_certificate_domains = [local.domain]
   create_url_map                  = true
 }
 
