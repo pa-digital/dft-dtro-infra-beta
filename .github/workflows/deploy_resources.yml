@@ -206,7 +206,7 @@ jobs:
           echo "$HOME/.apigeecli/bin" >> $GITHUB_PATH
 
       - name: Make scripts directory executable
-        run: chmod +x apigee/portals/*
+        run: chmod +x portals/*
 
       - name: Deploy Proxy
         run: apigeecli apis create oas --name "$dtro-{env}-server" --oas-base-folderpath openApi --oas-name OpenAPIspecs-20240715.json --target-url $target_url --basepath /v1 --add-cors=true --token ${{ steps.google-auth.outputs.access_token }} --org "$apigee_organisation" --ovr --wait=true
