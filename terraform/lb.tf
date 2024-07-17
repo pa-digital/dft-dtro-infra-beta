@@ -4,7 +4,7 @@ locals {
 
 # XLB
 module "loadbalancer" {
-  count   = 0
+  #   count   = 0
   source  = "GoogleCloudPlatform/lb-http/google"
   version = "~> 10.0.0"
   name    = "${local.name_prefix}-xlb"
@@ -53,33 +53,34 @@ module "loadbalancer" {
   }
 
   # Create IPV4 HTTPS IP Address
-  create_address                  = true
-  http_forward                    = false
-  ssl                             = true
-  managed_ssl_certificate_domains = [var.dtro_service_domain]
-  create_url_map                  = true
-  # Enable SSL support
-  #   ssl                             = true
-  #   address = google_compute_global_address.private_ip_address.address
+  #   create_address                  = true
   #   http_forward                    = false
-  #   ssl_certificates = [google_compute_managed_ssl_certificate.alb-cert.id]
-  #   managed_ssl_certificate_domains = []
+  #   ssl                             = true
+  #   managed_ssl_certificate_domains = [var.dtro_service_domain]
   #   create_url_map                  = true
-  #   depends_on   = [google_compute_global_address.external_ipv4_address, google_compute_managed_ssl_certificate.alb-cert]
+  # Enable SSL support
+  ssl                             = true
+  address                         = google_compute_global_address.private_ip_address.address
+  http_forward                    = false
+  ssl_certificates                = [google_compute_managed_ssl_certificate.alb-cert.id]
+  managed_ssl_certificate_domains = []
+  create_url_map                  = true
+
+  depends_on = [google_compute_global_address.external_ipv4_address, google_compute_managed_ssl_certificate.alb-cert]
 }
 
 # Create IPV4 HTTPS IP Address
 resource "google_compute_global_address" "external_ipv4_address" {
-  count      = 0
+  #   count      = 0
   project    = local.project_id
-  name       = "apigee-lb-address-name"
+  name       = "${local.name_prefix}-xlb-ipv4-address"
   ip_version = "IPV4"
 }
 
 resource "google_compute_managed_ssl_certificate" "alb-cert" {
-  count   = 0
+  #   count   = 0
   project = local.project_id
-  name    = "${local.name_prefix}-alb-cert"
+  name    = "${local.name_prefix}-xlb-cert"
   managed {
     domains = [local.domain]
   }
