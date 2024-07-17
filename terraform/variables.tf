@@ -40,6 +40,12 @@ variable "org_domain" {
   default     = "dft.gov.uk"
 }
 
+variable "dtro_service_domain" {
+  type        = string
+  description = "Name of the domain where the DTRO is published"
+  default     = "dtro.dft.gov.uk"
+}
+
 variable "application_name" {
   type        = string
   description = "The name the application."
