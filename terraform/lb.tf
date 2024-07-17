@@ -4,6 +4,7 @@ locals {
 
 # XLB
 module "loadbalancer" {
+  count   = 0
   source  = "GoogleCloudPlatform/lb-http/google"
   version = "~> 10.0.0"
   name    = "${local.name_prefix}-alb"
