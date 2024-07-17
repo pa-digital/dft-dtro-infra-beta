@@ -53,6 +53,7 @@ module "loadbalancer" {
 
   # Enable SSL support
   ssl                             = true
+  create_address                  = false
   address                         = google_compute_global_address.external_ipv4_address.address
   http_forward                    = false
   ssl_certificates                = [google_compute_managed_ssl_certificate.alb-cert.id]
