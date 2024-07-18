@@ -204,12 +204,13 @@ jobs:
         run: |
           curl -L https://raw.githubusercontent.com/apigee/apigeecli/main/downloadLatest.sh | sh
           echo "$HOME/.apigeecli/bin" >> $GITHUB_PATH
+          echo "APIGEECLI_DEBUG=true" >> $GITHUB_ENV
 
       - name: Make scripts directory executable
         run: chmod +x portals/*
 
       - name: Deploy Proxy
-        run: apigeecli apis create oas --name "$dtro-server" --oas-base-folderpath openApi --oas-name OpenAPIspecs-20240715.json --target-url $target_url --basepath /v1 --add-cors=true --token ${{ steps.google-auth.outputs.access_token }} --org "$apigee_organisation" --ovr --wait=true --print-output=true
+        run: apigeecli apis create oas --name "$dtro-server" --oas-base-folderpath openApi --oas-name OpenAPIspecs-20240715.json --target-url $target_url --basepath /v1 --add-cors=true --token ${{ steps.google-auth.outputs.access_token }} --org "$apigee_organisation" --ovr --wait=true
 
 #      - name: Get Proxy Bundle
 #        run: |
