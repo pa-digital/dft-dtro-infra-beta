@@ -230,12 +230,35 @@ variable "google_compute_global_address_range" {
   default     = "10.9.0.0"
 }
 
+variable "ilb_proxy_only_subnetwork_range" {
+  type        = string
+  description = "IP range for the internal ALB proxy only subnetwork"
+  default     = "10.3.0.0/26"
+}
+
+variable "ilb_private_subnetwork_range" {
+  type        = string
+  description = "IP range for internal ALB private subnetwork"
+  default     = "10.2.1.0/24"
+}
+
+variable "psc_private_subnetwork_range" {
+  type        = string
+  description = "IP range for Private Service Connect private subnetwork"
+  default     = "10.20.1.0/24"
+}
+
+variable "psc_subnetwork_range" {
+  type        = string
+  description = "IP range for Private Service Connect subnetwork"
+  default     = "10.3.1.0/24"
+}
+
 variable "google_compute_global_address_prefix_length" {
   type        = number
   description = "Prefix length of the google_compute_global_address_range"
   default     = 16
 }
-
 
 variable "cpu_max_utilization" {
   type        = number
