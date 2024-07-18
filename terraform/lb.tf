@@ -148,7 +148,6 @@ resource "google_compute_region_autoscaler" "apigee_autoscaler" {
 ############################################################################
 
 # Internal Load Balancer
-
 # Create a proxy-only subnetwork for internal load balancer
 resource "google_compute_subnetwork" "proxy_only_subnetwork" {
   project       = local.project_id
@@ -227,10 +226,9 @@ resource "google_compute_forwarding_rule" "internal_lb_forwarding_rule" {
 ############################################################################
 
 # Private Service Connect
-
 resource "google_compute_network" "psc_network" {
   project                 = local.project_id
-  name                    = "${local.name_prefix}psc-network"
+  name                    = "${local.name_prefix}-psc-network"
   auto_create_subnetworks = false
 }
 
