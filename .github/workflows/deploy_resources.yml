@@ -57,8 +57,8 @@ permissions:
 
 jobs:
   deploy-resources:
-    if: ${{ run-terraform }}
     name: Deploy GCP Resources to ${{ inputs.environment }}
+    if: ${{ inputs.run-terraform }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -114,7 +114,7 @@ jobs:
 #        run: terraform apply -auto-approve -input=false terraform-plan-gcp
 
   deploy-apigee-proxies-and-portal:
-    if: ${{ run-apigee-1 }}
+    if: ${{ inputs.run-apigee-1 }}
     name: Deploy GCP Apigee proxies and portal to ${{ inputs.environment }}
 #    needs:
 #      - deploy-resources
@@ -179,7 +179,7 @@ jobs:
 
 #  build-apigee-proxies-and-products:
 #    name: Build GCP Apigee proxies and products in ${{ inputs.environment }}
-#    if: ${{ run-apigee-1 }}
+#    if: ${{ inputs.run-apigee-2 }}
 ##    needs:
 ##      - deploy-apigee-proxies-and-portal
 #    runs-on: ubuntu-latest
