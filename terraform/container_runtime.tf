@@ -28,7 +28,7 @@ resource "google_cloud_run_v2_service" "dtro_service" {
     service_account = var.execution_service_account
 
     scaling {
-      min_instance_count = 0
+      min_instance_count = 1
       max_instance_count = local.max_instance_count
     }
 
