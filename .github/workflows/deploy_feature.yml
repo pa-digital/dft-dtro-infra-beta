@@ -33,7 +33,7 @@ jobs:
       gcp-region: ${{ vars.DEFAULT_GCP_REGION }}
       environment: dev
 #      do-validation-checks: true
-      checkov-skip-check: ${{ var.CHECKOV_SKIP_CHECK }}
+      checkov-skip-check: ${{ vars.CHECKOV_SKIP_CHECK }}
       run-terraform: ${{ inputs.run-terraform }}
       run-apigee-1: ${{ inputs.run-apigee-1 }}
       run-apigee-2: ${{ inputs.run-apigee-2 }}
