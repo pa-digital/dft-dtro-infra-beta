@@ -50,6 +50,6 @@ jobs:
         with:
           # CKV_SECRET*: not related to files within this repo
           # CKV2_GHA_1: to be addressed
-          skip_check: CKV_TF_1,CKV_GCP_84,CKV_SECRET*,CKV2_GHA_1
+          skip_check: ${{ var.CHECKOV_SKIP_CHECK }}
           output_format: github_failed_only
           output_file_path: console

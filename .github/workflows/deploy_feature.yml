@@ -20,22 +20,6 @@ on:
         default: false
 
 jobs:
-#  docker-build-push:
-#    name: Build and push Docker image to Artifact Registry
-#    uses: ./.github/workflows/docker-build-push.yml
-
-#  deploy-feature-dev-pa:
-#    name: Deploy Feature Branch
-#    uses: ./.github/workflows/deploy_resources.yml
-#    secrets:
-#      workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_PA }}
-#      wip_service_account: ${{ secrets.WIP_SERVICE_ACCOUNT_PA }}
-#      execution_service_account: ${{ secrets.EXECUTION_SERVICE_ACCOUNT_PA }}
-#      access_level_members: ${{ secrets.ACCESS_LEVEL_MEMBERS }}
-#    with:
-#      gcp-project-id: ${{ vars.GCP_PROJECT_ID_DEV_PA }}
-#      gcp-region: ${{ vars.DEFAULT_GCP_REGION }}
-#      environment: dev
   deploy-feature-dev:
     name: Deploy Feature Branch
     uses: ./.github/workflows/deploy_resources.yml
@@ -49,6 +33,7 @@ jobs:
       gcp-region: ${{ vars.DEFAULT_GCP_REGION }}
       environment: dev
 #      do-validation-checks: true
+      checkov-skip-check: ${{ var.CHECKOV_SKIP_CHECK }}
       run-terraform: ${{ inputs.run-terraform }}
       run-apigee-1: ${{ inputs.run-apigee-1 }}
       run-apigee-2: ${{ inputs.run-apigee-2 }}

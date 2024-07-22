@@ -80,12 +80,13 @@ resource "google_compute_managed_ssl_certificate" "alb-cert" {
 
 # Managed Instance Group
 resource "google_compute_subnetwork" "apigee_mig" {
-  project                  = local.project_id
-  name                     = "${local.apigee-mig}-subnetwork"
-  ip_cidr_range            = var.apigee_ip_range
-  region                   = var.region
-  network                  = module.alb_vpc_network.network_id
-  private_ip_google_access = true
+  project                    = local.project_id
+  name                       = "${local.apigee-mig}-subnetwork"
+  ip_cidr_range              = var.apigee_ip_range
+  region                     = var.region
+  network                    = module.alb_vpc_network.network_id
+  private_ip_google_access   = true
+  private_ipv6_google_access = "ENABLE_BIDIRECTIONAL_ACCESS_TO_GOOGLE"
 }
 
 resource "google_compute_instance_template" "apigee_mig" {
