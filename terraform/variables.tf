@@ -18,14 +18,14 @@ variable "region" {
 
 variable "organisation" {
   type        = string
-  description = "GCP Organisation where the DTRO project can be found."
-  default     = "dft"
+  description = "GCP Organisation for DfT."
+  default     = "dft.gov.uk"
 }
 
 variable "organisation_id" {
   type        = string
-  description = "ID of the GCP Organisation where the DTRO project can be found."
-  default     = "0"
+  description = "ID of the GCP Organisation for DfT."
+  default     = "251335196181"
 }
 
 variable "project_id" {
