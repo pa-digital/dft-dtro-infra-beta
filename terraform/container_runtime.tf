@@ -19,8 +19,8 @@ locals {
 
 # TODO: Move this File to dft-dtro-beta repo
 resource "google_cloud_run_v2_service" "dtro_service" {
-  count    = 0
-  name     = local.cloud_run_service_name
+  #   count    = 0
+  name     = "${local.cloud_run_service_name}-2"
   location = var.region
   ingress  = "INGRESS_TRAFFIC_INTERNAL_ONLY"
 
@@ -48,7 +48,9 @@ resource "google_cloud_run_v2_service" "dtro_service" {
     }
 
     containers {
-      image = "${var.region}-docker.pkg.dev/${local.project_id}/${local.artifact_registry_name}/${var.dtro_service_image}:${var.tag}"
+      #       image = "${var.region}-docker.pkg.dev/${local.project_id}/${local.artifact_registry_name}/${var.dtro_service_image}:${var.tag}"
+      # TODO: Below is the last stable image
+      image = "europe-west1-docker.pkg.dev/dft-dtro-dev-01/dft-dtro-dev-repository/dft-dtro-beta@sha256:f34febca186167410eb8ee2a8362975521c8994c675ba22a5590cb563d442e0f"
       ports {
         container_port = 8080
       }
