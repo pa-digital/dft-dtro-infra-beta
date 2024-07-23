@@ -24,14 +24,14 @@ variable "region" {
 
 variable "organisation" {
   type        = string
-  description = "GCP Organisation where the DTRO project can be found."
-  default     = "dft"
+  description = "GCP Organisation for DfT."
+  default     = "dft.gov.uk"
 }
 
 variable "organisation_id" {
   type        = string
-  description = "ID of the GCP Organisation where the DTRO project can be found."
-  default     = "0"
+  description = "ID of the GCP Organisation for DfT."
+  default     = "251335196181"
 }
 
 variable "project_id" {
@@ -44,6 +44,12 @@ variable "org_domain" {
   type        = string
   description = "DfT's main domain."
   default     = "dft.gov.uk"
+}
+
+variable "dtro_service_domain" {
+  type        = string
+  description = "Name of the domain where the DTRO is published"
+  default     = "dtro.dft.gov.uk"
 }
 
 variable "application_name" {
@@ -102,12 +108,6 @@ variable "db_connections_per_cloud_run_instance" {
   type        = number
   default     = 2
   description = "Maximum size of DB connection pool for each Cloud Run instance"
-}
-
-variable "dtro_service_domain" {
-  type        = string
-  description = "Name of the domain where the DTRO is published"
-  default     = "dtro.dft.gov.uk"
 }
 
 variable "logs_retention_in_days" {
@@ -236,12 +236,35 @@ variable "google_compute_global_address_range" {
   default     = "10.9.0.0"
 }
 
+variable "ilb_proxy_only_subnetwork_range" {
+  type        = string
+  description = "IP range for the internal ALB proxy only subnetwork"
+  default     = "10.3.0.0/26"
+}
+
+variable "ilb_private_subnetwork_range" {
+  type        = string
+  description = "IP range for internal ALB private subnetwork"
+  default     = "10.2.1.0/24"
+}
+
+variable "psc_private_subnetwork_range" {
+  type        = string
+  description = "IP range for Private Service Connect private subnetwork"
+  default     = "10.20.1.0/24"
+}
+
+variable "psc_subnetwork_range" {
+  type        = string
+  description = "IP range for Private Service Connect subnetwork"
+  default     = "10.3.1.0/24"
+}
+
 variable "google_compute_global_address_prefix_length" {
   type        = number
   description = "Prefix length of the google_compute_global_address_range"
   default     = 16
 }
-
 
 variable "cpu_max_utilization" {
   type        = number

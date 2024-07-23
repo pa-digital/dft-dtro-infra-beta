@@ -1,5 +1,5 @@
 resource "google_secret_manager_secret" "postgres_password" {
-  secret_id = "${var.application_name}-postgres-password"
+  secret_id = "${local.name_prefix}-postgres-password"
 
   replication {
     auto {}
