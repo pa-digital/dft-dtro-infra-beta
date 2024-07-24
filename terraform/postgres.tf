@@ -9,10 +9,9 @@ module "postgres_db" {
   database_version = "POSTGRES_15"
   tier             = var.database_environment_configuration[var.environment].tier
 
-  name              = "${local.name_prefix}-postgres"
-  db_name           = local.database_name
-  enable_default_db = false
-  user_name         = local.database_username
+  name      = "${local.name_prefix}-postgres"
+  db_name   = local.database_name
+  user_name = local.database_username
 
   deletion_protection         = false # TODO: WIll be set to true on DfT
   deletion_protection_enabled = false
