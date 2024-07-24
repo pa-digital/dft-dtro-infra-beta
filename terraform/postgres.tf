@@ -13,7 +13,7 @@ module "postgres_db" {
   db_name   = local.database_name
   user_name = local.database_username
 
-  deletion_protection         = false # TODO: WIll be set to true on DfT
+  deletion_protection         = false # TODO: WIll be set to true for Prod
   deletion_protection_enabled = false
 
   disk_size                      = var.database_environment_configuration[var.environment].disk_size
