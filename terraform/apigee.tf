@@ -14,13 +14,13 @@ resource "google_apigee_instance" "apigee_instance" {
   count    = var.integration_prefix == "" ? 1 : 0
   name     = "${var.application_name}-apigee-instance"
   location = var.region
-  org_id   = google_apigee_organization.apigee_org.id
+  org_id   = google_apigee_organization.apigee_org[0].id
   ip_range = "10.9.0.0/22"
 }
 
 resource "google_apigee_environment" "apigee_env" {
   count        = var.integration_prefix == "" ? 1 : 0
-  org_id       = google_apigee_organization.apigee_org.id
+  org_id       = google_apigee_organization.apigee_org[0].id
   name         = "${local.name_prefix}-apigee-environment"
   description  = "${var.environment} ${var.application_name} Apigee Environment"
   display_name = "${local.name_prefix} Environment"
@@ -30,7 +30,7 @@ resource "google_apigee_environment" "apigee_env" {
 
 resource "google_apigee_instance_attachment" "attachment" {
   count       = var.integration_prefix == "" ? 1 : 0
-  instance_id = google_apigee_instance.apigee_instance.id
+  instance_id = google_apigee_instance.apigee_instance[0].id
   environment = google_apigee_environment.apigee_env.name
 }
 
@@ -38,7 +38,7 @@ resource "google_apigee_envgroup" "env_group" {
   count     = var.integration_prefix == "" ? 1 : 0
   name      = "${local.name_prefix}-apigee-environment-group"
   hostnames = var.domain[var.environment]
-  org_id    = google_apigee_organization.apigee_org.id
+  org_id    = google_apigee_organization.apigee_org[0].id
 }
 
 resource "google_apigee_envgroup_attachment" "group_attachment" {
