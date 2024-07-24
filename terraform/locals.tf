@@ -4,7 +4,6 @@ locals {
   cloud_run_service_name = "${local.name_prefix}-${var.dtro_service_image}"
   database_name          = "${local.name_prefix}-database"
   database_username      = var.application_name
-  domain                 = var.environment == "prod" ? "${var.application_name}.${var.org_domain}" : "${var.application_name}-${var.environment}.${var.org_domain}"
   project_id             = data.google_project.project.project_id
-  name_prefix            = var.environment == "test" && var.third_party_prefix != "" ? "${var.application_name}-${var.third_party_prefix}" : "${var.application_name}-${var.environment}"
+  name_prefix            = var.environment == "test" && var.integration_prefix == "int" ? "${var.application_name}-${var.integration_prefix}" : "${var.application_name}-${var.environment}"
 }

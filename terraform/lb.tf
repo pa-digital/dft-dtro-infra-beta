@@ -74,7 +74,7 @@ resource "google_compute_managed_ssl_certificate" "alb-cert" {
   project = local.project_id
   name    = "${local.name_prefix}-xlb-cert"
   managed {
-    domains = [local.domain]
+    domains = [var.integration_prefix == "" ? var.domain[var.environment] : var.domain[var.integration_prefix]]
   }
 }
 
@@ -82,7 +82,7 @@ resource "google_compute_managed_ssl_certificate" "alb-cert" {
 resource "google_compute_subnetwork" "apigee_mig" {
   project                  = local.project_id
   name                     = "${local.apigee-mig}-subnetwork"
-  ip_cidr_range            = var.apigee_ip_range
+  ip_cidr_range            = var.integration_prefix == "" ? var.apigee_ip_range : var.int_apigee_ip_range
   region                   = var.region
   network                  = module.alb_vpc_network.network_id
   private_ip_google_access = true

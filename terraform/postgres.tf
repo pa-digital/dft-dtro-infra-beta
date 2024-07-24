@@ -13,8 +13,8 @@ module "postgres_db" {
   db_name   = local.database_name
   user_name = local.database_username
 
-  deletion_protection         = false # TODO: WIll be set to true for Prod
-  deletion_protection_enabled = false
+  deletion_protection         = var.environment != "prod" ? false : true
+  deletion_protection_enabled = var.environment != "prod" ? false : true
 
   disk_size                      = var.database_environment_configuration[var.environment].disk_size
   disk_type                      = "PD_SSD"

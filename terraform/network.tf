@@ -13,33 +13,11 @@ module "alb_vpc_network" {
   subnets = [
     {
       subnet_name   = "alb-subnet"
-      subnet_ip     = var.alb_vpc_ip_range
+      subnet_ip     = var.integration_prefix == "" ? var.alb_vpc_ip_range : var.int_alb_vpc_ip_range
       subnet_region = var.region
     }
   ]
 }
-
-#Firewall rules for ALB VPC
-# module "alb_vpc_network_firewall_rules" {
-#   source  = "terraform-google-modules/network/google//modules/firewall-rules"
-#   version = "~> 9.1"
-#
-#   project_id   = data.google_project.project.project_id
-#   network_name = module.alb_vpc_network.network_name
-#
-#   rules = [{
-#     name          = "allow-global-external-application-load-balancer"
-#     description   = "Allow incoming from GXLB on TCP port 443 to Apigee Proxy"
-#     source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
-#     target_tags   = [local.apigee-mig-proxy]
-#     allow = [{
-#       protocol = "tcp"
-#       ports    = ["443"]
-#     }]
-#     #     deny = [{ protocol = "all"
-#     #     ports = [] }]
-#   }]
-# }
 
 # Private VPC connection with Apigee network
 resource "google_compute_global_address" "private_ip_address" {
@@ -69,7 +47,7 @@ module "backend_vpc_network" {
   subnets = [
     {
       subnet_name           = local.serverless_connector_subnet_name
-      subnet_ip             = var.backend_vpc_ip_range
+      subnet_ip             = var.integration_prefix == "" ? var.backend_vpc_ip_range : var.int_backend_vpc_ip_range
       subnet_region         = var.region
       subnet_private_access = true
     }
@@ -117,7 +95,7 @@ resource "google_compute_region_network_endpoint_group" "publish_service_serverl
 ## VPC Service Control
 # Manage access policy
 module "org_policy" {
-  #   count = var.third_party_prefix == "" ? 1 : 0
+  #   count = var.integration_prefix == "" ? 1 : 0
   count   = 0
   source  = "terraform-google-modules/vpc-service-controls/google"
   version = "6.0.0"
@@ -127,7 +105,7 @@ module "org_policy" {
 }
 
 module "access_level_members" {
-  #   count = var.third_party_prefix == "" ? 1 : 0
+  #   count = var.integration_prefix == "" ? 1 : 0
   count   = 0
   source  = "terraform-google-modules/vpc-service-controls/google//modules/access_level"
   version = "6.0.0"
@@ -139,7 +117,7 @@ module "access_level_members" {
 #  According to the docs(https://github.com/terraform-google-modules/terraform-google-vpc-service-controls?tab=readme-ov-file#known-limitations),
 #  there may be a delay between a successful response and the change taking effect.
 resource "null_resource" "wait_for_members" {
-  #   count = var.third_party_prefix == "" ? 1 : 0
+  #   count = var.integration_prefix == "" ? 1 : 0
   count = 0
   provisioner "local-exec" {
     command = "sleep 60"
@@ -149,7 +127,7 @@ resource "null_resource" "wait_for_members" {
 
 # Regular perimeter: Regular service perimeters protect services on the projects they contain.
 module "dtro_regular_service_perimeter" {
-  #   count = var.third_party_prefix == "" ? 1 : 0
+  #   count = var.integration_prefix == "" ? 1 : 0
   count                       = 0
   source                      = "terraform-google-modules/vpc-service-controls/google//modules/regular_service_perimeter"
   version                     = "6.0.0"
