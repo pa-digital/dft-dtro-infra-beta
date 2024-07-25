@@ -62,3 +62,13 @@ module "postgres_db" {
 
   module_depends_on = [module.cloudsql_private_service_access.peering_completed]
 }
+
+resource "google_sql_user" "test_user" {
+  name     = "test_user"
+  project  = var.project_id
+  instance = module.postgres_db.instance_name
+  password = "test_user"
+  depends_on = [
+    module.postgres_db
+  ]
+}
