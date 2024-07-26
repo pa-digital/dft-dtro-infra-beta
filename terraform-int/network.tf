@@ -13,7 +13,7 @@ module "alb_vpc_network" {
   subnets = [
     {
       subnet_name   = "alb-subnet"
-      subnet_ip     = var.alb_vpc_ip_range
+      subnet_ip     = var.int_alb_vpc_ip_range
       subnet_region = var.region
     }
   ]
@@ -25,7 +25,7 @@ resource "google_compute_global_address" "private_ip_address" {
   name          = "${local.name_prefix}-apigee-ip-address"
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
-  address       = var.google_compute_global_address_range
+  address       = var.int_google_compute_global_address_range
   prefix_length = var.google_compute_global_address_prefix_length
   network       = module.alb_vpc_network.network_id
 }
@@ -47,7 +47,7 @@ module "backend_vpc_network" {
   subnets = [
     {
       subnet_name           = local.serverless_connector_subnet_name
-      subnet_ip             = var.backend_vpc_ip_range
+      subnet_ip             = var.int_backend_vpc_ip_range
       subnet_region         = var.region
       subnet_private_access = true
     }
@@ -95,6 +95,7 @@ resource "google_compute_region_network_endpoint_group" "publish_service_serverl
 ## VPC Service Control
 # Manage access policy
 module "org_policy" {
+  #   count = var.integration_prefix == "" ? 1 : 0
   count   = 0
   source  = "terraform-google-modules/vpc-service-controls/google"
   version = "6.0.0"
@@ -104,6 +105,7 @@ module "org_policy" {
 }
 
 module "access_level_members" {
+  #   count = var.integration_prefix == "" ? 1 : 0
   count   = 0
   source  = "terraform-google-modules/vpc-service-controls/google//modules/access_level"
   version = "6.0.0"
@@ -115,6 +117,7 @@ module "access_level_members" {
 #  According to the docs(https://github.com/terraform-google-modules/terraform-google-vpc-service-controls?tab=readme-ov-file#known-limitations),
 #  there may be a delay between a successful response and the change taking effect.
 resource "null_resource" "wait_for_members" {
+  #   count = var.integration_prefix == "" ? 1 : 0
   count = 0
   provisioner "local-exec" {
     command = "sleep 60"
@@ -124,6 +127,7 @@ resource "null_resource" "wait_for_members" {
 
 # Regular perimeter: Regular service perimeters protect services on the projects they contain.
 module "dtro_regular_service_perimeter" {
+  #   count = var.integration_prefix == "" ? 1 : 0
   count                       = 0
   source                      = "terraform-google-modules/vpc-service-controls/google//modules/regular_service_perimeter"
   version                     = "6.0.0"

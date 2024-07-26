@@ -74,7 +74,7 @@ resource "google_compute_managed_ssl_certificate" "alb-cert" {
   project = local.project_id
   name    = "${local.name_prefix}-xlb-cert"
   managed {
-    domains = [var.domain[var.environment]]
+    domains = [var.integration_prefix == "" ? var.domain[var.environment] : var.domain[var.integration_prefix]]
   }
 }
 
@@ -82,7 +82,7 @@ resource "google_compute_managed_ssl_certificate" "alb-cert" {
 resource "google_compute_subnetwork" "apigee_mig" {
   project                  = local.project_id
   name                     = "${local.apigee-mig}-subnetwork"
-  ip_cidr_range            = var.apigee_ip_range
+  ip_cidr_range            = var.int_apigee_ip_range
   region                   = var.region
   network                  = module.alb_vpc_network.network_id
   private_ip_google_access = true
@@ -108,7 +108,7 @@ resource "google_compute_instance_template" "apigee_mig" {
     scopes = ["cloud-platform"]
   }
   metadata = {
-    ENDPOINT           = google_apigee_instance.apigee_instance.host
+    ENDPOINT           = google_apigee_instance.apigee_instance[0].host
     startup-script-url = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
   }
 }
@@ -152,7 +152,7 @@ resource "google_compute_region_autoscaler" "apigee_autoscaler" {
 resource "google_compute_subnetwork" "proxy_only_subnetwork" {
   project       = local.project_id
   name          = "${local.name_prefix}-loadbalancer-proxy-only-subnetwork"
-  ip_cidr_range = var.ilb_proxy_only_subnetwork_range
+  ip_cidr_range = var.int_ilb_proxy_only_subnetwork_range
   region        = var.region
   network       = google_compute_network.psc_network.id
   purpose       = "INTERNAL_HTTPS_LOAD_BALANCER"
@@ -163,7 +163,7 @@ resource "google_compute_subnetwork" "proxy_only_subnetwork" {
 resource "google_compute_subnetwork" "private_subnetwork" {
   project       = local.project_id
   name          = "${local.name_prefix}-forward-rule-private-subnetwork"
-  ip_cidr_range = var.ilb_private_subnetwork_range
+  ip_cidr_range = var.int_ilb_private_subnetwork_range
   region        = var.region
   network       = google_compute_network.psc_network.id
   purpose       = "PRIVATE"
@@ -235,7 +235,7 @@ resource "google_compute_network" "psc_network" {
 resource "google_compute_subnetwork" "psc_private_subnetwork" {
   project       = local.project_id
   name          = "${local.name_prefix}psc-private-subnetwork"
-  ip_cidr_range = var.psc_private_subnetwork_range
+  ip_cidr_range = var.int_psc_private_subnetwork_range
   region        = var.region
   network       = google_compute_network.psc_network.id
   purpose       = "PRIVATE"
@@ -244,7 +244,7 @@ resource "google_compute_subnetwork" "psc_private_subnetwork" {
 resource "google_compute_subnetwork" "psc_subnetwork" {
   project       = local.project_id
   name          = "${local.name_prefix}-psc-subnetwork"
-  ip_cidr_range = var.psc_subnetwork_range
+  ip_cidr_range = var.int_psc_subnetwork_range
   region        = var.region
   network       = google_compute_network.psc_network.id
   purpose       = "PRIVATE_SERVICE_CONNECT"
@@ -270,7 +270,7 @@ resource "google_compute_service_attachment" "psc_attachment" {
 
 # Endpoint attachment in apigee project
 resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
-  org_id                 = google_apigee_organization.apigee_org.id
+  org_id                 = google_apigee_organization.apigee_org[0].id
   endpoint_attachment_id = "${local.name_prefix}-ep-attach-${var.environment}"
   location               = var.region
   service_attachment     = google_compute_service_attachment.psc_attachment.id
