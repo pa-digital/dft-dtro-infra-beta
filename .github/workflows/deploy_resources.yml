@@ -73,7 +73,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: terraform
+        working-directory: terraform-int
     steps:
       - name: Checkout
         uses: actions/checkout@v4

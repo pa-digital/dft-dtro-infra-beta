@@ -271,7 +271,7 @@ resource "google_compute_service_attachment" "psc_attachment" {
 # Endpoint attachment in apigee project
 resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
   org_id                 = google_apigee_organization.apigee_org[0].id
-  endpoint_attachment_id = "${local.name_prefix}-ep-attach-${var.environment}"
+  endpoint_attachment_id = "${local.name_prefix}-ep-attach-${var.integration_prefix}"
   location               = var.region
   service_attachment     = google_compute_service_attachment.psc_attachment.id
 }
