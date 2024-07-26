@@ -45,7 +45,7 @@ on:
 
 env:
   TF_VAR_integration_prefix: int
-  TF_VAR_tf_state_bucket: dft-d-tro-terraform-int #dft-d-tro-terraform-${{ inputs.environment }}
+  TF_VAR_tf_state_bucket: dft-d-tro-terraform-${{ inputs.environment }}
   TF_VAR_environment: ${{ inputs.environment }}
   TF_VAR_region: ${{ inputs.gcp-region }}
   TF_VAR_project_id: ${{ inputs.gcp-project-id }}
@@ -107,7 +107,7 @@ jobs:
         run: |
           terraform init \
           -backend-config "bucket=${{env.TF_VAR_tf_state_bucket}}" \
-          -backend-config "prefix=terraform/state"
+          -backend-config "prefix=terraform/int-state"
 
       - name: Terraform Plan
         run: terraform plan -input=false -out terraform-plan-gcp
