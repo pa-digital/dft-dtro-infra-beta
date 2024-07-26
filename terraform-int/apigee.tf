@@ -1,3 +1,13 @@
+resource "google_apigee_organization" "apigee_org" {
+  project_id = local.project_id
+}
+
+resource "google_apigee_instance" "apigee_instance" {
+  name     = "${var.application_name}-apigee-instance"
+  location = var.region
+  org_id   = google_apigee_organization.apigee_org.id
+}
+
 resource "google_apigee_environment" "apigee_env" {
   org_id       = data.google_apigee_organization.apigee_org.id
   name         = "${local.name_prefix}-apigee-environment"

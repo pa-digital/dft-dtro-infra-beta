@@ -74,7 +74,7 @@ resource "google_compute_managed_ssl_certificate" "alb-cert" {
   project = local.project_id
   name    = "${local.name_prefix}-xlb-cert"
   managed {
-    domains = [var.integration_prefix == "" ? var.domain[var.environment] : var.domain[var.integration_prefix]]
+    domains = [var.domain[var.integration_prefix]]
   }
 }
 
@@ -108,7 +108,7 @@ resource "google_compute_instance_template" "apigee_mig" {
     scopes = ["cloud-platform"]
   }
   metadata = {
-    ENDPOINT           = google_apigee_instance.apigee_instance[0].host
+    ENDPOINT           = data.google_apigee_instance.apigee_instance[0].host
     startup-script-url = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
   }
 }
@@ -270,7 +270,7 @@ resource "google_compute_service_attachment" "psc_attachment" {
 
 # Endpoint attachment in apigee project
 resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
-  org_id                 = google_apigee_organization.apigee_org[0].id
+  org_id                 = data.google_apigee_organization.apigee_org[0].id
   endpoint_attachment_id = "${local.name_prefix}-ep-attach-${var.integration_prefix}"
   location               = var.region
   service_attachment     = google_compute_service_attachment.psc_attachment.id
