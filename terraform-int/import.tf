@@ -4,6 +4,6 @@ import {
 }
 
 import {
-  id = "${var.organisation_id}/${var.application_name}-apigee-instance"
+  id = "organizations/${data.google_organization.organisation.id}/${var.application_name}-apigee-instance"
   to = google_apigee_instance.apigee_instance
 }
