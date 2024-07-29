@@ -13,7 +13,6 @@ resource "google_apigee_instance" "apigee_instance" {
   name     = "${var.application_name}-apigee-instance"
   location = var.region
   org_id   = google_apigee_organization.apigee_org.id
-  #   ip_range = "10.9.0.0/22"
 }
 
 resource "google_apigee_environment" "apigee_env" {
