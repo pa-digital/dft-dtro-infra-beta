@@ -16,7 +16,7 @@ resource "google_apigee_instance" "apigee_instance" {
 }
 
 resource "google_apigee_environment" "apigee_env" {
-  org_id       = google_apigee_organization.apigee_org.id
+  org_id       = data.terraform_remote_state.main_environment.google_apigee_organization.apigee_org.id
   name         = "${local.name_prefix}-apigee-environment"
   description  = "${var.environment} ${var.application_name} Apigee Environment"
   display_name = "${local.name_prefix} Environment"
