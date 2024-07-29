@@ -44,6 +44,7 @@ on:
         default: false
 
 env:
+  TF_VAR_integration_prefix: int
   TF_VAR_tf_state_bucket: dft-d-tro-terraform-${{ inputs.environment }}
   TF_VAR_environment: ${{ inputs.environment }}
   TF_VAR_region: ${{ inputs.gcp-region }}
@@ -72,7 +73,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: terraform
+        working-directory: terraform-int
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -106,13 +107,13 @@ jobs:
         run: |
           terraform init \
           -backend-config "bucket=${{env.TF_VAR_tf_state_bucket}}" \
-          -backend-config "prefix=terraform/state"
+          -backend-config "prefix=terraform/int-state"
 
       - name: Terraform Plan
         run: terraform plan -input=false -out terraform-plan-gcp
 
-      - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false terraform-plan-gcp
+#      - name: Terraform Apply
+#        run: terraform apply -auto-approve -input=false terraform-plan-gcp
 
       - name: Terraform output
         run: terraform output

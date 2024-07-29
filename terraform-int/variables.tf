@@ -10,6 +10,12 @@ variable "environment" {
   default     = "dev"
 }
 
+variable "integration_prefix" {
+  type        = string
+  description = "Prefix to denote if deployment is for integration instance. Left blank if for test instance"
+  default     = ""
+}
+
 variable "region" {
   type        = string
   description = "GCP region to which resources will be deployed."
@@ -34,13 +40,20 @@ variable "project_id" {
   default     = "dft-dtro-dev-01"
 }
 
+variable "org_domain" {
+  type        = string
+  description = "DfT's main domain."
+  default     = "dft.gov.uk"
+}
+
 variable "domain" {
   type        = map(string)
   description = "Name of the domain where the DTRO is published"
   default = {
-    dev  = "dtro-dev.dft.gov.uk"
-    test = "dtro-test.dft.gov.uk"
-    prod = "dtro.dft.gov.uk"
+    dev  = "dtro-integration.dft.gov.uk"
+    test = "dtro-integration.dft.gov.uk"
+    int  = "dtro-integration.dft.gov.uk"
+    prod = "dtro-integration.dft.gov.uk"
   }
 }
 
@@ -204,58 +217,58 @@ variable "serverless_connector_config" {
   }
 }
 
-variable "backend_vpc_ip_range" {
+variable "int_backend_vpc_ip_range" {
   type        = string
   description = "IP range for Backend VPC"
-  default     = "10.0.0.0/28"
+  default     = "11.0.0.0/28"
 }
 
-variable "alb_vpc_ip_range" {
+variable "int_alb_vpc_ip_range" {
   type        = string
   description = "IP range for ALB VPC"
-  default     = "10.64.0.0/28"
+  default     = "11.64.0.0/28"
 }
 
-variable "serverless_connector_ip_range" {
+variable "int_serverless_connector_ip_range" {
   type        = string
   description = "IP range for Serverless VPC Access Connector"
-  default     = "10.200.0.0/28" # CIDR block with "/28" netmask is required
+  default     = "11.200.0.0/28" # CIDR block with "/28" netmask is required
 }
 
-variable "apigee_ip_range" {
+variable "int_apigee_ip_range" {
   type        = string
   description = "IP range for Apigee"
-  default     = "10.10.0.0/16"
+  default     = "11.10.0.0/16"
 }
 
-variable "google_compute_global_address_range" {
+variable "int_google_compute_global_address_range" {
   type        = string
   description = "IP range for the Google global address to manage private VPC connection with Apigee"
-  default     = "10.9.0.0"
+  default     = "11.9.0.0"
 }
 
-variable "ilb_proxy_only_subnetwork_range" {
+variable "int_ilb_proxy_only_subnetwork_range" {
   type        = string
   description = "IP range for the internal ALB proxy only subnetwork"
-  default     = "10.3.0.0/26"
+  default     = "11.3.0.0/26"
 }
 
-variable "ilb_private_subnetwork_range" {
+variable "int_ilb_private_subnetwork_range" {
   type        = string
   description = "IP range for internal ALB private subnetwork"
-  default     = "10.2.1.0/24"
+  default     = "11.2.1.0/24"
 }
 
-variable "psc_private_subnetwork_range" {
+variable "int_psc_private_subnetwork_range" {
   type        = string
   description = "IP range for Private Service Connect private subnetwork"
-  default     = "10.20.1.0/24"
+  default     = "11.20.1.0/24"
 }
 
-variable "psc_subnetwork_range" {
+variable "int_psc_subnetwork_range" {
   type        = string
   description = "IP range for Private Service Connect subnetwork"
-  default     = "10.3.1.0/24"
+  default     = "11.3.1.0/24"
 }
 
 variable "google_compute_global_address_prefix_length" {
@@ -268,6 +281,12 @@ variable "cpu_max_utilization" {
   type        = number
   description = "Maximum utilisation of each CE before auto scaler steps in"
   default     = 0.75
+}
+
+variable "redis_memory_size" {
+  type        = string
+  description = "Redis memory size in GiB"
+  default     = 1
 }
 
 variable "postgres_host" {
