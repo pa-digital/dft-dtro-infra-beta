@@ -3,38 +3,38 @@ locals {
 }
 
 #ALB VPC
-module "alb_vpc_network" {
-  source  = "terraform-google-modules/network/google"
-  version = "~> 9.1"
-
-  project_id   = data.google_project.project.project_id
-  network_name = "${local.name_prefix}-alb-network"
-
-  subnets = [
-    {
-      subnet_name   = "alb-subnet"
-      subnet_ip     = var.int_alb_vpc_ip_range
-      subnet_region = var.region
-    }
-  ]
-}
+# module "alb_vpc_network" {
+#   source  = "terraform-google-modules/network/google"
+#   version = "~> 9.1"
+#
+#   project_id   = data.google_project.project.project_id
+#   network_name = "${local.name_prefix}-alb-network"
+#
+#   subnets = [
+#     {
+#       subnet_name   = "alb-subnet"
+#       subnet_ip     = var.int_alb_vpc_ip_range
+#       subnet_region = var.region
+#     }
+#   ]
+# }
 
 # Private VPC connection with Apigee network
-resource "google_compute_global_address" "private_ip_address" {
-  project       = local.project_id
-  name          = "${local.name_prefix}-apigee-ip-address"
-  purpose       = "VPC_PEERING"
-  address_type  = "INTERNAL"
-  address       = var.int_google_compute_global_address_range
-  prefix_length = var.google_compute_global_address_prefix_length
-  network       = module.alb_vpc_network.network_id
-}
+# resource "google_compute_global_address" "private_ip_address" {
+#   project       = local.project_id
+#   name          = "${local.name_prefix}-apigee-ip-address"
+#   purpose       = "VPC_PEERING"
+#   address_type  = "INTERNAL"
+#   address       = var.int_google_compute_global_address_range
+#   prefix_length = var.google_compute_global_address_prefix_length
+#   network       = module.alb_vpc_network.network_id
+# }
 
-resource "google_service_networking_connection" "private_vpc_connection" {
-  network                 = module.alb_vpc_network.network_id
-  service                 = "servicenetworking.googleapis.com"
-  reserved_peering_ranges = [google_compute_global_address.private_ip_address.name]
-}
+# resource "google_service_networking_connection" "private_vpc_connection" {
+#   network                 = module.alb_vpc_network.network_id
+#   service                 = "servicenetworking.googleapis.com"
+#   reserved_peering_ranges = [google_compute_global_address.private_ip_address.name]
+# }
 
 #Backend VPC
 module "backend_vpc_network" {

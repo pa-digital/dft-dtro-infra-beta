@@ -21,7 +21,6 @@ resource "google_apigee_environment" "apigee_env" {
   description  = "${var.environment} ${var.application_name} Apigee Environment"
   display_name = "${local.name_prefix} Environment"
   type         = "INTERMEDIATE"
-  depends_on   = [google_service_networking_connection.private_vpc_connection]
 }
 
 resource "google_apigee_instance_attachment" "attachment" {

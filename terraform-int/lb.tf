@@ -10,7 +10,7 @@ module "loadbalancer" {
   project = local.project_id
 
   target_tags       = [local.apigee-mig-proxy]
-  firewall_networks = [module.alb_vpc_network.network_id]
+  firewall_networks = [data.google_compute_network.alb_vpc_network.id]
 
   backends = {
     dtro = {
@@ -84,7 +84,7 @@ resource "google_compute_subnetwork" "apigee_mig" {
   name                     = "${local.apigee-mig}-subnetwork"
   ip_cidr_range            = var.int_apigee_ip_range
   region                   = var.region
-  network                  = module.alb_vpc_network.network_id
+  network                  = data.google_compute_network.alb_vpc_network.id
   private_ip_google_access = true
 }
 
@@ -100,7 +100,7 @@ resource "google_compute_instance_template" "apigee_mig" {
     disk_size_gb = 20
   }
   network_interface {
-    network    = module.alb_vpc_network.network_id
+    network    = data.google_compute_network.alb_vpc_network.id
     subnetwork = google_compute_subnetwork.apigee_mig.id
   }
   service_account {
@@ -115,9 +115,9 @@ resource "google_compute_instance_template" "apigee_mig" {
 
 resource "google_compute_region_instance_group_manager" "apigee_mig" {
   project            = local.project_id
-  name               = "${local.apigee-mig}-proxy"
+  name               = "${local.apigee-mig}-int-proxy"
   region             = var.region
-  base_instance_name = "${local.apigee-mig}-proxy"
+  base_instance_name = "${local.apigee-mig}-int-proxy"
   target_size        = 2
   version {
     name              = "appserver-canary"
