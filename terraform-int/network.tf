@@ -1,5 +1,5 @@
 locals {
-  serverless_connector_subnet_name = "serverless-connector-subnet"
+  serverless_connector_subnet_name = "serverless-connector-subnet-int"
 }
 
 #ALB VPC

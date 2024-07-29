@@ -1,5 +1,5 @@
 locals {
-  apigee-mig = "apigee-mig"
+  apigee-mig = "apigee-mig-int"
 }
 
 # External Load Balancer
