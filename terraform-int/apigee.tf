@@ -1,12 +1,12 @@
 resource "google_apigee_organization" "apigee_org" {
-  project_id = local.project_id
-    analytics_region   = var.region
-    display_name       = "${local.name_prefix}-apigee-org"
-    description        = "Terraform-provisioned D-TRO Apigee Org."
-    runtime_type       = "CLOUD"
-    authorized_network = module.alb_vpc_network.network_id
-    retention          = "DELETION_RETENTION_UNSPECIFIED"
-    billing_type       = "PAYG"
+  project_id         = local.project_id
+  analytics_region   = var.region
+  display_name       = "${local.name_prefix}-apigee-org"
+  description        = "Terraform-provisioned D-TRO Apigee Org."
+  runtime_type       = "CLOUD"
+  authorized_network = module.alb_vpc_network.network_id
+  retention          = "DELETION_RETENTION_UNSPECIFIED"
+  billing_type       = "PAYG"
 }
 
 resource "google_apigee_instance" "apigee_instance" {
