@@ -115,6 +115,9 @@ jobs:
 #      - name: Terraform Apply
 #        run: terraform apply -auto-approve -input=false terraform-plan-gcp
 
+      - name: Terraform output
+        run: terraform output
+
   deploy-apigee-proxies-and-portal:
     if: ${{ inputs.run-apigee-1 }}
     name: Deploy GCP Apigee proxies and portal to ${{ inputs.environment }}
