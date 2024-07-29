@@ -75,12 +75,6 @@ variable "default_machine_type" {
   default     = "e2-micro"
 }
 
-variable "dtro_service_image" {
-  type        = string
-  description = "The name of an image being pushed for publish service."
-  default     = "dft-dtro-beta"
-}
-
 variable "wip_service_account" {
   type        = string
   description = "Service account from Workflow Identity Provider for Terraform to deploy resources."
@@ -89,6 +83,12 @@ variable "wip_service_account" {
 variable "execution_service_account" {
   type        = string
   description = "Service account for executing GCP applications."
+}
+
+variable "dtro_service_image" {
+  type        = string
+  description = "The name of an image being pushed for publish service."
+  default     = "dft-dtro-beta"
 }
 
 variable "tag" {
