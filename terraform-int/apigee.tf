@@ -4,7 +4,7 @@ resource "google_apigee_organization" "apigee_org" {
   display_name       = "${var.application_name}-${var.environment}-apigee-org"
   description        = "Terraform-provisioned D-TRO Apigee Org."
   runtime_type       = "CLOUD"
-  authorized_network = data.google_compute_network.alb_vpc_network
+  authorized_network = data.google_compute_network.alb_vpc_network.id
   retention          = "DELETION_RETENTION_UNSPECIFIED"
   billing_type       = "PAYG"
 }
