@@ -50,10 +50,10 @@ variable "domain" {
   type        = map(string)
   description = "Name of the domain where the DTRO is published"
   default = {
-    dev  = "dtro-dev.dft.gov.uk"
-    test = "dtro-test.dft.gov.uk"
+    dev  = "dtro-integration.dft.gov.uk"
+    test = "dtro-integration.dft.gov.uk"
     int  = "dtro-integration.dft.gov.uk"
-    prod = "dtro.dft.gov.uk"
+    prod = "dtro-integration.dft.gov.uk"
   }
 }
 
