@@ -1,7 +1,7 @@
 resource "google_apigee_organization" "apigee_org" {
   project_id         = local.project_id
   analytics_region   = var.region
-  display_name       = "${local.name_prefix}-apigee-org"
+  display_name       = "${var.application_name}-${var.environment}-apigee-org"
   description        = "Terraform-provisioned D-TRO Apigee Org."
   runtime_type       = "CLOUD"
   authorized_network = module.alb_vpc_network.network_id
