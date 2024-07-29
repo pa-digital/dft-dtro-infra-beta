@@ -20,7 +20,7 @@ resource "google_apigee_environment" "apigee_env" {
   org_id       = google_apigee_organization.apigee_org.id
   name         = "${local.name_prefix}-apigee-environment"
   description  = "${var.environment} ${var.application_name} Apigee Environment"
-  display_name = "${local.name_prefix} Environment"
+  display_name = "${var.environment} ${var.application_name} Environment"
   type         = "INTERMEDIATE"
   depends_on   = [google_service_networking_connection.private_vpc_connection]
 }
