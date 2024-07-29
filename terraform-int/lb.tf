@@ -108,7 +108,7 @@ resource "google_compute_instance_template" "apigee_mig" {
     scopes = ["cloud-platform"]
   }
   metadata = {
-    ENDPOINT           = google_apigee_instance.apigee_instance.host
+    ENDPOINT           = data.terraform_remote_state.primary_default_tfstate.outputs.apigee_instance_host
     startup-script-url = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
   }
 }
@@ -270,7 +270,7 @@ resource "google_compute_service_attachment" "psc_attachment" {
 
 # Endpoint attachment in apigee project
 resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
-  org_id                 = google_apigee_organization.apigee_org.id
+  org_id                 = data.terraform_remote_state.primary_default_tfstate.outputs.apigee_org.id
   endpoint_attachment_id = "${local.name_prefix}-ep-attach-${var.environment}"
   location               = var.region
   service_attachment     = google_compute_service_attachment.psc_attachment.id
