@@ -85,7 +85,7 @@ jobs:
         shell: bash
         working-directory: apigee
     env:
-      name_prefix: dtro-${{ env.TF_VAR_integration_prefix }}-apigee
+      name_prefix: dtro-int-apigee
     steps:
       - name: Checkout
         uses: actions/checkout@v4
