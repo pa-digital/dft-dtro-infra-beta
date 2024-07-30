@@ -4,14 +4,15 @@
 ORG=$apigee_organisation
 TOKEN=$1
 env=$env
+env_name_prefix=$env_name_prefix
 
   # Make the API call
   RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "https://apigee.googleapis.com/v1/organizations/${ORG}/sites" \
     -H "Authorization: Bearer ${TOKEN}" \
     -H "Content-Type: application/json" \
     -d '{
-      "name": "'"${env^} Developer D-TRO Portal"'",
-      "description": "'"This is the ${env^} Developer Portal for D-TRO"'"
+      "name": "'"${env_name_prefix^} Developer D-TRO Portal"'",
+      "description": "'"This is the ${env_name_prefix^} Developer Portal for D-TRO"'"
     }')
 
   # Error checking and handling

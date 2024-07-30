@@ -19,7 +19,7 @@ resource "google_apigee_environment" "apigee_env" {
   org_id       = data.terraform_remote_state.primary_default_tfstate.outputs.apigee_org
   name         = "${local.name_prefix}-apigee-environment"
   description  = "${var.environment} ${var.application_name} Apigee Environment"
-  display_name = "${local.name_prefix} Environment"
+  display_name = "${var.integration_prefix} ${var.application_name} Environment"
   type         = "INTERMEDIATE"
 }
 
