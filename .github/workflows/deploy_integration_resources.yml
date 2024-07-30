@@ -50,8 +50,8 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.WIP_SERVICE_ACCOUNT }}
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }} #TODO: Change to test after verification
+          service_account: ${{ secrets.WIP_SERVICE_ACCOUNT }} #TODO: Change to test after verification
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -84,8 +84,6 @@ jobs:
       run:
         shell: bash
         working-directory: apigee
-    env:
-      name_prefix: dtro-int-apigee
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -98,8 +96,8 @@ jobs:
         env:
           github_ref: ${{ github.ref }}
           environment: ${{ env.TF_VAR_integration_prefix }}
-          service_account: ${{ secrets.wip_service_account }}
-          apigee_organisation: ${{ vars.gcp-project-id }}
+          service_account: ${{ env.TF_VAR_execution_service_account }}
+          apigee_organisation: ${{ env.TF_VAR_project_id }}
 
       - name: Authenticate to Google Cloud
         id: google-auth
@@ -130,4 +128,4 @@ jobs:
         run: |
           env=$env
           apigeecli apis create bundle --name oauth-generator --proxy-zip proxy.zip --token "${{ steps.google-auth.outputs.access_token }}" --org "$apigee_organisation" --ovr --wait=true
-          apigeecli apis deploy --env "${{ env.name_prefix }}-environment" --name oauth-generator --token "${{ steps.google-auth.outputs.access_token }}" --org "$apigee_organisation" --ovr #--wait=true
+          apigeecli apis deploy --env "dtro-${{ env.TF_VAR_integration_prefix }}-apigee-environment" --name oauth-generator --token "${{ steps.google-auth.outputs.access_token }}" --org "$apigee_organisation" --ovr #--wait=true
