@@ -58,7 +58,7 @@ variable "application_name" {
 
 variable "default_machine_type" {
   type        = string
-  description = "Defualt machine type to use for non-application Compute Engines."
+  description = "Default machine type to use for non-application Compute Engines."
   default     = "e2-micro"
 }
 
@@ -266,7 +266,7 @@ variable "google_compute_global_address_prefix_length" {
 
 variable "cpu_max_utilization" {
   type        = number
-  description = "Maximum utilisation of each CE before auto scaler steps in"
+  description = "Maximum utilisation of each CE before autoscaler steps in"
   default     = 0.75
 }
 
