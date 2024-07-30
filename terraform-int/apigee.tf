@@ -16,7 +16,7 @@
 # }
 
 resource "google_apigee_environment" "apigee_env" {
-  org_id       = data.terraform_remote_state.primary_default_tfstate.outputs.apigee_org.id
+  org_id       = data.terraform_remote_state.primary_default_tfstate.outputs.apigee_org
   name         = "${local.name_prefix}-apigee-environment"
   description  = "${var.environment} ${var.application_name} Apigee Environment"
   display_name = "${local.name_prefix} Environment"
@@ -31,7 +31,7 @@ resource "google_apigee_instance_attachment" "attachment" {
 resource "google_apigee_envgroup" "env_group" {
   name      = "${local.name_prefix}-apigee-environment-group"
   hostnames = [var.domain[var.environment]]
-  org_id    = data.terraform_remote_state.primary_default_tfstate.outputs.apigee_org.id
+  org_id    = data.terraform_remote_state.primary_default_tfstate.outputs.apigee_org
 }
 
 resource "google_apigee_envgroup_attachment" "group_attachment" {
