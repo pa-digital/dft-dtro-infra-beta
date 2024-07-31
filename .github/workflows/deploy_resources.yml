@@ -26,7 +26,8 @@ on:
         default: false
       checkov-skip-check:
         type: string
-        required: true
+        required: false
+        default: false
       run-terraform:
         type: boolean
         description: Run terraform?
@@ -98,7 +99,7 @@ jobs:
         if: ${{ inputs.do-validation-checks }}
         uses: bridgecrewio/checkov-action@v12
         with:
-          skip_check: ${{ inputs.checkov-skip-check }}
+          skip_check: ${{ vars.CHECKOV_SKIP_CHECK }}
           output_format: github_failed_only
           output_file_path: console
 
