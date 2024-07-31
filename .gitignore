@@ -1,4 +1,4 @@
 /.idea/
-/.github/temp_storge_of_tf_files/.gitignore
+/.github/temp_storge_of_tf_files/
 /terraform/.terraform/
 /terraform-int/.terraform/
