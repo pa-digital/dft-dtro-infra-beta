@@ -8,6 +8,10 @@ on:
         required: true
       execution_service_account:
         required: true
+      dft_organisation:
+        required: true
+      dft_organisation_id:
+        required: true
       access_level_members:
         required: true
     inputs:
@@ -49,10 +53,11 @@ env:
   TF_VAR_environment: ${{ inputs.environment }}
   TF_VAR_region: ${{ inputs.gcp-region }}
   TF_VAR_project_id: ${{ inputs.gcp-project-id }}
+  TF_VAR_organisation: ${{ secrets.dft-organisation }}
+  TF_VAR_organisation_id: ${{ secrets.dft-organisation-id }}
   TF_VAR_execution_service_account: ${{ secrets.execution_service_account }}
   TF_VAR_wip_service_account: ${{ secrets.wip_service_account }}
   TF_VAR_access_level_members: ${{ secrets.access_level_members }}
-#  TF_LOG: DEBUG
 
 permissions:
   contents: read

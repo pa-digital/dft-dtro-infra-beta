@@ -19,6 +19,8 @@ env:
   TF_VAR_integration_prefix: int
   TF_VAR_region: ${{ vars.DEFAULT_GCP_REGION }}
   TF_VAR_project_id: ${{ vars.GCP_PROJECT_ID_DEV }} #TODO: Change to test after verification
+  TF_VAR_organisation: ${{ vars.DFT_ORGANISATION }}
+  TF_VAR_organisation_id: ${{ vars.DFT_ORGANISATION_ID }}
   TF_VAR_execution_service_account: ${{ secrets.EXECUTION_SERVICE_ACCOUNT }}
   TF_VAR_wip_service_account: ${{ secrets.WIP_SERVICE_ACCOUNT }}
   TF_VAR_access_level_members: ${{ secrets.ACCESS_LEVEL_MEMBERS }}
