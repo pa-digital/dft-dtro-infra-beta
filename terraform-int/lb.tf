@@ -2,7 +2,7 @@ locals {
   apigee-mig = "apigee-mig-int"
 }
 
-# External Load Balancer
+# External Load Balancer for D-TRO
 module "loadbalancer" {
   source  = "GoogleCloudPlatform/lb-http/google"
   version = "~> 10.0.0"
@@ -78,7 +78,83 @@ resource "google_compute_managed_ssl_certificate" "alb-cert" {
   }
 }
 
-# Managed Instance Group
+# External Load Balancer for CSO Portal UI
+module "loadbalancer" {
+  source  = "GoogleCloudPlatform/lb-http/google"
+  version = "~> 10.0.0"
+  name    = "${local.name_prefix}-ui-xlb"
+  project = local.project_id
+
+  target_tags       = []#TODO
+  firewall_networks = [data.google_compute_network.alb_vpc_network.id]
+
+  backends = {
+    dtro = {
+      description          = "D-TRO CSO Service UI"
+      protocol             = "HTTPS"
+      port_name            = "https"
+      security_policy      = ""
+      edge_security_policy = ""
+      timeout_sec          = 302
+      enable_cdn           = false
+
+      health_check = {
+        check_interval_sec  = 30
+        timeout_sec         = 10
+        healthy_threshold   = 2
+        unhealthy_threshold = 2
+        port                = 443
+        request_path        = "/healthz/ingress"
+      }
+
+      groups = [
+        {
+          group           = #TODO
+          max_utilization = var.cpu_max_utilization
+        }
+      ]
+
+      iap_config = {
+        enable               = false
+        oauth2_client_id     = ""
+        oauth2_client_secret = ""
+      }
+
+      log_config = {
+        enable      = false
+        sample_rate = null
+      }
+    }
+  }
+
+  # Enable SSL support
+  ssl                             = true
+  create_address                  = false
+  address                         = google_compute_global_address.ui_external_ipv4_address.address
+  http_forward                    = false
+  ssl_certificates                = [google_compute_managed_ssl_certificate.ui-alb-cert.id]
+  managed_ssl_certificate_domains = []
+  create_url_map                  = true
+
+  depends_on = [google_compute_global_address.ui_external_ipv4_address, google_compute_managed_ssl_certificate.ui-alb-cert]
+}
+
+# Create IPV4 HTTPS IP Address
+resource "google_compute_global_address" "ui_external_ipv4_address" {
+  project    = local.project_id
+  name       = "${local.name_prefix}-ui-xlb-ipv4-address"
+  ip_version = "IPV4"
+}
+
+resource "google_compute_managed_ssl_certificate" "ui-alb-cert" {
+  project = local.project_id
+  name    = "${local.name_prefix}-ui-xlb-cert"
+  managed {
+    domains = [var.domain[var.integration_prefix]]
+  }
+}
+
+# Managed Instance Group for Apigee
 resource "google_compute_subnetwork" "apigee_mig" {
   project                  = local.project_id
   name                     = "${local.apigee-mig}-subnetwork"

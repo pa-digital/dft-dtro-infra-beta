@@ -36,6 +36,16 @@ resource "google_service_networking_connection" "private_vpc_connection" {
   reserved_peering_ranges = [google_compute_global_address.private_ip_address.name]
 }
 
+# Serverless network endpoint for Service UI Cloud Run instance
+resource "google_compute_region_network_endpoint_group" "cloudrun_neg" {
+  name                  = "${local.name_prefix}-ui-neg"
+  network_endpoint_type = "SERVERLESS"
+  region                = var.region
+  cloud_run {
+    service = "dtro-${var.environment}-dft-dtro-beta"
+  }
+}
+
 #Backend VPC
 module "backend_vpc_network" {
   source  = "terraform-google-modules/network/google"
