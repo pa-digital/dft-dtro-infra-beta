@@ -148,13 +148,10 @@ resource "google_compute_region_autoscaler" "apigee_autoscaler" {
 
 # External Load Balancer for CSO Portal UI
 module "ui_loadbalancer" {
-  source  = "GoogleCloudPlatform/lb-http/google"
+  source  = "GoogleCloudPlatform/lb-http/google//modules/serverless_negs"
   version = "~> 10.0.0"
   name    = "${local.name_prefix}-ui-xlb"
   project = local.project_id
-
-  target_tags       = [local.service-ui-mig]
-  firewall_networks = [module.alb_vpc_network.network_id]
 
   backends = {
     ui = {
@@ -168,8 +165,7 @@ module "ui_loadbalancer" {
 
       groups = [
         {
-          group           = google_compute_region_network_endpoint_group.cloudrun_neg.id
-          max_utilization = var.cpu_max_utilization
+          group = google_compute_region_network_endpoint_group.cloudrun_neg.id
         }
       ]
 
