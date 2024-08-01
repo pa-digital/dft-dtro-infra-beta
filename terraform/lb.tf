@@ -157,7 +157,7 @@ module "ui_loadbalancer" {
   firewall_networks = [module.alb_vpc_network.network_id]
 
   backends = {
-    dtro = {
+    ui = {
       description          = "D-TRO CSO Service UI"
       protocol             = "HTTPS"
       port_name            = "https"
@@ -165,15 +165,6 @@ module "ui_loadbalancer" {
       edge_security_policy = ""
       timeout_sec          = 302
       enable_cdn           = false
-
-      health_check = {
-        check_interval_sec  = 30
-        timeout_sec         = 10
-        healthy_threshold   = 2
-        unhealthy_threshold = 2
-        port                = 443
-        request_path        = "/healthz/ingress"
-      }
 
       groups = [
         {
