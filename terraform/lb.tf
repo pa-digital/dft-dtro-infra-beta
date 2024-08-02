@@ -155,13 +155,9 @@ module "ui_loadbalancer" {
 
   backends = {
     ui = {
-      description          = "D-TRO CSO Service UI"
-      protocol             = "HTTPS"
-      port_name            = "https"
-      security_policy      = ""
-      edge_security_policy = ""
-      timeout_sec          = 302
-      enable_cdn           = false
+      description = "D-TRO CSO Service UI"
+      timeout_sec = 302
+      enable_cdn  = false
 
       groups = [
         {
