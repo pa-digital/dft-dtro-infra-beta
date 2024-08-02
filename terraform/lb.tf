@@ -149,7 +149,7 @@ resource "google_compute_region_autoscaler" "apigee_autoscaler" {
 # External Load Balancer for CSO Portal UI
 module "ui_loadbalancer" {
   source  = "GoogleCloudPlatform/lb-http/google//modules/serverless_negs"
-  version = "~> 10.0.0"
+  version = "~> 11.1.0"
   name    = "${local.name_prefix}-ui-xlb"
   project = local.project_id
 
