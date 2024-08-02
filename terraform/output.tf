@@ -9,7 +9,3 @@ output "apigee_instance_id" {
 output "apigee_instance_host" {
   value = google_apigee_instance.apigee_instance.host
 }
-
-output "apigee_target_service_url" {
-  value = google_apigee_environment.apigee_env.
-}
