@@ -258,6 +258,18 @@ variable "psc_subnetwork_range" {
   default     = "10.3.1.0/24"
 }
 
+variable "ui_vpc_connector_range" {
+  type        = string
+  description = "IP range for Private Service Connect private subnetwork"
+  default     = "10.30.1.0/24"
+}
+
+variable "ui_psc_subnetwork_range" {
+  type        = string
+  description = "IP range for Private Service Connect subnetwork"
+  default     = "10.4.1.0/24"
+}
+
 variable "google_compute_global_address_prefix_length" {
   type        = number
   description = "Prefix length of the google_compute_global_address_range"

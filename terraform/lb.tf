@@ -285,7 +285,7 @@ resource "google_compute_forwarding_rule" "internal_lb_forwarding_rule" {
 
 ############################################################################
 
-# Private Service Connect
+# Private Service Connect: Apigee -> D-TRO Cloud Run instances
 resource "google_compute_network" "psc_network" {
   project                 = local.project_id
   name                    = "${local.name_prefix}-psc-network"
@@ -334,4 +334,55 @@ resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
   endpoint_attachment_id = "${local.name_prefix}-ep-attach-${var.environment}"
   location               = var.region
   service_attachment     = google_compute_service_attachment.psc_attachment.id
+}
+
+# Private Service Connect: CSP Service UI -> Apigee
+resource "google_compute_network" "ui_psc_network" {
+  project                 = local.project_id
+  name                    = "${local.name_prefix}-ui-psc-network"
+  auto_create_subnetworks = false
+}
+
+# resource "google_compute_subnetwork" "ui_psc_private_subnetwork" {
+#   project       = local.project_id
+#   name          = "${local.name_prefix}-ui-psc-private-subnetwork"
+#   ip_cidr_range = var.ui_psc_private_subnetwork_range
+#   region        = var.region
+#   network       = google_compute_network.ui_psc_network.id
+#   purpose       = "PRIVATE"
+# }
+
+resource "google_compute_subnetwork" "ui_psc_subnetwork" {
+  project       = local.project_id
+  name          = "${local.name_prefix}-ui-psc-subnetwork"
+  ip_cidr_range = var.ui_psc_subnetwork_range
+  region        = var.region
+  network       = google_compute_network.ui_psc_network.id
+  purpose       = "PRIVATE_SERVICE_CONNECT"
+}
+
+resource "google_compute_address" "ui_psc_address" {
+  project      = local.project_id
+  name         = "${local.name_prefix}-ui-psc-ip"
+  region       = var.region
+  address_type = "INTERNAL"
+  subnetwork   = google_compute_subnetwork.ui_psc_subnetwork.id
+}
+
+resource "google_compute_service_attachment" "ui_psc_attachment" {
+  project               = local.project_id
+  name                  = "${local.name_prefix}-ui-psc-attachment"
+  region                = var.region
+  enable_proxy_protocol = false
+  connection_preference = "ACCEPT_AUTOMATIC"
+  nat_subnets           = [google_compute_subnetwork.ui_psc_subnetwork.id]
+  target_service        = "https://apigee.googleapis.com/v1/organizations/${var.project_id}/environments/${google_apigee_environment.apigee_env.name}/attachedService"
+}
+
+# Endpoint attachment in the Cloud RUn CSO Service UI project
+resource "google_vpc_access_connector" "ui_vpc_connector" {
+  name          = "cloud-run-connector"
+  network       = google_compute_network.ui_psc_network.id
+  region        = var.region
+  ip_cidr_range = var.ui_vpc_connector_range
 }
