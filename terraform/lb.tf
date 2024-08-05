@@ -381,9 +381,9 @@ resource "google_compute_service_attachment" "ui_psc_attachment" {
 
 # Endpoint attachment in the Cloud Run CSO Service UI project
 resource "google_vpc_access_connector" "ui_vpc_connector" {
-  name    = "cloud-run-connector"
-  network = google_compute_network.ui_psc_network.id
-  region  = var.region
+  name = "cloud-run-connector"
+  #   network = google_compute_network.ui_psc_network.id
+  region = var.region
   subnet {
     project_id = data.google_project.project.project_id
     name       = google_compute_subnetwork.ui_psc_subnetwork.name
