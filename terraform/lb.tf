@@ -343,14 +343,14 @@ resource "google_compute_network" "ui_psc_network" {
   auto_create_subnetworks = false
 }
 
-# resource "google_compute_subnetwork" "ui_psc_private_subnetwork" {
-#   project       = local.project_id
-#   name          = "${local.name_prefix}-ui-psc-private-subnetwork"
-#   ip_cidr_range = var.ui_psc_private_subnetwork_range
-#   region        = var.region
-#   network       = google_compute_network.ui_psc_network.id
-#   purpose       = "PRIVATE"
-# }
+resource "google_compute_subnetwork" "ui_psc_private_subnetwork" {
+  project       = local.project_id
+  name          = "${local.name_prefix}-ui-psc-private-subnetwork"
+  ip_cidr_range = var.ui_psc_private_subnetwork_range
+  region        = var.region
+  network       = google_compute_network.ui_psc_network.id
+  purpose       = "PRIVATE"
+}
 
 resource "google_compute_subnetwork" "ui_psc_subnetwork" {
   project       = local.project_id
@@ -366,7 +366,7 @@ resource "google_compute_address" "ui_psc_address" {
   name         = "${local.name_prefix}-ui-psc-ip"
   region       = var.region
   address_type = "INTERNAL"
-  subnetwork   = google_compute_subnetwork.ui_psc_subnetwork.id
+  subnetwork   = google_compute_subnetwork.ui_psc_private_subnetwork.id
 }
 
 resource "google_compute_service_attachment" "ui_psc_attachment" {
@@ -379,10 +379,13 @@ resource "google_compute_service_attachment" "ui_psc_attachment" {
   target_service        = "https://apigee.googleapis.com/v1/organizations/${var.project_id}/environments/${google_apigee_environment.apigee_env.name}/attachedService"
 }
 
-# Endpoint attachment in the Cloud RUn CSO Service UI project
+# Endpoint attachment in the Cloud Run CSO Service UI project
 resource "google_vpc_access_connector" "ui_vpc_connector" {
-  name          = "cloud-run-connector"
-  network       = google_compute_network.ui_psc_network.id
-  region        = var.region
-  ip_cidr_range = var.ui_vpc_connector_range
+  name    = "cloud-run-connector"
+  network = google_compute_network.ui_psc_network.id
+  region  = var.region
+  subnet {
+    project_id = data.google_project.project.project_id
+    name       = google_compute_subnetwork.ui_psc_subnetwork.name
+  }
 }
