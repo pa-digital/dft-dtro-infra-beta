@@ -376,7 +376,7 @@ resource "google_compute_service_attachment" "ui_psc_attachment" {
   enable_proxy_protocol = false
   connection_preference = "ACCEPT_AUTOMATIC"
   nat_subnets           = [google_compute_subnetwork.ui_psc_subnetwork.id]
-  target_service        = "https://apigee.googleapis.com/v1/organizations/${var.project_id}/environments/${google_apigee_environment.apigee_env.name}/attachedService"
+  target_service        = var.apigee_service_endpoint
 }
 
 # Endpoint attachment in the Cloud Run CSO Service UI project

@@ -30,6 +30,7 @@ jobs:
       dft_organisation: ${{ secrets.DFT_ORGANISATION }}
       dft_organisation_id: ${{ secrets.DFT_ORGANISATION_ID }}
       access_level_members: ${{ secrets.ACCESS_LEVEL_MEMBERS }}
+      apigee_service_endpoint: ${{ secrets.APIGEE_SERVICE_ENDPOINT_DEV }}
     with:
       gcp-project-id: ${{ vars.GCP_PROJECT_ID_DEV }}
       gcp-region: ${{ vars.DEFAULT_GCP_REGION }}

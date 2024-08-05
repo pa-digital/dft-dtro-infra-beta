@@ -288,6 +288,11 @@ variable "cpu_max_utilization" {
   default     = 0.75
 }
 
+variable "apigee_service_endpoint" {
+  type        = string
+  description = "apigee_service_endpoint"
+}
+
 variable "postgres_host" {
   type        = string
   description = "Postgres database host"
