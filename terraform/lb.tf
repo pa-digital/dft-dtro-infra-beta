@@ -207,7 +207,7 @@ resource "google_compute_managed_ssl_certificate" "ui-alb-cert" {
 
 ############################################################################
 
-# Internal Load Balancer
+# Internal Load Balancer between Apigee and Cloud Run
 # Create a proxy-only subnetwork for internal load balancer
 resource "google_compute_subnetwork" "proxy_only_subnetwork" {
   project       = local.project_id
@@ -283,9 +283,7 @@ resource "google_compute_forwarding_rule" "internal_lb_forwarding_rule" {
   subnetwork            = google_compute_subnetwork.private_subnetwork.id
 }
 
-############################################################################
-
-# Private Service Connect: Apigee -> D-TRO Cloud Run instances
+# Private Service Connect
 resource "google_compute_network" "psc_network" {
   project                 = local.project_id
   name                    = "${local.name_prefix}-psc-network"
@@ -336,56 +334,193 @@ resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
   service_attachment     = google_compute_service_attachment.psc_attachment.id
 }
 
-# Private Service Connect: CSP Service UI -> Apigee
-resource "google_compute_network" "ui_psc_network" {
+############################################################################
+
+# Internal Load Balancer between Cloud Run CSO UI and Apigee
+# Create a proxy-only subnetwork for internal load balancer
+
+resource "google_compute_network" "ui_ilb_network" {
   project                 = local.project_id
-  name                    = "${local.name_prefix}-ui-psc-network"
+  name                    = "${local.name_prefix}-ui-ilb-network"
   auto_create_subnetworks = false
 }
 
-resource "google_compute_subnetwork" "ui_psc_private_subnetwork" {
+# Proxy only subnetwork for source address for ui_ilb_subnetwork
+resource "google_compute_subnetwork" "proxy_only_ui_subnetwork" {
   project       = local.project_id
-  name          = "${local.name_prefix}-ui-psc-private-subnetwork"
-  ip_cidr_range = var.ui_psc_private_subnetwork_range
+  name          = "${local.name_prefix}-loadbalancer-proxy-only-ui-subnetwork"
+  ip_cidr_range = var.ui_ilb_proxy_only_subnetwork_range
   region        = var.region
-  network       = google_compute_network.ui_psc_network.id
+  network       = google_compute_network.ui_ilb_network.id
+  purpose       = "REGIONAL_MANAGED_PROXY"
+  role          = "ACTIVE"
+}
+
+# Create a private subnetwork to apigee for the forwarding rule
+resource "google_compute_subnetwork" "ui_ilb_subnetwork" {
+  project       = local.project_id
+  name          = "${local.name_prefix}-ui-ilb-subnetwork"
+  ip_cidr_range = var.ui_ilb_private_subnetwork_range
+  region        = var.region
+  network       = google_compute_network.ui_ilb_network.id
   purpose       = "PRIVATE"
 }
 
-resource "google_compute_subnetwork" "ui_psc_subnetwork" {
-  project       = local.project_id
-  name          = "${local.name_prefix}-ui-psc-subnetwork"
-  ip_cidr_range = var.ui_psc_subnetwork_range
-  region        = var.region
-  network       = google_compute_network.ui_psc_network.id
-  purpose       = "PRIVATE_SERVICE_CONNECT"
-}
-
-resource "google_compute_address" "ui_psc_address" {
+resource "google_compute_address" "ui_ilb_address" {
   project      = local.project_id
-  name         = "${local.name_prefix}-ui-psc-ip"
+  name         = "${local.name_prefix}-ui-ilb-ip"
   region       = var.region
   address_type = "INTERNAL"
-  subnetwork   = google_compute_subnetwork.ui_psc_private_subnetwork.id
+  subnetwork   = google_compute_subnetwork.ui_ilb_subnetwork.id
+  purpose      = "SHARED_LOADBALANCER_VIP"
 }
 
-resource "google_compute_service_attachment" "ui_psc_attachment" {
+# Create a regional forwarding rule for the internal load balancer
+resource "google_compute_forwarding_rule" "ui_ilb_forwarding_rule" {
   project               = local.project_id
-  name                  = "${local.name_prefix}-ui-psc-attachment"
+  name                  = "${local.name_prefix}-ui-ilb-forwarding-rule"
   region                = var.region
-  enable_proxy_protocol = false
-  connection_preference = "ACCEPT_AUTOMATIC"
-  nat_subnets           = [google_compute_subnetwork.ui_psc_subnetwork.id]
-  target_service        = var.apigee_service_endpoint
+  load_balancing_scheme = "INTERNAL_MANAGED"
+  port_range            = "80"
+  target                = google_compute_region_target_http_proxy.ui_ilb_target_http_proxy.id
+  network               = google_compute_network.ui_ilb_network.id
+  subnetwork            = google_compute_subnetwork.ui_ilb_subnetwork.id
+}
+
+# Create a target HTTP proxy for the URL maps
+resource "google_compute_region_target_http_proxy" "ui_ilb_target_http_proxy" {
+  project = local.project_id
+  name    = "${local.name_prefix}-ui-http-proxy"
+  region  = var.region
+  url_map = google_compute_region_url_map.internal_ui_lb_url_map.self_link
+}
+
+# Create a URL map for the backend services
+resource "google_compute_region_url_map" "internal_ui_lb_url_map" {
+  project         = local.project_id
+  name            = "${local.name_prefix}-ui-url-map"
+  region          = var.region
+  default_service = google_compute_region_backend_service.apigee_backend_service.self_link
+  host_rule {
+    hosts        = ["*"]
+    path_matcher = "${local.name_prefix}-path-matcher"
+  }
+  path_matcher {
+    name            = "${local.name_prefix}-path-matcher"
+    default_service = google_compute_region_backend_service.apigee_backend_service.self_link
+    path_rule {
+      paths   = ["/dtros/*"] #TODO: Is this correct for DTRO?
+      service = google_compute_region_backend_service.apigee_backend_service.self_link
+    }
+  }
+}
+
+# Create a backend service for each Cloud Run service
+resource "google_compute_region_backend_service" "apigee_backend_service" {
+  project               = local.project_id
+  name                  = "${local.apigee-mig}-backend-service"
+  region                = var.region
+  load_balancing_scheme = "INTERNAL_MANAGED"
+  protocol              = "HTTP"
+  backend {
+    group           = google_compute_region_instance_group_manager.apigee_mig.instance_group
+    balancing_mode  = "UTILIZATION"
+    capacity_scaler = 1.0
+  }
+}
+
+resource "google_compute_firewall" "ui_ilb_firewall_rule" {
+  project     = local.project_id
+  name        = "${local.name_prefix}-ui-ilb-firewall-rule"
+  network     = google_compute_network.ui_ilb_network.id
+  description = "Allow incoming from Cloud Run on ssh to Apigee Proxy"
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["allow-ssh", "apigee-mig-proxy"]
+}
+
+resource "google_compute_firewall" "ui_ilb_allow_proxy_firewall_rule" {
+  project     = local.project_id
+  name        = "${local.name_prefix}-ui-ilb-allow-proxy-firewall-rule"
+  network     = google_compute_network.ui_ilb_network.id
+  description = "Allow incoming from Proxy"
+  allow {
+    protocol = "tcp"
+    ports    = ["80", "443", "8080"]
+  }
+  source_ranges = ["11.129.0.0/23"]
+  target_tags   = ["allow_proxy", "load-balanced-backend", "apigee-mig-proxy"]
+}
+
+resource "google_compute_firewall" "health_check_firewall_rule" {
+  project     = local.project_id
+  name        = "${local.name_prefix}-ui-health-check-firewall-rule"
+  network     = google_compute_network.ui_ilb_network.id
+  description = "Allow health check for apigee"
+  allow {
+    protocol = "tcp"
+    ports    = ["443"]
+  }
+  source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
+  target_tags   = ["load-balanced-backend", "apigee-mig-proxy"]
 }
 
 # Endpoint attachment in the Cloud Run CSO Service UI project
 resource "google_vpc_access_connector" "ui_vpc_connector" {
-  name = "cloud-run-connector"
-  #   network = google_compute_network.ui_psc_network.id
+  name   = "cloud-run-connector"
   region = var.region
   subnet {
     project_id = data.google_project.project.project_id
-    name       = google_compute_subnetwork.ui_psc_subnetwork.name
+    name       = google_compute_subnetwork.ui_ilb_subnetwork.name
   }
 }
+
+####
+
+# # Private Service Connect: CSP Service UI -> Apigee
+# resource "google_compute_network" "ui_psc_network" {
+#   project                 = local.project_id
+#   name                    = "${local.name_prefix}-ui-psc-network"
+#   auto_create_subnetworks = false
+# }
+#
+# resource "google_compute_subnetwork" "ui_psc_private_subnetwork" {
+#   project       = local.project_id
+#   name          = "${local.name_prefix}-ui-psc-private-subnetwork"
+#   ip_cidr_range = var.ui_psc_private_subnetwork_range
+#   region        = var.region
+#   network       = google_compute_network.ui_psc_network.id
+#   purpose       = "PRIVATE"
+# }
+#
+# resource "google_compute_subnetwork" "ui_psc_subnetwork" {
+#   project       = local.project_id
+#   name          = "${local.name_prefix}-ui-psc-subnetwork"
+#   ip_cidr_range = var.ui_psc_subnetwork_range
+#   region        = var.region
+#   network       = google_compute_network.ui_psc_network.id
+#   purpose       = "PRIVATE_SERVICE_CONNECT"
+# }
+#
+# resource "google_compute_address" "ui_psc_address" {
+#   project      = local.project_id
+#   name         = "${local.name_prefix}-ui-psc-ip"
+#   region       = var.region
+#   address_type = "INTERNAL"
+#   subnetwork   = google_compute_subnetwork.ui_psc_private_subnetwork.id
+# }
+#
+# resource "google_compute_service_attachment" "ui_psc_attachment" {
+#   project               = local.project_id
+#   name                  = "${local.name_prefix}-ui-psc-attachment"
+#   region                = var.region
+#   enable_proxy_protocol = false
+#   connection_preference = "ACCEPT_AUTOMATIC"
+#   nat_subnets           = [google_compute_subnetwork.ui_psc_subnetwork.id]
+#   target_service        = var.apigee_service_endpoint
+# }
+
+

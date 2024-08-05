@@ -240,10 +240,22 @@ variable "ilb_proxy_only_subnetwork_range" {
   default     = "10.3.0.0/26"
 }
 
+variable "ui_ilb_proxy_only_subnetwork_range" {
+  type        = string
+  description = "IP range for the internal ALB proxy only subnetwork"
+  default     = "11.3.0.0/26"
+}
+
 variable "ilb_private_subnetwork_range" {
   type        = string
   description = "IP range for internal ALB private subnetwork"
   default     = "10.2.1.0/24"
+}
+
+variable "ui_ilb_private_subnetwork_range" {
+  type        = string
+  description = "IP range for internal ALB private subnetwork"
+  default     = "11.2.1.0/24"
 }
 
 variable "psc_private_subnetwork_range" {
@@ -267,7 +279,7 @@ variable "ui_psc_private_subnetwork_range" {
 variable "ui_psc_subnetwork_range" {
   type        = string
   description = "IP range for Private Service Connect subnetwork"
-  default     = "10.4.1.0/24"
+  default     = "10.4.1.0/28"
 }
 
 variable "ui_vpc_connector_range" {
