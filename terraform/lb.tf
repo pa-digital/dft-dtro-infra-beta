@@ -1,6 +1,8 @@
 locals {
-  apigee-mig    = "apigee-mig"
-  ui-apigee-mig = "ui-apigee-mig"
+  apigee-mig          = "apigee-mig"
+  apigee-mig-proxy    = "apigee-mig-proxy"
+  ui-apigee-mig       = "ui-apigee-mig"
+  ui-apigee-mig-proxy = "ui_apigee-mig-proxy"
 }
 
 # External Load Balancer

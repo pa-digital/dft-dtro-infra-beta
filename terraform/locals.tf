@@ -1,6 +1,4 @@
 locals {
-  apigee-mig-proxy       = "apigee-mig-proxy"
-  ui-apigee-mig-proxy    = "ui_apigee-mig-proxy"
   cloud_run_service_name = "${local.name_prefix}-${var.dtro_service_image}"
   database_name          = "${local.name_prefix}-database"
   database_username      = var.application_name
