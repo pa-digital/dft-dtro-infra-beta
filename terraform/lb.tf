@@ -128,6 +128,10 @@ resource "google_compute_region_instance_group_manager" "apigee_mig" {
     name = "https"
     port = 443
   }
+  named_port {
+    name = "http"
+    port = 80
+  }
 }
 
 resource "google_compute_region_autoscaler" "apigee_autoscaler" {
