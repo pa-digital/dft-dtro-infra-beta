@@ -520,7 +520,7 @@ resource "google_compute_instance_template" "ui_apigee_mig" {
     disk_size_gb = 20
   }
   network_interface {
-    network    = module.alb_vpc_network.network_id
+    network    = google_compute_network.ui_ilb_network.id
     subnetwork = google_compute_subnetwork.ui_apigee_mig.id
   }
   service_account {
