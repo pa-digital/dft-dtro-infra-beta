@@ -422,10 +422,20 @@ resource "google_compute_region_backend_service" "apigee_backend_service" {
   region                = var.region
   load_balancing_scheme = "INTERNAL_MANAGED"
   protocol              = "HTTP"
+  health_checks         = [google_compute_region_health_check.ui_ilb_health_check.id]
   backend {
     group           = google_compute_region_instance_group_manager.apigee_mig.instance_group
     balancing_mode  = "UTILIZATION"
     capacity_scaler = 1.0
+  }
+}
+
+resource "google_compute_region_health_check" "ui_ilb_health_check" {
+  project = local.project_id
+  name    = "${local.name_prefix}-ui-ilb-health-check"
+  region  = "europe-west1"
+  http_health_check {
+    port_specification = "USE_SERVING_PORT"
   }
 }
 
@@ -452,7 +462,7 @@ resource "google_compute_firewall" "ui_ilb_allow_proxy_firewall_rule" {
     ports    = ["80", "443", "8080"]
   }
   source_ranges = ["11.129.0.0/23"]
-  target_tags   = ["allow_proxy", "load-balanced-backend", "apigee-mig-proxy"]
+  target_tags   = ["allow-proxy", "load-balanced-backend", "apigee-mig-proxy"]
 }
 
 resource "google_compute_firewall" "health_check_firewall_rule" {
