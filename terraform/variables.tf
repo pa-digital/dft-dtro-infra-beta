@@ -255,7 +255,7 @@ variable "ilb_private_subnetwork_range" {
 variable "ui_ilb_private_subnetwork_range" {
   type        = string
   description = "IP range for internal ALB private subnetwork"
-  default     = "11.2.1.0/24"
+  default     = "11.2.1.0/28"
 }
 
 variable "psc_private_subnetwork_range" {

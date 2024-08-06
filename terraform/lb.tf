@@ -427,7 +427,9 @@ resource "google_compute_region_backend_service" "apigee_backend_service" {
     group           = google_compute_region_instance_group_manager.apigee_mig.instance_group
     balancing_mode  = "UTILIZATION"
     capacity_scaler = 1.0
+    max_utilization = var.cpu_max_utilization
   }
+
 }
 
 resource "google_compute_region_health_check" "ui_ilb_health_check" {
