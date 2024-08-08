@@ -430,7 +430,7 @@ resource "google_compute_region_backend_service" "apigee_backend_service" {
   protocol              = "HTTP"
   health_checks         = [google_compute_region_health_check.ui_ilb_health_check.id]
   backend {
-    group           = google_compute_region_instance_group_manager.ui_apigee_mig[0].instance_group
+    group           = google_compute_region_instance_group_manager.ui_apigee_mig_2.instance_group
     balancing_mode  = "UTILIZATION"
     capacity_scaler = 1.0
     max_utilization = var.cpu_max_utilization
@@ -550,11 +550,27 @@ resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
   }
 }
 
+resource "google_compute_region_instance_group_manager" "ui_apigee_mig_2" {
+  project            = local.project_id
+  name               = "${local.ui-apigee-mig}-proxy"
+  region             = var.region
+  base_instance_name = "${local.ui-apigee-mig}-proxy"
+  target_size        = 1
+  version {
+    name              = "appserver-canary"
+    instance_template = google_compute_instance_template.ui_apigee_mig.self_link_unique
+  }
+  named_port {
+    name = "http"
+    port = 80
+  }
+}
+
 resource "google_compute_region_autoscaler" "ui_apigee_autoscaler" {
   project = local.project_id
   name    = "${local.ui-apigee-mig}-autoscaler"
   region  = var.region
-  target  = google_compute_region_instance_group_manager.ui_apigee_mig[0].id
+  target  = google_compute_region_instance_group_manager.ui_apigee_mig_2.id
   # TODO: Assess if these values are sufficient or requires updating
   autoscaling_policy {
     max_replicas    = 3
