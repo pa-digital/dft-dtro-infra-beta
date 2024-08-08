@@ -13,11 +13,6 @@ on:
         description: Run Apigee job 1?
         required: false
         default: false
-      run-apigee-2:
-        type: boolean
-        description: Run Apigee job 2?
-        required: false
-        default: false
 
 jobs:
   deploy-feature-dev:
@@ -39,4 +34,3 @@ jobs:
       checkov-skip-check: ${{ vars.CHECKOV_SKIP_CHECK }}
       run-terraform: ${{ inputs.run-terraform }}
       run-apigee-1: ${{ inputs.run-apigee-1 }}
-      run-apigee-2: ${{ inputs.run-apigee-2 }}
