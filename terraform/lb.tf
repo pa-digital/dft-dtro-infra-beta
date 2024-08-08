@@ -480,7 +480,7 @@ resource "google_compute_firewall" "health_check_firewall_rule" {
   description = "Allow health check for apigee"
   allow {
     protocol = "tcp"
-    ports    = ["443"]
+    ports    = ["443", "80"]
   }
   source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
   target_tags   = ["load-balanced-backend", "apigee-mig-proxy"]
