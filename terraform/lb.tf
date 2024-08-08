@@ -534,7 +534,7 @@ resource "google_compute_instance_template" "ui_apigee_mig" {
 }
 
 resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
-  count              = 0
+#   count              = 0
   project            = local.project_id
   name               = "${local.ui-apigee-mig}-proxy"
   region             = var.region
