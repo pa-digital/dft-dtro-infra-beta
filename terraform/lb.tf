@@ -512,7 +512,7 @@ resource "google_compute_instance_template" "ui_apigee_mig" {
   project      = local.project_id
   name         = "${local.ui-apigee-mig}-template"
   machine_type = var.default_machine_type
-  tags         = ["http-server", "apigee-mig-proxy", "gke-apigee-proxy"]
+  tags         = ["http-server", local.ui-apigee-mig-proxy, "gke-apigee-proxy"]
   disk {
     source_image = "projects/debian-cloud/global/images/family/debian-11"
     auto_delete  = true
@@ -534,6 +534,7 @@ resource "google_compute_instance_template" "ui_apigee_mig" {
 }
 
 resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
+  count              = 0
   project            = local.project_id
   name               = "${local.ui-apigee-mig}-proxy"
   region             = var.region
