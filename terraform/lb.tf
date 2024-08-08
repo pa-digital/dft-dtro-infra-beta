@@ -550,19 +550,19 @@ resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
   }
 }
 
-resource "google_compute_region_autoscaler" "ui_apigee_autoscaler" {
-  count   = 0
-  project = local.project_id
-  name    = "${local.ui-apigee-mig}-autoscaler"
-  region  = var.region
-  target  = google_compute_region_instance_group_manager.ui_apigee_mig.id
-  # TODO: Assess if these values are sufficient or requires updating
-  autoscaling_policy {
-    max_replicas    = 3
-    min_replicas    = 2
-    cooldown_period = 90
-    cpu_utilization {
-      target = var.cpu_max_utilization
-    }
-  }
-}
+# resource "google_compute_region_autoscaler" "ui_apigee_autoscaler" {
+#   count   = 0
+#   project = local.project_id
+#   name    = "${local.ui-apigee-mig}-autoscaler"
+#   region  = var.region
+#   target  = google_compute_region_instance_group_manager.ui_apigee_mig.id
+#   # TODO: Assess if these values are sufficient or requires updating
+#   autoscaling_policy {
+#     max_replicas    = 3
+#     min_replicas    = 2
+#     cooldown_period = 90
+#     cpu_utilization {
+#       target = var.cpu_max_utilization
+#     }
+#   }
+# }
