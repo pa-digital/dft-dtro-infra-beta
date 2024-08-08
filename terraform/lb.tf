@@ -429,12 +429,12 @@ resource "google_compute_region_backend_service" "apigee_backend_service" {
   load_balancing_scheme = "INTERNAL_MANAGED"
   protocol              = "HTTP"
   health_checks         = [google_compute_region_health_check.ui_ilb_health_check.id]
-  #   backend {
-  #     group           = google_compute_region_instance_group_manager.ui_apigee_mig.instance_group
-  #     balancing_mode  = "UTILIZATION"
-  #     capacity_scaler = 1.0
-  #     max_utilization = var.cpu_max_utilization
-  #   }
+    backend {
+      group           = google_compute_region_instance_group_manager.ui_apigee_mig.instance_group
+      balancing_mode  = "UTILIZATION"
+      capacity_scaler = 1.0
+      max_utilization = var.cpu_max_utilization
+    }
 
 }
 
@@ -512,7 +512,7 @@ resource "google_compute_instance_template" "ui_apigee_mig" {
   project      = local.project_id
   name         = "${local.ui-apigee-mig}-template"
   machine_type = var.default_machine_type
-  tags         = ["http-server", local.ui-apigee-mig-proxy, "gke-apigee-proxy"]
+  tags         = ["http-server", "apigee-mig-proxy", "gke-apigee-proxy"]
   disk {
     source_image = "projects/debian-cloud/global/images/family/debian-11"
     auto_delete  = true
@@ -534,12 +534,11 @@ resource "google_compute_instance_template" "ui_apigee_mig" {
 }
 
 resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
-  count              = 0
   project            = local.project_id
   name               = "${local.ui-apigee-mig}-proxy"
   region             = var.region
   base_instance_name = "${local.ui-apigee-mig}-proxy"
-  target_size        = 2
+  target_size        = 1
   version {
     name              = "appserver-canary"
     instance_template = google_compute_instance_template.ui_apigee_mig.self_link_unique
@@ -550,19 +549,19 @@ resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
   }
 }
 
-# resource "google_compute_region_autoscaler" "ui_apigee_autoscaler" {
-#   count   = 0
-#   project = local.project_id
-#   name    = "${local.ui-apigee-mig}-autoscaler"
-#   region  = var.region
-#   target  = google_compute_region_instance_group_manager.ui_apigee_mig.id
-#   # TODO: Assess if these values are sufficient or requires updating
-#   autoscaling_policy {
-#     max_replicas    = 3
-#     min_replicas    = 2
-#     cooldown_period = 90
-#     cpu_utilization {
-#       target = var.cpu_max_utilization
-#     }
-#   }
-# }
+resource "google_compute_region_autoscaler" "ui_apigee_autoscaler" {
+  count   = 0
+  project = local.project_id
+  name    = "${local.ui-apigee-mig}-autoscaler"
+  region  = var.region
+  target  = google_compute_region_instance_group_manager.ui_apigee_mig.id
+  # TODO: Assess if these values are sufficient or requires updating
+  autoscaling_policy {
+    max_replicas    = 3
+    min_replicas    = 2
+    cooldown_period = 90
+    cpu_utilization {
+      target = var.cpu_max_utilization
+    }
+  }
+}
