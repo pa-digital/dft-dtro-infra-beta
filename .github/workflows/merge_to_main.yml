@@ -22,6 +22,9 @@ jobs:
       gcp-project-id: ${{ vars.GCP_PROJECT_ID_DEV }}
       gcp-region: ${{ vars.DEFAULT_GCP_REGION }}
       environment: dev
+      run-terraform: true
+#      run-apigee: false #TODO: Default value when no major endpoint or OAuth changes have been made
+      run-apigee: true
 
   deploy-test:
     name: Terraform - Deploy to Test
@@ -39,3 +42,6 @@ jobs:
       gcp-project-id: ${{ vars.GCP_PROJECT_ID_TEST }}
       gcp-region: ${{ vars.DEFAULT_GCP_REGION }}
       environment: test
+      run-terraform: true
+#      run-apigee: false #TODO: Default value when no major endpoint or OAuth changes have been made
+      run-apigee: true

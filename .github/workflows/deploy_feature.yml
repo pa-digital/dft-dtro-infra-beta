@@ -8,9 +8,9 @@ on:
         description: Run terraform?
         required: false
         default: false
-      run-apigee-1:
+      run-apigee:
         type: boolean
-        description: Run Apigee job 1?
+        description: Run Apigee job?
         required: false
         default: false
 
@@ -33,4 +33,4 @@ jobs:
 #      do-validation-checks: true
       checkov-skip-check: ${{ vars.CHECKOV_SKIP_CHECK }}
       run-terraform: ${{ inputs.run-terraform }}
-      run-apigee-1: ${{ inputs.run-apigee-1 }}
+      run-apigee: ${{ inputs.run-apigee }}
