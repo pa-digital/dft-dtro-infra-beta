@@ -429,13 +429,12 @@ resource "google_compute_region_backend_service" "apigee_backend_service" {
   load_balancing_scheme = "INTERNAL_MANAGED"
   protocol              = "HTTP"
   health_checks         = [google_compute_region_health_check.ui_ilb_health_check.id]
-    backend {
-      group           = google_compute_region_instance_group_manager.ui_apigee_mig.instance_group
-      balancing_mode  = "UTILIZATION"
-      capacity_scaler = 1.0
-      max_utilization = var.cpu_max_utilization
-    }
-
+  backend {
+    group           = google_compute_region_instance_group_manager.ui_apigee_mig.instance_group
+    balancing_mode  = "UTILIZATION"
+    capacity_scaler = 1.0
+    max_utilization = var.cpu_max_utilization
+  }
 }
 
 resource "google_compute_region_health_check" "ui_ilb_health_check" {
@@ -469,7 +468,7 @@ resource "google_compute_firewall" "ui_ilb_allow_proxy_firewall_rule" {
     protocol = "tcp"
     ports    = ["80", "443", "8080"]
   }
-  source_ranges = ["11.129.0.0/23"]
+  source_ranges = [var.ui_ilb_proxy_only_subnetwork_range]
   target_tags   = ["allow-proxy", "load-balanced-backend", "apigee-mig-proxy"]
 }
 
@@ -480,9 +479,8 @@ resource "google_compute_firewall" "health_check_firewall_rule" {
   description = "Allow health check for apigee"
   allow {
     protocol = "tcp"
-    ports    = ["443", "80"]
   }
-  source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
+  source_ranges = ["130.211.0.0/22", "35.191.0.0/16", "35.235.240.0/20"]
   target_tags   = ["load-balanced-backend", "apigee-mig-proxy"]
 }
 
