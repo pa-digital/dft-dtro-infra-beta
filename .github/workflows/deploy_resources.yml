@@ -121,8 +121,8 @@ jobs:
   deploy-apigee-proxies-and-portal:
     if: ${{ inputs.run-apigee-1 }}
     name: Deploy GCP Apigee proxies and portal to ${{ inputs.environment }}
-#    needs:
-#      - deploy-resources
+    needs:
+      - deploy-resources
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -167,8 +167,8 @@ jobs:
       - name: Make scripts directory executable
         run: chmod +x scripts/*
 
-      #TODO: Create new workflow to create portals with parameters. Use this for testing
       - name: Create Developer Portal
+        if: ${{ inputs.environment != 'prod' }}
         run: scripts/create_developer_portal.sh ${{ steps.google-auth.outputs.access_token }}
 
       - name: Create API bundle
