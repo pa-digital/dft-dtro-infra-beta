@@ -23,8 +23,3 @@ env_name_prefix=$env_name_prefix
   else
     echo "Failed to create developer portal in ${ORG}. HTTP response code: $RESPONSE"
   fi
-
-#  RESPONSE=$(curl -i  -X GET "https://apigee.googleapis.com/v1/organizations/dft-dtro-dev-01/instances" \
-#      -H "Authorization: Bearer ${TOKEN}"
-#      )
-#  echo "$RESPONSE"
