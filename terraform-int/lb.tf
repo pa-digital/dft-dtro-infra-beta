@@ -484,8 +484,8 @@ resource "google_compute_firewall" "health_check_firewall_rule" {
 }
 
 # Endpoint attachment in the Cloud Run CSO Service UI project
-resource "google_vpc_access_connector" "ui_vpc_connector" {
-  name   = "${local.name_prefix}-ui-cloud-run-connector"
+resource "google_vpc_access_connector" "int_ui_vpc_connector" {
+  name   = "${local.name_prefix}-cloud-run-connector"
   region = var.region
   subnet {
     project_id = data.google_project.project.project_id
