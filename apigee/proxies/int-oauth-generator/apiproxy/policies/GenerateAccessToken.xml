@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OAuthV2 name="GenerateAccessToken">
+  <Operation>GenerateAccessToken</Operation>
+  <ExpiresIn>1800000</ExpiresIn>
+  <!-- 30 minutes -->
+  <SupportedGrantTypes>
+    <GrantType>client_credentials</GrantType>
+  </SupportedGrantTypes>
+  <GenerateResponse enabled="true"/>
+</OAuthV2>

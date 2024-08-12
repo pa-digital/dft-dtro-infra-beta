@@ -116,8 +116,8 @@ jobs:
         run: terraform apply -auto-approve -input=false terraform-plan-gcp
 
   deploy-apigee-proxies-and-portal:
-    if: ${{ inputs.run-apigee }}
     name: Deploy GCP Apigee proxies and portal to ${{ inputs.environment }}
+    if: ${{ inputs.run-apigee }}
     needs:
       - deploy-resources
     runs-on: ubuntu-latest

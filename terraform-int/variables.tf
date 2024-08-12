@@ -238,37 +238,73 @@ variable "int_serverless_connector_ip_range" {
 variable "int_apigee_ip_range" {
   type        = string
   description = "IP range for Apigee"
-  default     = "11.10.0.0/16"
+  default     = "12.10.0.0/16"
+}
+
+variable "int_ui_apigee_ip_range" {
+  type        = string
+  description = "IP range for Apigee"
+  default     = "13.20.0.0/16"
 }
 
 variable "int_google_compute_global_address_range" {
   type        = string
   description = "IP range for the Google global address to manage private VPC connection with Apigee"
-  default     = "11.9.0.0"
+  default     = "12.8.0.0"
 }
 
 variable "int_ilb_proxy_only_subnetwork_range" {
   type        = string
   description = "IP range for the internal ALB proxy only subnetwork"
-  default     = "11.3.0.0/26"
+  default     = "12.3.0.0/26"
+}
+
+variable "int_ui_ilb_proxy_only_subnetwork_range" {
+  type        = string
+  description = "IP range for the internal ALB proxy only subnetwork"
+  default     = "13.3.0.0/26"
 }
 
 variable "int_ilb_private_subnetwork_range" {
   type        = string
   description = "IP range for internal ALB private subnetwork"
-  default     = "11.2.1.0/24"
+  default     = "12.2.1.0/24"
+}
+
+variable "int_ui_ilb_private_subnetwork_range" {
+  type        = string
+  description = "IP range for internal ALB private subnetwork"
+  default     = "13.2.1.0/28"
 }
 
 variable "int_psc_private_subnetwork_range" {
   type        = string
   description = "IP range for Private Service Connect private subnetwork"
-  default     = "11.20.1.0/24"
+  default     = "12.20.1.0/24"
 }
 
 variable "int_psc_subnetwork_range" {
   type        = string
   description = "IP range for Private Service Connect subnetwork"
-  default     = "11.3.1.0/24"
+  default     = "12.3.1.0/24"
+}
+
+variable "int_ui_psc_private_subnetwork_range" {
+  type        = string
+  description = "IP range for Private Service Connect private subnetwork"
+  default     = "13.30.1.0/24"
+}
+
+variable "int_ui_psc_subnetwork_range" {
+  type        = string
+  description = "IP range for Private Service Connect subnetwork"
+  default     = "13.4.1.0/28"
+}
+
+variable "int_ui_vpc_connector_range" {
+  type        = string
+  description = "IP range for Private Service Connect private subnetwork"
+  default     = "13.40.1.0/28"
 }
 
 variable "google_compute_global_address_prefix_length" {

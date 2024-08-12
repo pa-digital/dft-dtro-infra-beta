@@ -14,11 +14,11 @@ on:
         default: false
 
 env:
-  TF_VAR_tf_state_bucket: dft-d-tro-terraform-dev #TODO: Change to test after verification
-  TF_VAR_environment: dev #TODO: Change to test after verification
+  TF_VAR_tf_state_bucket: dft-d-tro-terraform-test
+  TF_VAR_environment: test
   TF_VAR_integration_prefix: int
   TF_VAR_region: ${{ vars.DEFAULT_GCP_REGION }}
-  TF_VAR_project_id: ${{ vars.GCP_PROJECT_ID_DEV }} #TODO: Change to test after verification
+  TF_VAR_project_id: ${{ vars.GCP_PROJECT_ID_TEST }}
   TF_VAR_organisation: ${{ vars.DFT_ORGANISATION }}
   TF_VAR_organisation_id: ${{ vars.DFT_ORGANISATION_ID }}
   TF_VAR_execution_service_account: ${{ secrets.EXECUTION_SERVICE_ACCOUNT }}
@@ -52,8 +52,8 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }} #TODO: Change to test after verification
-          service_account: ${{ secrets.WIP_SERVICE_ACCOUNT }} #TODO: Change to test after verification
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_TEST }}
+          service_account: ${{ secrets.WIP_SERVICE_ACCOUNT_TEST }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -120,7 +120,6 @@ jobs:
       - name: Make scripts directory executable
         run: chmod +x scripts/*
 
-      # Create new workflow to create portals with parameters. Use this for testing
       - name: Create Developer Portal
         run: scripts/create_developer_portal.sh ${{ steps.google-auth.outputs.access_token }}
 

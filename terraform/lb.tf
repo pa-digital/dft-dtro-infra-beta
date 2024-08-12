@@ -2,7 +2,6 @@ locals {
   apigee-mig          = "apigee-mig"
   apigee-mig-proxy    = "apigee-mig-proxy"
   ui-apigee-mig       = "ui-apigee-mig"
-  ui-apigee-mig-proxy = "ui-apigee-mig-proxy"
 }
 
 # External Load Balancer
@@ -456,7 +455,7 @@ resource "google_compute_firewall" "ui_ilb_firewall_rule" {
     ports    = ["22"]
   }
   source_ranges = ["0.0.0.0/0"]
-  target_tags   = ["allow-ssh", "apigee-mig-proxy"]
+  target_tags   = ["allow-ssh", local.apigee-mig-proxy]
 }
 
 resource "google_compute_firewall" "ui_ilb_allow_proxy_firewall_rule" {
@@ -469,7 +468,7 @@ resource "google_compute_firewall" "ui_ilb_allow_proxy_firewall_rule" {
     ports    = ["80", "443", "8080"]
   }
   source_ranges = [var.ui_ilb_proxy_only_subnetwork_range]
-  target_tags   = ["allow-proxy", "load-balanced-backend", "apigee-mig-proxy"]
+  target_tags   = ["allow-proxy", "load-balanced-backend", local.apigee-mig-proxy]
 }
 
 resource "google_compute_firewall" "health_check_firewall_rule" {
@@ -481,7 +480,7 @@ resource "google_compute_firewall" "health_check_firewall_rule" {
     protocol = "tcp"
   }
   source_ranges = ["130.211.0.0/22", "35.191.0.0/16", "35.235.240.0/20"]
-  target_tags   = ["load-balanced-backend", "apigee-mig-proxy"]
+  target_tags   = ["load-balanced-backend", local.apigee-mig-proxy]
 }
 
 # Endpoint attachment in the Cloud Run CSO Service UI project
@@ -510,7 +509,7 @@ resource "google_compute_instance_template" "ui_apigee_mig" {
   project      = local.project_id
   name         = "${local.ui-apigee-mig}-template"
   machine_type = var.default_machine_type
-  tags         = ["http-server", "apigee-mig-proxy", "gke-apigee-proxy"]
+  tags         = ["http-server", local.apigee-mig-proxy, "gke-apigee-proxy"]
   disk {
     source_image = "projects/debian-cloud/global/images/family/debian-11"
     auto_delete  = true
