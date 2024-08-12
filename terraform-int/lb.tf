@@ -1,7 +1,7 @@
 locals {
-  int-apigee-mig          = "int-apigee-mig"
-  apigee-mig-proxy    = "apigee-mig-proxy"
-  int-ui-apigee-mig       = "int-ui-apigee-mig"
+  int-apigee-mig    = "int-apigee-mig"
+  apigee-mig-proxy  = "apigee-mig-proxy"
+  int-ui-apigee-mig = "int-ui-apigee-mig"
 }
 
 # External Load Balancer for D-TRO
