@@ -136,6 +136,7 @@ resource "google_compute_region_instance_group_manager" "apigee_mig" {
 }
 
 resource "google_compute_region_autoscaler" "apigee_autoscaler" {
+  count = 0
   project = local.project_id
   name    = "${local.int-apigee-mig}-autoscaler"
   region  = var.region
