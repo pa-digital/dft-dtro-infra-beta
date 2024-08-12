@@ -118,7 +118,7 @@ resource "google_compute_instance_template" "apigee_mig" {
 
 resource "google_compute_instance_template" "apigee_mig_2" {
   project      = local.project_id
-  name         = "${local.int-apigee-mig}-template_2"
+  name         = "${local.int-apigee-mig}-template-2"
   machine_type = var.default_machine_type
   tags         = ["https-server", local.apigee-mig-proxy, "gke-apigee-proxy"]
   disk {
