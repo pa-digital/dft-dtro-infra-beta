@@ -11,7 +11,7 @@ module "loadbalancer" {
   name    = "${local.name_prefix}-xlb"
   project = local.project_id
 
-  target_tags       = [local.apigee-mig-proxy]
+  target_tags       = [local.apigee-mig-proxy, local.int-apigee-mig]
   firewall_networks = [data.google_compute_network.alb_vpc_network.id]
 
   backends = {
@@ -94,7 +94,7 @@ resource "google_compute_instance_template" "apigee_mig" {
   project      = local.project_id
   name         = "${local.int-apigee-mig}-template"
   machine_type = var.default_machine_type
-  tags         = ["https-server", local.apigee-mig-proxy, "gke-apigee-proxy"]
+  tags         = ["https-server", local.apigee-mig-proxy, local.int-apigee-mig, "gke-apigee-proxy"]
   disk {
     source_image = "projects/debian-cloud/global/images/family/debian-11"
     auto_delete  = true
