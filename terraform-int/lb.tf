@@ -36,7 +36,7 @@ module "loadbalancer" {
 
       groups = [
         {
-          group           = google_compute_region_instance_group_manager.apigee_mig_2.instance_group
+          group           = google_compute_region_instance_group_manager.apigee_mig.instance_group
           max_utilization = var.cpu_max_utilization
         }
       ]
@@ -95,7 +95,7 @@ resource "google_compute_instance_template" "apigee_mig" {
   project      = local.project_id
   name         = "${local.int-apigee-mig}-template"
   machine_type = var.default_machine_type
-  tags         = ["https-server", local.apigee-mig-proxy, "gke-apigee-proxy"]
+  tags         = ["https-server", local.apigee-mig-proxy, local.int-apigee-mig-proxy, "gke-apigee-proxy"]
   disk {
     source_image = "projects/debian-cloud/global/images/family/debian-11"
     auto_delete  = true
@@ -142,7 +142,6 @@ resource "google_compute_instance_template" "apigee_mig_2" {
 }
 
 resource "google_compute_region_instance_group_manager" "apigee_mig" {
-  count = 0
   project            = local.project_id
   name               = "${local.int-apigee-mig}-proxy"
   region             = var.region
@@ -179,11 +178,10 @@ resource "google_compute_region_instance_group_manager" "apigee_mig_2" {
 }
 
 resource "google_compute_region_autoscaler" "apigee_autoscaler" {
-  count = 0
   project = local.project_id
   name    = "${local.int-apigee-mig}-autoscaler"
   region  = var.region
-  target  = google_compute_region_instance_group_manager.apigee_mig_2.id
+  target  = google_compute_region_instance_group_manager.apigee_mig.id
   # TODO: Assess if these values are sufficient or requires updating
   autoscaling_policy {
     max_replicas    = 3
