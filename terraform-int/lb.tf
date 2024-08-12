@@ -2,6 +2,7 @@ locals {
   int-apigee-mig    = "int-apigee-mig"
   apigee-mig-proxy  = "apigee-mig-proxy"
   int-ui-apigee-mig = "int-ui-apigee-mig"
+  int-apigee-mig-proxy  = "int-apigee-mig-proxy"
 }
 
 # External Load Balancer for D-TRO
@@ -11,7 +12,7 @@ module "loadbalancer" {
   name    = "${local.name_prefix}-xlb"
   project = local.project_id
 
-  target_tags       = [local.apigee-mig-proxy, local.int-apigee-mig]
+  target_tags       = [local.apigee-mig-proxy, local.int-apigee-mig-proxy]
   firewall_networks = [data.google_compute_network.alb_vpc_network.id]
 
   backends = {
@@ -116,6 +117,7 @@ resource "google_compute_instance_template" "apigee_mig" {
 }
 
 resource "google_compute_region_instance_group_manager" "apigee_mig" {
+  count = 0
   project            = local.project_id
   name               = "${local.int-apigee-mig}-proxy"
   region             = var.region
