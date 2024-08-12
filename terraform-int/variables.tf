@@ -220,19 +220,19 @@ variable "serverless_connector_config" {
 variable "int_backend_vpc_ip_range" {
   type        = string
   description = "IP range for Backend VPC"
-  default     = "11.0.0.0/28"
+  default     = "12.0.0.0/28"
 }
 
 variable "int_alb_vpc_ip_range" {
   type        = string
   description = "IP range for ALB VPC"
-  default     = "11.64.0.0/28"
+  default     = "12.64.0.0/28"
 }
 
 variable "int_serverless_connector_ip_range" {
   type        = string
   description = "IP range for Serverless VPC Access Connector"
-  default     = "11.200.0.0/28" # CIDR block with "/28" netmask is required
+  default     = "12.200.0.0/28" # CIDR block with "/28" netmask is required
 }
 
 variable "int_apigee_ip_range" {
