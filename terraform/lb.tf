@@ -35,7 +35,7 @@ module "loadbalancer" {
 
       groups = [
         {
-          group           = google_compute_region_instance_group_manager.apigee_mig.instance_group
+          group           = google_compute_region_instance_group_manager.apigee_mig_2.instance_group
           max_utilization = var.cpu_max_utilization
         }
       ]
@@ -116,6 +116,7 @@ resource "google_compute_instance_template" "apigee_mig" {
 }
 
 resource "google_compute_region_instance_group_manager" "apigee_mig" {
+  count = 0
   project            = local.project_id
   name               = "${local.apigee-mig}-proxy"
   region             = var.region
@@ -134,12 +135,27 @@ resource "google_compute_region_instance_group_manager" "apigee_mig" {
     port = 80
   }
 }
+resource "google_compute_region_instance_group_manager" "apigee_mig_2" {
+  project            = local.project_id
+  name               = "${local.apigee-mig}-proxy"
+  region             = var.region
+  base_instance_name = "${local.apigee-mig}-proxy"
+  target_size        = 1
+  version {
+    name              = "appserver-canary"
+    instance_template = google_compute_instance_template.apigee_mig.self_link_unique
+  }
+  named_port {
+    name = "http"
+    port = 80
+  }
+}
 
 resource "google_compute_region_autoscaler" "apigee_autoscaler" {
   project = local.project_id
   name    = "${local.apigee-mig}-autoscaler"
   region  = var.region
-  target  = google_compute_region_instance_group_manager.apigee_mig.id
+  target  = google_compute_region_instance_group_manager.apigee_mig_2.id
   # TODO: Assess if these values are sufficient or requires updating
   autoscaling_policy {
     max_replicas    = 3
