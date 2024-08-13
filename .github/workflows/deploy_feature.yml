@@ -47,7 +47,7 @@ jobs:
     with:
       gcp-project-id: ${{ vars.GCP_PROJECT_ID_TEST }}
       gcp-region: ${{ vars.DEFAULT_GCP_REGION }}
-      environment: dev
+      environment: test
       #      do-validation-checks: true
       checkov-skip-check: ${{ vars.CHECKOV_SKIP_CHECK }}
       run-terraform: ${{ inputs.run-terraform }}
