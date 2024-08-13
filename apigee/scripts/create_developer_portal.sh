@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2269,SC2154
 
 # Script Variables
 ORG=$apigee_organisation

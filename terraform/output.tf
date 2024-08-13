@@ -13,7 +13,3 @@ output "apigee_instance_host" {
 output "apigee_mig_instance_group" {
   value = google_compute_region_instance_group_manager.apigee_mig.instance_group
 }
-
-output "apigee_mig_id" {
-  value = google_compute_region_instance_group_manager.apigee_mig.id
-}
