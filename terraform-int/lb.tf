@@ -137,23 +137,6 @@ resource "google_compute_region_instance_group_manager" "apigee_mig" {
   }
 }
 
-resource "google_compute_region_autoscaler" "apigee_autoscaler" {
-  count = 0
-  project = local.project_id
-  name    = "${local.int-apigee-mig}-autoscaler"
-  region  = var.region
-  target  = google_compute_region_instance_group_manager.apigee_mig.id
-  # TODO: Assess if these values are sufficient or requires updating
-  autoscaling_policy {
-    max_replicas    = 3
-    min_replicas    = 2
-    cooldown_period = 90
-    cpu_utilization {
-      target = var.cpu_max_utilization
-    }
-  }
-}
-
 # External Load Balancer for CSO Portal UI
 module "ui_loadbalancer" {
   source  = "GoogleCloudPlatform/lb-http/google//modules/serverless_negs"
