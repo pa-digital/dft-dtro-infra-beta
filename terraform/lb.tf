@@ -548,7 +548,7 @@ resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
 
 resource "google_compute_subnetwork" "ui_apigee_mig_2" {
   project                  = local.project_id
-  name                     = "${local.ui-apigee-mig}-subnetwork"
+  name                     = "${local.ui-apigee-mig}-subnetwork-2"
   ip_cidr_range            = var.ui_apigee_ip_range
   region                   = var.region
   network                  = google_compute_network.ui_ilb_network.id
@@ -557,7 +557,7 @@ resource "google_compute_subnetwork" "ui_apigee_mig_2" {
 
 resource "google_compute_instance_template" "ui_apigee_mig_2" {
   project      = local.project_id
-  name         = "${local.ui-apigee-mig}-template"
+  name         = "${local.ui-apigee-mig}-template-2"
   machine_type = var.default_machine_type
   tags         = ["http-server", local.apigee-mig-proxy, "gke-apigee-proxy"]
   disk {
@@ -582,9 +582,9 @@ resource "google_compute_instance_template" "ui_apigee_mig_2" {
 
 resource "google_compute_region_instance_group_manager" "ui_apigee_mig_2" {
   project            = local.project_id
-  name               = "${local.ui-apigee-mig}-proxy"
+  name               = "${local.ui-apigee-mig}-proxy-2"
   region             = var.region
-  base_instance_name = "${local.ui-apigee-mig}-proxy"
+  base_instance_name = "${local.ui-apigee-mig}-proxy-2"
   target_size        = 1
   version {
     name              = "appserver-canary"
