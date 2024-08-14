@@ -549,7 +549,7 @@ resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
 resource "google_compute_subnetwork" "ui_apigee_mig_2" {
   project                  = local.project_id
   name                     = "${local.ui-apigee-mig}-subnetwork-2"
-  ip_cidr_range            = var.ui_apigee_ip_range
+  ip_cidr_range            = var.ui_apigee_ip_range_2
   region                   = var.region
   network                  = google_compute_network.ui_ilb_network.id
   private_ip_google_access = true

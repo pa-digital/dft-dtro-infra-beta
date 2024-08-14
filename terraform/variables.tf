@@ -234,6 +234,14 @@ variable "ui_apigee_ip_range" {
   default     = "11.10.0.0/16"
 }
 
+
+
+variable "ui_apigee_ip_range_2" {
+  type        = string
+  description = "IP range for Apigee"
+  default     = "10.300.0.0/16"
+}
+
 variable "google_compute_global_address_range" {
   type        = string
   description = "IP range for the Google global address to manage private VPC connection with Apigee"
