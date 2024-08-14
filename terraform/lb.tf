@@ -429,7 +429,7 @@ resource "google_compute_region_backend_service" "apigee_backend_service" {
   protocol              = "HTTP"
   health_checks         = [google_compute_region_health_check.ui_ilb_health_check.id]
   backend {
-    group           = google_compute_region_instance_group_manager.ui_apigee_mig.instance_group
+    group           = google_compute_region_instance_group_manager.ui_apigee_mig_2.instance_group
     balancing_mode  = "UTILIZATION"
     capacity_scaler = 1.0
     max_utilization = var.cpu_max_utilization
@@ -484,14 +484,14 @@ resource "google_compute_firewall" "health_check_firewall_rule" {
 }
 
 # Endpoint attachment in the Cloud Run CSO Service UI project
-# resource "google_vpc_access_connector" "ui_vpc_connector" {
-#   name   = "cloud-run-connector"
-#   region = var.region
-#   subnet {
-#     project_id = data.google_project.project.project_id
-#     name       = google_compute_subnetwork.ui_ilb_subnetwork.name
-#   }
-# }
+resource "google_vpc_access_connector" "ui_vpc_connector" {
+  name   = "cloud-run-connector"
+  region = var.region
+  subnet {
+    project_id = data.google_project.project.project_id
+    name       = google_compute_subnetwork.ui_ilb_subnetwork.name
+  }
+}
 
 ####
 
@@ -530,21 +530,21 @@ resource "google_compute_instance_template" "ui_apigee_mig" {
   }
 }
 
-resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
-  project            = local.project_id
-  name               = "${local.ui-apigee-mig}-proxy"
-  region             = var.region
-  base_instance_name = "${local.ui-apigee-mig}-proxy"
-  target_size        = 1
-  version {
-    name              = "appserver-canary"
-    instance_template = google_compute_instance_template.ui_apigee_mig.self_link_unique
-  }
-  named_port {
-    name = "http"
-    port = 80
-  }
-}
+# resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
+#   project            = local.project_id
+#   name               = "${local.ui-apigee-mig}-proxy"
+#   region             = var.region
+#   base_instance_name = "${local.ui-apigee-mig}-proxy"
+#   target_size        = 1
+#   version {
+#     name              = "appserver-canary"
+#     instance_template = google_compute_instance_template.ui_apigee_mig.self_link_unique
+#   }
+#   named_port {
+#     name = "http"
+#     port = 80
+#   }
+# }
 
 resource "google_compute_subnetwork" "ui_apigee_mig_2" {
   project                  = local.project_id
