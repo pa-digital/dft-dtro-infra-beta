@@ -234,6 +234,12 @@ variable "ui_apigee_ip_range" {
   default     = "10.60.0.0/16"
 }
 
+variable "ui_apigee_ip_range_2" {
+  type        = string
+  description = "IP range for Apigee"
+  default     = "11.50.0.0/16"
+}
+
 variable "google_compute_global_address_range" {
   type        = string
   description = "IP range for the Google global address to manage private VPC connection with Apigee"
@@ -261,7 +267,7 @@ variable "ilb_private_subnetwork_range" {
 variable "ui_ilb_private_subnetwork_range" {
   type        = string
   description = "IP range for internal ALB private subnetwork"
-  default     = "10.50.1.0/28"
+ default     = "10.50.1.0/28"
 }
 
 variable "psc_private_subnetwork_range" {

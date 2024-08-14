@@ -414,7 +414,7 @@ resource "google_compute_region_url_map" "internal_ui_lb_url_map" {
     name            = "${local.name_prefix}-path-matcher"
     default_service = google_compute_region_backend_service.apigee_backend_service.self_link
     path_rule {
-      paths   = ["/dtros/*"] #TODO: Is this correct for DTRO?
+      paths   = ["/dtros/*"]
       service = google_compute_region_backend_service.apigee_backend_service.self_link
     }
   }
