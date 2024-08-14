@@ -239,7 +239,7 @@ variable "ui_apigee_ip_range" {
 variable "ui_apigee_ip_range_2" {
   type        = string
   description = "IP range for Apigee"
-  default     = "10.300.0.0/16"
+  default     = "10.90.0.0/16"
 }
 
 variable "google_compute_global_address_range" {
