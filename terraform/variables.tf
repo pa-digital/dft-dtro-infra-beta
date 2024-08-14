@@ -231,10 +231,8 @@ variable "apigee_ip_range" {
 variable "ui_apigee_ip_range" {
   type        = string
   description = "IP range for Apigee"
-  default     = "11.10.0.0/16"
+  default     = "10.60.0.0/16"
 }
-
-
 
 variable "ui_apigee_ip_range_2" {
   type        = string
@@ -257,7 +255,7 @@ variable "ilb_proxy_only_subnetwork_range" {
 variable "ui_ilb_proxy_only_subnetwork_range" {
   type        = string
   description = "IP range for the internal ALB proxy only subnetwork"
-  default     = "11.3.0.0/26"
+  default     = "10.30.0.0/26"
 }
 
 variable "ilb_private_subnetwork_range" {
@@ -269,7 +267,7 @@ variable "ilb_private_subnetwork_range" {
 variable "ui_ilb_private_subnetwork_range" {
   type        = string
   description = "IP range for internal ALB private subnetwork"
-  default     = "11.2.1.0/28"
+  default     = "10.50.1.0/28"
 }
 
 variable "psc_private_subnetwork_range" {
