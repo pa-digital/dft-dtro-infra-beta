@@ -371,26 +371,26 @@ resource "google_compute_subnetwork" "ui_ilb_subnetwork" {
   purpose       = "PRIVATE"
 }
 
-# resource "google_compute_address" "ui_ilb_address" {
-#   project      = local.project_id
-#   name         = "${local.name_prefix}-ui-ilb-ip"
-#   region       = var.region
-#   address_type = "INTERNAL"
-#   subnetwork   = google_compute_subnetwork.ui_ilb_subnetwork.id
-#   purpose      = "SHARED_LOADBALANCER_VIP"
-# }
-#
-# # Create a regional forwarding rule for the internal load balancer
-# resource "google_compute_forwarding_rule" "ui_ilb_forwarding_rule" {
-#   project               = local.project_id
-#   name                  = "${local.name_prefix}-ui-ilb-forwarding-rule"
-#   region                = var.region
-#   load_balancing_scheme = "INTERNAL_MANAGED"
-#   port_range            = "80"
-#   target                = google_compute_region_target_http_proxy.ui_ilb_target_http_proxy.id
-#   network               = google_compute_network.ui_ilb_network.id
-#   subnetwork            = google_compute_subnetwork.ui_ilb_subnetwork.id
-# }
+resource "google_compute_address" "ui_ilb_address" {
+  project      = local.project_id
+  name         = "${local.name_prefix}-ui-ilb-ip"
+  region       = var.region
+  address_type = "INTERNAL"
+  subnetwork   = google_compute_subnetwork.ui_ilb_subnetwork.id
+  purpose      = "SHARED_LOADBALANCER_VIP"
+}
+
+# Create a regional forwarding rule for the internal load balancer
+resource "google_compute_forwarding_rule" "ui_ilb_forwarding_rule" {
+  project               = local.project_id
+  name                  = "${local.name_prefix}-ui-ilb-forwarding-rule"
+  region                = var.region
+  load_balancing_scheme = "INTERNAL_MANAGED"
+  port_range            = "80"
+  target                = google_compute_region_target_http_proxy.ui_ilb_target_http_proxy.id
+  network               = google_compute_network.ui_ilb_network.id
+  subnetwork            = google_compute_subnetwork.ui_ilb_subnetwork.id
+}
 
 # Create a target HTTP proxy for the URL maps
 resource "google_compute_region_target_http_proxy" "ui_ilb_target_http_proxy" {
@@ -429,7 +429,7 @@ resource "google_compute_region_backend_service" "apigee_backend_service" {
   protocol              = "HTTP"
   health_checks         = [google_compute_region_health_check.ui_ilb_health_check.id]
   backend {
-    group           = google_compute_region_instance_group_manager.ui_apigee_mig_2.instance_group
+    group           = google_compute_region_instance_group_manager.ui_apigee_mig.instance_group
     balancing_mode  = "UTILIZATION"
     capacity_scaler = 1.0
     max_utilization = var.cpu_max_utilization
