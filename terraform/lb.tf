@@ -455,7 +455,7 @@ resource "google_compute_firewall" "ui_ilb_firewall_rule" {
     ports    = ["22"]
   }
   source_ranges = ["0.0.0.0/0"]
-  target_tags   = ["allow-ssh", local.apigee-mig-proxy]
+  target_tags   = [ local.apigee-mig-proxy, "allow-ssh"]
 }
 
 resource "google_compute_firewall" "ui_ilb_allow_proxy_firewall_rule" {
@@ -468,7 +468,7 @@ resource "google_compute_firewall" "ui_ilb_allow_proxy_firewall_rule" {
     ports    = ["80", "443", "8080"]
   }
   source_ranges = [var.ui_ilb_proxy_only_subnetwork_range]
-  target_tags   = ["allow-proxy", "load-balanced-backend", local.apigee-mig-proxy]
+  target_tags   = [local.apigee-mig-proxy, "http-server", "allow-proxy", "load-balanced-backend"]
 }
 
 resource "google_compute_firewall" "health_check_firewall_rule" {
@@ -479,8 +479,8 @@ resource "google_compute_firewall" "health_check_firewall_rule" {
   allow {
     protocol = "tcp"
   }
-  source_ranges = ["130.211.0.0/22", "35.191.0.0/16", "35.235.240.0/20"]
-  target_tags   = ["load-balanced-backend", local.apigee-mig-proxy]
+  source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
+  target_tags   = [local.apigee-mig-proxy, "load-balanced-backend"]
 }
 
 # Endpoint attachment in the Cloud Run CSO Service UI project
