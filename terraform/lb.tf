@@ -491,7 +491,7 @@ resource "google_compute_firewall" "health_check_firewall_rule" {
 #     project_id = data.google_project.project.project_id
 #     name       = google_compute_subnetwork.ui_ilb_subnetwork.name
 #   }
-}
+# }
 
 ####
 
