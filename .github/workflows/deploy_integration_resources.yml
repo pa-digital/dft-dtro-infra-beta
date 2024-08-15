@@ -122,12 +122,12 @@ jobs:
         run: scripts/create_developer_portal.sh ${{ steps.google-auth.outputs.access_token }}
 
       - name: Create API bundle
-        working-directory: apigee/int_proxies/oauth-generator
+        working-directory: apigee/proxies/oauth-generator
         run: zip -r proxy.zip apiproxy
 
       - name: Upload and Deploy API Proxy Bundle
-        working-directory: apigee/int_proxies/oauth-generator
+        working-directory: apigee/proxies/oauth-generator
         run: |
           env=$env
-          apigeecli apis create bundle --name int-oauth-generator --proxy-zip proxy.zip --token "${{ steps.google-auth.outputs.access_token }}" --org "$apigee_organisation" --ovr --wait=true
+          apigeecli apis create bundle --name oauth-generator --proxy-zip proxy.zip --token "${{ steps.google-auth.outputs.access_token }}" --org "$apigee_organisation" --ovr --wait=true
           apigeecli apis deploy --env "dtro-${{ env.TF_VAR_integration_prefix }}-apigee-environment" --name int-oauth-generator --token "${{ steps.google-auth.outputs.access_token }}" --org "$apigee_organisation" --ovr #--wait=true
