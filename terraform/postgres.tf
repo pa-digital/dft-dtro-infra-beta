@@ -10,7 +10,7 @@ module "postgres_db" {
   tier             = var.database_environment_configuration[var.environment].tier
 
   name      = "${local.name_prefix}-postgres"
-  db_name   = local.database_name
+  db_name   = "${local.database_name}-temp"
   user_name = local.database_username
 
   deletion_protection         = var.environment != "prod" ? false : true
