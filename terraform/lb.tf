@@ -356,7 +356,7 @@ resource "google_compute_subnetwork" "proxy_only_ui_subnetwork" {
   name          = "${local.name_prefix}-loadbalancer-proxy-only-ui-subnetwork"
   ip_cidr_range = var.ui_ilb_proxy_only_subnetwork_range
   region        = var.region
-  network       = google_compute_network.ui_ilb_network.id
+  network       = module.alb_vpc_network.network_id
   purpose       = "REGIONAL_MANAGED_PROXY"
   role          = "ACTIVE"
 }
@@ -367,7 +367,7 @@ resource "google_compute_subnetwork" "ui_ilb_subnetwork" {
   name          = "${local.name_prefix}-ui-ilb-subnetwork"
   ip_cidr_range = var.ui_ilb_private_subnetwork_range
   region        = var.region
-  network       = google_compute_network.ui_ilb_network.id
+  network       = module.alb_vpc_network.network_id
   purpose       = "PRIVATE"
 }
 
@@ -510,7 +510,7 @@ resource "google_compute_subnetwork" "ui_apigee_mig" {
   name                     = "${local.ui-apigee-mig}-subnetwork"
   ip_cidr_range            = var.ui_apigee_ip_range
   region                   = var.region
-  network                  = google_compute_network.ui_ilb_network.id
+  network                  = module.alb_vpc_network.network_id
   private_ip_google_access = true
 }
 
@@ -526,7 +526,7 @@ resource "google_compute_instance_template" "ui_apigee_mig" {
     disk_size_gb = 20
   }
   network_interface {
-    network    = google_compute_network.ui_ilb_network.id
+    network    = module.alb_vpc_network.network_id
     subnetwork = google_compute_subnetwork.ui_apigee_mig.id
   }
   service_account {
