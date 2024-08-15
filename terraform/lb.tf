@@ -350,6 +350,23 @@ resource "google_compute_network" "ui_ilb_network" {
   auto_create_subnetworks = false
 }
 
+# Private VPC connection with Apigee network
+resource "google_compute_global_address" "ui_ilb_private_ip_address" {
+  project       = local.project_id
+  name          = "${local.name_prefix}-ui-ilb-apigee-ip-address"
+  purpose       = "VPC_PEERING"
+  address_type  = "INTERNAL"
+  address       = var.ilb_google_compute_global_address_range
+  prefix_length = var.google_compute_global_address_prefix_length
+  network       = google_compute_network.ui_ilb_network.id
+}
+
+resource "google_service_networking_connection" "ui_ilb_private_vpc_connection" {
+  network                 = google_compute_network.ui_ilb_network.id
+  service                 = "servicenetworking.googleapis.com"
+  reserved_peering_ranges = [google_compute_global_address.ui_ilb_private_ip_address.name]
+}
+
 # Proxy only subnetwork for source address for ui_ilb_subnetwork
 resource "google_compute_subnetwork" "proxy_only_ui_subnetwork" {
   project       = local.project_id
