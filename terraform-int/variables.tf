@@ -264,15 +264,15 @@ variable "int_google_compute_global_address_range" {
 variable "int_ilb_proxy_only_subnetwork_range" {
   type        = string
   description = "IP range for the internal ALB proxy only subnetwork"
-#   default     = "12.3.0.0/26"
-  default     = "10.90.0.0/26"
+  default     = "12.3.0.0/26"
+#   default     = "10.90.0.0/26"
 }
 
 variable "int_ui_ilb_proxy_only_subnetwork_range" {
   type        = string
   description = "IP range for the internal ALB proxy only subnetwork"
-#   default     = "13.3.0.0/26"
-  default     = "10.95.0.0/26"
+  default     = "13.3.0.0/26"
+#   default     = "10.95.0.0/26"
 }
 
 variable "int_ilb_private_subnetwork_range" {
