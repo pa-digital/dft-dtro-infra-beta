@@ -154,7 +154,7 @@ resource "google_compute_managed_ssl_certificate" "ui-alb-cert" {
 
 # Internal Load Balancer between Apigee and Cloud Run
 # Create a proxy-only subnetwork for internal load balancer
-#TODO: apigee-cr lb - #4
+#TODO: apigee-cr lb - #4 - start
 resource "google_compute_subnetwork" "proxy_only_subnetwork" {
   project       = local.project_id
   name          = "${local.name_prefix}-loadbalancer-proxy-only-subnetwork"
@@ -217,18 +217,18 @@ resource "google_compute_region_target_http_proxy" "internal_lb_target_http_prox
   url_map = google_compute_region_url_map.internal_lb_url_map.self_link
 }
 
-#TODO: apigee-cr lb - #4
 # Create a regional forwarding rule for the internal load balancer
-resource "google_compute_forwarding_rule" "internal_lb_forwarding_rule" {
-  project               = local.project_id
-  name                  = "${local.name_prefix}-forwarding-rule"
-  region                = var.region # Ensure this is regional
-  load_balancing_scheme = "INTERNAL_MANAGED"
-  port_range            = "80"
-  target                = google_compute_region_target_http_proxy.internal_lb_target_http_proxy.id
-  network               = google_compute_network.psc_network.id
-  subnetwork            = google_compute_subnetwork.private_subnetwork.id
-}
+# resource "google_compute_forwarding_rule" "internal_lb_forwarding_rule" {
+#   project               = local.project_id
+#   name                  = "${local.name_prefix}-forwarding-rule"
+#   region                = var.region # Ensure this is regional
+#   load_balancing_scheme = "INTERNAL_MANAGED"
+#   port_range            = "80"
+#   target                = google_compute_region_target_http_proxy.internal_lb_target_http_proxy.id
+#   network               = google_compute_network.psc_network.id
+#   subnetwork            = google_compute_subnetwork.private_subnetwork.id
+# }
+#TODO: apigee-cr lb - #4 - end
 
 # Private Service Connect
 #TODO: PCS newtworks - #3 - start
@@ -264,15 +264,15 @@ resource "google_compute_subnetwork" "psc_subnetwork" {
 #   subnetwork   = google_compute_subnetwork.psc_private_subnetwork.id
 # }
 
-resource "google_compute_service_attachment" "psc_attachment" {
-  project               = local.project_id
-  name                  = "${local.name_prefix}-psc-attachment"
-  region                = var.region
-  enable_proxy_protocol = false
-  connection_preference = "ACCEPT_AUTOMATIC" # TODO Change this value to only accept connections from apigee project
-  nat_subnets           = [google_compute_subnetwork.psc_subnetwork.id]
-  target_service        = google_compute_forwarding_rule.internal_lb_forwarding_rule.self_link
-}
+# resource "google_compute_service_attachment" "psc_attachment" {
+#   project               = local.project_id
+#   name                  = "${local.name_prefix}-psc-attachment"
+#   region                = var.region
+#   enable_proxy_protocol = false
+#   connection_preference = "ACCEPT_AUTOMATIC" # TODO Change this value to only accept connections from apigee project
+#   nat_subnets           = [google_compute_subnetwork.psc_subnetwork.id]
+#   target_service        = google_compute_forwarding_rule.internal_lb_forwarding_rule.self_link
+# }
 
 # Endpoint attachment in apigee project
 # resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
