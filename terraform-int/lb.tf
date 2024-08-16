@@ -190,32 +190,32 @@ resource "google_compute_region_backend_service" "internal_lb_backend_service" {
 }
 
 # Create a URL map for the backend services
-resource "google_compute_region_url_map" "internal_lb_url_map" {
-  project         = local.project_id
-  name            = "${local.name_prefix}-url-map"
-  region          = var.region
-  default_service = google_compute_region_backend_service.internal_lb_backend_service.self_link
-  host_rule {
-    hosts        = ["*"]
-    path_matcher = "${local.name_prefix}-path-matcher"
-  }
-  path_matcher {
-    name            = "${local.name_prefix}-path-matcher"
-    default_service = google_compute_region_backend_service.internal_lb_backend_service.self_link
-    path_rule {
-      paths   = ["/dtros/*"]
-      service = google_compute_region_backend_service.internal_lb_backend_service.self_link
-    }
-  }
-}
+# resource "google_compute_region_url_map" "internal_lb_url_map" {
+#   project         = local.project_id
+#   name            = "${local.name_prefix}-url-map"
+#   region          = var.region
+#   default_service = google_compute_region_backend_service.internal_lb_backend_service.self_link
+#   host_rule {
+#     hosts        = ["*"]
+#     path_matcher = "${local.name_prefix}-path-matcher"
+#   }
+#   path_matcher {
+#     name            = "${local.name_prefix}-path-matcher"
+#     default_service = google_compute_region_backend_service.internal_lb_backend_service.self_link
+#     path_rule {
+#       paths   = ["/dtros/*"]
+#       service = google_compute_region_backend_service.internal_lb_backend_service.self_link
+#     }
+#   }
+# }
 
 # Create a target HTTP proxy for the URL maps
-resource "google_compute_region_target_http_proxy" "internal_lb_target_http_proxy" {
-  project = local.project_id
-  name    = "${local.name_prefix}-http-proxy"
-  region  = var.region
-  url_map = google_compute_region_url_map.internal_lb_url_map.self_link
-}
+# resource "google_compute_region_target_http_proxy" "internal_lb_target_http_proxy" {
+#   project = local.project_id
+#   name    = "${local.name_prefix}-http-proxy"
+#   region  = var.region
+#   url_map = google_compute_region_url_map.internal_lb_url_map.self_link
+# }
 
 # Create a regional forwarding rule for the internal load balancer
 # resource "google_compute_forwarding_rule" "internal_lb_forwarding_rule" {
