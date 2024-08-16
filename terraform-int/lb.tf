@@ -374,7 +374,7 @@ resource "google_compute_region_backend_service" "apigee_backend_service" {
   protocol              = "HTTP"
   health_checks         = [google_compute_region_health_check.ui_ilb_health_check.id]
   backend {
-    group           = google_compute_region_instance_group_manager.ui_apigee_mig_2.instance_group
+    group           = google_compute_region_instance_group_manager.ui_apigee_mig.instance_group
     balancing_mode  = "UTILIZATION"
     capacity_scaler = 1.0
     max_utilization = var.cpu_max_utilization
