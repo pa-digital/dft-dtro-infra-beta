@@ -510,7 +510,7 @@ resource "google_compute_subnetwork" "ui_apigee_mig" {
   name                     = "${local.ui-apigee-mig}-subnetwork"
   ip_cidr_range            = var.ui_apigee_ip_range
   region                   = var.region
-  network                  = google_compute_network.ui_ilb_network.id
+  network                  = module.alb_vpc_network.network_id
   private_ip_google_access = true
 }
 
