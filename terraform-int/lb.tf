@@ -274,7 +274,7 @@ resource "google_compute_service_attachment" "psc_attachment" {
   target_service        = google_compute_forwarding_rule.internal_lb_forwarding_rule.self_link
 }
 
-Endpoint attachment in apigee project
+# Endpoint attachment in apigee project
 resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
   org_id                 = data.terraform_remote_state.primary_default_tfstate.outputs.apigee_org
   endpoint_attachment_id = "${local.name_prefix}-ep-attach-${var.environment}"
