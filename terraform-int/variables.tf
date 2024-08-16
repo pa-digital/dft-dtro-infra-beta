@@ -185,8 +185,8 @@ variable "database_environment_configuration" {
     }
     test = {
       tier                  = "db-custom-2-7680" # vCPU:2  RAM MB:7680
-      disk_size             = 1000
-      disk_autoresize_limit = 500
+      disk_size             = 500
+      disk_autoresize_limit = 1000
       max_connections       = 400
     }
     prod = {
