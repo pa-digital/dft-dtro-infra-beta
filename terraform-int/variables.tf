@@ -221,90 +221,86 @@ variable "int_backend_vpc_ip_range" {
   type        = string
   description = "IP range for Backend VPC"
   default     = "12.0.0.0/28"
+#   default     = "10.70.0.0/28"
 }
 
-variable "int_alb_vpc_ip_range" {
-  type        = string
-  description = "IP range for ALB VPC"
-  default     = "12.64.0.0/28"
-}
-
+#TODO: REMOVE
 variable "int_serverless_connector_ip_range" {
   type        = string
   description = "IP range for Serverless VPC Access Connector"
   default     = "12.200.0.0/28" # CIDR block with "/28" netmask is required
+#   default     = "10.250.0.0/28" # CIDR block with "/28" netmask is required
 }
 
 variable "int_apigee_ip_range" {
   type        = string
   description = "IP range for Apigee"
-  default     = "12.10.0.0/16"
+#   default     = "12.10.0.0/16"
+  default     = "10.80.0.0/16"
 }
 
 variable "int_ui_apigee_ip_range" {
   type        = string
   description = "IP range for Apigee"
   default     = "13.20.0.0/16"
+#   default     = "10.85.0.0/16"
 }
 
+variable "int_ui_apigee_ip_range_2" {
+  type        = string
+  description = "IP range for Apigee"
+  default     = "13.25.0.0/16"
+  #   default     = "10.85.0.0/16"
+}
+
+#TODO: REMOVE
 variable "int_google_compute_global_address_range" {
   type        = string
   description = "IP range for the Google global address to manage private VPC connection with Apigee"
   default     = "12.8.0.0"
+#   default     = "10.88.0.0"
 }
 
 variable "int_ilb_proxy_only_subnetwork_range" {
   type        = string
   description = "IP range for the internal ALB proxy only subnetwork"
-  default     = "12.3.0.0/26"
+#   default     = "12.3.0.0/26"
+  default     = "10.90.0.0/26"
 }
 
 variable "int_ui_ilb_proxy_only_subnetwork_range" {
   type        = string
   description = "IP range for the internal ALB proxy only subnetwork"
-  default     = "13.3.0.0/26"
+#   default     = "13.3.0.0/26"
+  default     = "10.95.0.0/26"
 }
 
 variable "int_ilb_private_subnetwork_range" {
   type        = string
   description = "IP range for internal ALB private subnetwork"
   default     = "12.2.1.0/24"
+#   default     = "10.100.1.0/24"
 }
 
 variable "int_ui_ilb_private_subnetwork_range" {
   type        = string
   description = "IP range for internal ALB private subnetwork"
   default     = "13.2.1.0/28"
+#   default     = "10.105.1.0/28"
 }
 
 variable "int_psc_private_subnetwork_range" {
   type        = string
   description = "IP range for Private Service Connect private subnetwork"
   default     = "12.20.1.0/24"
+#   default     = "10.110.1.0/24"
 }
 
 variable "int_psc_subnetwork_range" {
   type        = string
   description = "IP range for Private Service Connect subnetwork"
   default     = "12.3.1.0/24"
-}
-
-variable "int_ui_psc_private_subnetwork_range" {
-  type        = string
-  description = "IP range for Private Service Connect private subnetwork"
-  default     = "13.30.1.0/24"
-}
-
-variable "int_ui_psc_subnetwork_range" {
-  type        = string
-  description = "IP range for Private Service Connect subnetwork"
-  default     = "13.4.1.0/28"
-}
-
-variable "int_ui_vpc_connector_range" {
-  type        = string
-  description = "IP range for Private Service Connect private subnetwork"
-  default     = "13.40.1.0/28"
+#   default     = "10.115.1.0/24"
 }
 
 variable "google_compute_global_address_prefix_length" {

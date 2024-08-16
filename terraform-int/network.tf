@@ -31,31 +31,33 @@ module "backend_vpc_network" {
 }
 
 #VPC peering link to Cloud SQL VPC
-module "cloudsql_private_service_access" {
-  source  = "GoogleCloudPlatform/sql-db/google//modules/private_service_access"
-  version = "20.1.0"
+#TODO - backend-network #1
+# module "cloudsql_private_service_access" {
+#   source  = "GoogleCloudPlatform/sql-db/google//modules/private_service_access"
+#   version = "20.1.0"
+#
+#   project_id  = data.google_project.project.project_id
+#   vpc_network = module.backend_vpc_network.network_name
+#
+#   depends_on = [module.backend_vpc_network]
+# }
 
-  project_id  = data.google_project.project.project_id
-  vpc_network = module.backend_vpc_network.network_name
-
-  depends_on = [module.backend_vpc_network]
-}
-
+#TODO - backend-network #1
 ## This could be redundant, we can use Direct VPC egress to connect to the database VPC instead of this.
-resource "google_vpc_access_connector" "serverless_connector" {
-  name    = "${local.name_prefix}-connector"
-  project = data.google_project.project.project_id
-  region  = var.region
-
-  subnet {
-    project_id = data.google_project.project.project_id
-    name       = module.backend_vpc_network.subnets["${var.region}/${local.serverless_connector_subnet_name}"].name
-  }
-
-  machine_type  = var.serverless_connector_config.machine_type
-  min_instances = var.serverless_connector_config.min_instances
-  max_instances = var.serverless_connector_config.max_instances
-}
+# resource "google_vpc_access_connector" "serverless_connector" {
+#   name    = "${local.name_prefix}-connector"
+#   project = data.google_project.project.project_id
+#   region  = var.region
+#
+#   subnet {
+#     project_id = data.google_project.project.project_id
+#     name       = module.backend_vpc_network.subnets["${var.region}/${local.serverless_connector_subnet_name}"].name
+#   }
+#
+#   machine_type  = var.serverless_connector_config.machine_type
+#   min_instances = var.serverless_connector_config.min_instances
+#   max_instances = var.serverless_connector_config.max_instances
+# }
 
 # Post-MVP, There may be a need to have a separate endpoint for Publish and Consume to reduce latency for Consume DSPs
 resource "google_compute_region_network_endpoint_group" "publish_service_serverless_neg" {
