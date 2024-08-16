@@ -536,7 +536,7 @@ resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
   name               = "${local.ui-apigee-mig}-proxy"
   region             = var.region
   base_instance_name = "${local.ui-apigee-mig}-proxy"
-  target_size        = 1
+  target_size        = 2
   version {
     name              = "appserver-canary"
     instance_template = google_compute_instance_template.ui_apigee_mig.self_link_unique
