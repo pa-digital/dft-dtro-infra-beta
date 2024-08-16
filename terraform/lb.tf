@@ -371,26 +371,26 @@ resource "google_compute_subnetwork" "ui_ilb_subnetwork" {
   purpose       = "PRIVATE"
 }
 
-# resource "google_compute_address" "ui_ilb_address" {
-#   project      = local.project_id
-#   name         = "${local.name_prefix}-ui-ilb-ip"
-#   region       = var.region
-#   address_type = "INTERNAL"
-#   subnetwork   = google_compute_subnetwork.ui_ilb_subnetwork.id
-#   purpose      = "SHARED_LOADBALANCER_VIP"
-# }
-#
-# # Create a regional forwarding rule for the internal load balancer
-# resource "google_compute_forwarding_rule" "ui_ilb_forwarding_rule" {
-#   project               = local.project_id
-#   name                  = "${local.name_prefix}-ui-ilb-forwarding-rule"
-#   region                = var.region
-#   load_balancing_scheme = "INTERNAL_MANAGED"
-#   port_range            = "80"
-#   target                = google_compute_region_target_http_proxy.ui_ilb_target_http_proxy.id
-#   network               = module.alb_vpc_network.network_id
-#   subnetwork            = google_compute_subnetwork.ui_ilb_subnetwork.id
-# }
+resource "google_compute_address" "ui_ilb_address" {
+  project      = local.project_id
+  name         = "${local.name_prefix}-ui-ilb-ip"
+  region       = var.region
+  address_type = "INTERNAL"
+  subnetwork   = google_compute_subnetwork.ui_ilb_subnetwork.id
+  purpose      = "SHARED_LOADBALANCER_VIP"
+}
+
+# Create a regional forwarding rule for the internal load balancer
+resource "google_compute_forwarding_rule" "ui_ilb_forwarding_rule" {
+  project               = local.project_id
+  name                  = "${local.name_prefix}-ui-ilb-forwarding-rule"
+  region                = var.region
+  load_balancing_scheme = "INTERNAL_MANAGED"
+  port_range            = "80"
+  target                = google_compute_region_target_http_proxy.ui_ilb_target_http_proxy.id
+  network               = module.alb_vpc_network.network_id
+  subnetwork            = google_compute_subnetwork.ui_ilb_subnetwork.id
+}
 
 # Create a target HTTP proxy for the URL maps
 resource "google_compute_region_target_http_proxy" "ui_ilb_target_http_proxy" {
@@ -429,7 +429,7 @@ resource "google_compute_region_backend_service" "apigee_backend_service" {
   protocol              = "HTTP"
   health_checks         = [google_compute_region_health_check.ui_ilb_health_check.id]
   backend {
-    group           = google_compute_region_instance_group_manager.ui_apigee_mig_2.instance_group
+    group           = google_compute_region_instance_group_manager.ui_apigee_mig.instance_group
     balancing_mode  = "UTILIZATION"
     capacity_scaler = 1.0
     max_utilization = var.cpu_max_utilization
@@ -493,14 +493,14 @@ resource "google_compute_firewall" "health_check_firewall_rule" {
 }
 
 # Endpoint attachment in the Cloud Run CSO Service UI project
-# resource "google_vpc_access_connector" "ui_vpc_connector" {
-#   name   = "cloud-run-connector"
-#   region = var.region
-#   subnet {
-#     project_id = data.google_project.project.project_id
-#     name       = google_compute_subnetwork.ui_ilb_subnetwork.name
-#   }
-# }
+resource "google_vpc_access_connector" "ui_vpc_connector" {
+  name   = "cloud-run-connector"
+  region = var.region
+  subnet {
+    project_id = data.google_project.project.project_id
+    name       = google_compute_subnetwork.ui_ilb_subnetwork.name
+  }
+}
 
 ####
 
@@ -514,46 +514,46 @@ resource "google_compute_subnetwork" "ui_apigee_mig" {
   private_ip_google_access = true
 }
 
-# resource "google_compute_instance_template" "ui_apigee_mig" {
-#   project      = local.project_id
-#   name         = "${local.ui-apigee-mig}-template"
-#   machine_type = var.default_machine_type
-#   tags         = ["http-server", local.apigee-mig-proxy, "gke-apigee-proxy"]
-#   disk {
-#     source_image = "projects/debian-cloud/global/images/family/debian-11"
-#     auto_delete  = true
-#     boot         = true
-#     disk_size_gb = 20
-#   }
-#   network_interface {
-#     network    = google_compute_network.ui_ilb_network.id
-#     subnetwork = google_compute_subnetwork.ui_apigee_mig.id
-#   }
-#   service_account {
-#     email  = var.execution_service_account
-#     scopes = ["cloud-platform"]
-#   }
-#   metadata = {
-#     ENDPOINT           = google_apigee_instance.apigee_instance.host
-#     startup-script-url = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
-#   }
-# }
+resource "google_compute_instance_template" "ui_apigee_mig" {
+  project      = local.project_id
+  name         = "${local.ui-apigee-mig}-template"
+  machine_type = var.default_machine_type
+  tags         = ["http-server", local.apigee-mig-proxy, "gke-apigee-proxy"]
+  disk {
+    source_image = "projects/debian-cloud/global/images/family/debian-11"
+    auto_delete  = true
+    boot         = true
+    disk_size_gb = 20
+  }
+  network_interface {
+    network    = module.alb_vpc_network.network_id
+    subnetwork = google_compute_subnetwork.ui_apigee_mig.id
+  }
+  service_account {
+    email  = var.execution_service_account
+    scopes = ["cloud-platform"]
+  }
+  metadata = {
+    ENDPOINT           = google_apigee_instance.apigee_instance.host
+    startup-script-url = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
+  }
+}
 
-# resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
-#   project            = local.project_id
-#   name               = "${local.ui-apigee-mig}-proxy"
-#   region             = var.region
-#   base_instance_name = "${local.ui-apigee-mig}-proxy"
-#   target_size        = 2
-#   version {
-#     name              = "appserver-canary"
-#     instance_template = google_compute_instance_template.ui_apigee_mig.self_link_unique
-#   }
-#   named_port {
-#     name = "http"
-#     port = 80
-#   }
-# }
+resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
+  project            = local.project_id
+  name               = "${local.ui-apigee-mig}-proxy"
+  region             = var.region
+  base_instance_name = "${local.ui-apigee-mig}-proxy"
+  target_size        = 2
+  version {
+    name              = "appserver-canary"
+    instance_template = google_compute_instance_template.ui_apigee_mig.self_link_unique
+  }
+  named_port {
+    name = "http"
+    port = 80
+  }
+}
 
 resource "google_compute_subnetwork" "ui_apigee_mig_2" {
   project                  = local.project_id
@@ -605,18 +605,18 @@ resource "google_compute_region_instance_group_manager" "ui_apigee_mig_2" {
   }
 }
 
-# resource "google_compute_region_autoscaler" "ui_apigee_autoscaler" {
-#   project = local.project_id
-#   name    = "${local.ui-apigee-mig}-autoscaler"
-#   region  = var.region
-#   target  = google_compute_region_instance_group_manager.ui_apigee_mig.id
-#   # TODO: Assess if these values are sufficient or requires updating
-#   autoscaling_policy {
-#     max_replicas    = 3
-#     min_replicas    = 2
-#     cooldown_period = 90
-#     cpu_utilization {
-#       target = var.cpu_max_utilization
-#     }
-#   }
-# }
+resource "google_compute_region_autoscaler" "ui_apigee_autoscaler" {
+  project = local.project_id
+  name    = "${local.ui-apigee-mig}-autoscaler"
+  region  = var.region
+  target  = google_compute_region_instance_group_manager.ui_apigee_mig.id
+  # TODO: Assess if these values are sufficient or requires updating
+  autoscaling_policy {
+    max_replicas    = 3
+    min_replicas    = 2
+    cooldown_period = 90
+    cpu_utilization {
+      target = var.cpu_max_utilization
+    }
+  }
+}
