@@ -41,7 +41,6 @@ module "cloudsql_private_service_access" {
   depends_on = [module.backend_vpc_network]
 }
 
-#TODO - backend-network #1
 # This could be redundant, we can use Direct VPC egress to connect to the database VPC instead of this.
 resource "google_vpc_access_connector" "serverless_connector" {
   name    = "${local.name_prefix}-connector"
