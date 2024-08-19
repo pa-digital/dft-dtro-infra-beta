@@ -129,10 +129,6 @@ resource "google_compute_region_instance_group_manager" "apigee_mig" {
     name = "https"
     port = 443
   }
-  named_port {
-    name = "http"
-    port = 80
-  }
 }
 
 resource "google_compute_region_autoscaler" "apigee_autoscaler" {
@@ -398,18 +394,6 @@ resource "google_compute_region_url_map" "internal_ui_lb_url_map" {
   name            = "${local.name_prefix}-ui-url-map"
   region          = var.region
   default_service = google_compute_region_backend_service.apigee_backend_service.self_link
-  host_rule {
-    hosts        = ["*"]
-    path_matcher = "${local.name_prefix}-path-matcher"
-  }
-  path_matcher {
-    name            = "${local.name_prefix}-path-matcher"
-    default_service = google_compute_region_backend_service.apigee_backend_service.self_link
-    path_rule {
-      paths   = ["/dtros/*"]
-      service = google_compute_region_backend_service.apigee_backend_service.self_link
-    }
-  }
 }
 
 # Create a backend service for each Cloud Run service
@@ -418,7 +402,7 @@ resource "google_compute_region_backend_service" "apigee_backend_service" {
   name                  = "${local.apigee-mig}-backend-service"
   region                = var.region
   load_balancing_scheme = "INTERNAL_MANAGED"
-  protocol              = "HTTP"
+  protocol              = "HTTPS"
   health_checks         = [google_compute_region_health_check.ui_ilb_health_check.id]
   timeout_sec           = var.backend_service_timeout_sec
   connection_draining_timeout_sec = var.backend_service_connection_draining_timeout_sec
@@ -439,7 +423,8 @@ resource "google_compute_region_health_check" "ui_ilb_health_check" {
   healthy_threshold   = 2
   unhealthy_threshold = 2
   http_health_check {
-    port                = 80
+    port         = 443
+    request_path = "/healthz/ingress"
   }
   log_config {
     enable      = true
@@ -551,8 +536,8 @@ resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
     instance_template = google_compute_instance_template.ui_apigee_mig.self_link_unique
   }
   named_port {
-    name = "http"
-    port = 80
+    name = "https"
+    port = 443
   }
 }
 
