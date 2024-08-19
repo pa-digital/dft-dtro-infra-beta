@@ -420,6 +420,8 @@ resource "google_compute_region_backend_service" "apigee_backend_service" {
   load_balancing_scheme = "INTERNAL_MANAGED"
   protocol              = "HTTP"
   health_checks         = [google_compute_region_health_check.ui_ilb_health_check.id]
+  timeout_sec           = var.backend_service_timeout_sec
+  connection_draining_timeout_sec = var.backend_service_connection_draining_timeout_sec
   backend {
     group           = google_compute_region_instance_group_manager.ui_apigee_mig.instance_group
     balancing_mode  = "UTILIZATION"
@@ -432,8 +434,15 @@ resource "google_compute_region_health_check" "ui_ilb_health_check" {
   project = local.project_id
   name    = "${local.name_prefix}-ui-ilb-health-check"
   region  = "europe-west1"
+  check_interval_sec  = 30
+  timeout_sec         = 10
+  healthy_threshold   = 2
+  unhealthy_threshold = 2
   http_health_check {
-    port_specification = "USE_SERVING_PORT"
+    port                = 80
+  }
+  log_config {
+    enable      = true
   }
 }
 
