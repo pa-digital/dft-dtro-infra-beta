@@ -422,7 +422,7 @@ resource "google_compute_region_health_check" "ui_ilb_health_check" {
   timeout_sec         = 10
   healthy_threshold   = 2
   unhealthy_threshold = 2
-  http_health_check {
+  https_health_check {
     port         = 443
     request_path = "/healthz/ingress"
   }
@@ -538,6 +538,10 @@ resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
   named_port {
     name = "https"
     port = 443
+  }
+  named_port {
+    name = "http"
+    port = 80
   }
 }
 
