@@ -129,10 +129,6 @@ resource "google_compute_region_instance_group_manager" "apigee_mig" {
     name = "https"
     port = 443
   }
-  named_port {
-    name = "http"
-    port = 80
-  }
 }
 
 resource "google_compute_region_autoscaler" "apigee_autoscaler" {
@@ -341,22 +337,14 @@ resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
 
 ############################################################################
 
-# Internal Load Balancer between Cloud Run CSO UI and Apigee
-# Create a proxy-only subnetwork for internal load balancer
-
-resource "google_compute_network" "ui_ilb_network" {
-  project                 = local.project_id
-  name                    = "${local.name_prefix}-ui-ilb-network"
-  auto_create_subnetworks = false
-}
-
+# Internal Load Balancer between Cloud Run Service UI and Apigee
 # Proxy only subnetwork for source address for ui_ilb_subnetwork
 resource "google_compute_subnetwork" "proxy_only_ui_subnetwork" {
   project       = local.project_id
   name          = "${local.name_prefix}-loadbalancer-proxy-only-ui-subnetwork"
   ip_cidr_range = var.ui_ilb_proxy_only_subnetwork_range
   region        = var.region
-  network       = google_compute_network.ui_ilb_network.id
+  network       = module.alb_vpc_network.network_id
   purpose       = "REGIONAL_MANAGED_PROXY"
   role          = "ACTIVE"
 }
@@ -367,7 +355,7 @@ resource "google_compute_subnetwork" "ui_ilb_subnetwork" {
   name          = "${local.name_prefix}-ui-ilb-subnetwork"
   ip_cidr_range = var.ui_ilb_private_subnetwork_range
   region        = var.region
-  network       = google_compute_network.ui_ilb_network.id
+  network       = module.alb_vpc_network.network_id
   purpose       = "PRIVATE"
 }
 
@@ -388,7 +376,7 @@ resource "google_compute_forwarding_rule" "ui_ilb_forwarding_rule" {
   load_balancing_scheme = "INTERNAL_MANAGED"
   port_range            = "80"
   target                = google_compute_region_target_http_proxy.ui_ilb_target_http_proxy.id
-  network               = google_compute_network.ui_ilb_network.id
+  network               = module.alb_vpc_network.network_id
   subnetwork            = google_compute_subnetwork.ui_ilb_subnetwork.id
 }
 
@@ -406,18 +394,6 @@ resource "google_compute_region_url_map" "internal_ui_lb_url_map" {
   name            = "${local.name_prefix}-ui-url-map"
   region          = var.region
   default_service = google_compute_region_backend_service.apigee_backend_service.self_link
-  host_rule {
-    hosts        = ["*"]
-    path_matcher = "${local.name_prefix}-path-matcher"
-  }
-  path_matcher {
-    name            = "${local.name_prefix}-path-matcher"
-    default_service = google_compute_region_backend_service.apigee_backend_service.self_link
-    path_rule {
-      paths   = ["/dtros/*"]
-      service = google_compute_region_backend_service.apigee_backend_service.self_link
-    }
-  }
 }
 
 # Create a backend service for each Cloud Run service
@@ -426,8 +402,10 @@ resource "google_compute_region_backend_service" "apigee_backend_service" {
   name                  = "${local.apigee-mig}-backend-service"
   region                = var.region
   load_balancing_scheme = "INTERNAL_MANAGED"
-  protocol              = "HTTP"
+  protocol              = "HTTPS"
   health_checks         = [google_compute_region_health_check.ui_ilb_health_check.id]
+  timeout_sec           = var.backend_service_timeout_sec
+  connection_draining_timeout_sec = var.backend_service_connection_draining_timeout_sec
   backend {
     group           = google_compute_region_instance_group_manager.ui_apigee_mig.instance_group
     balancing_mode  = "UTILIZATION"
@@ -440,15 +418,23 @@ resource "google_compute_region_health_check" "ui_ilb_health_check" {
   project = local.project_id
   name    = "${local.name_prefix}-ui-ilb-health-check"
   region  = "europe-west1"
-  http_health_check {
-    port_specification = "USE_SERVING_PORT"
+  check_interval_sec  = 30
+  timeout_sec         = 10
+  healthy_threshold   = 2
+  unhealthy_threshold = 2
+  https_health_check {
+    port         = 443
+    request_path = "/healthz/ingress"
+  }
+  log_config {
+    enable      = true
   }
 }
 
 resource "google_compute_firewall" "ui_ilb_firewall_rule" {
   project     = local.project_id
   name        = "${local.name_prefix}-ui-ilb-firewall-rule"
-  network     = google_compute_network.ui_ilb_network.id
+  network     = module.alb_vpc_network.network_id
   description = "Allow incoming from Cloud Run on ssh to Apigee Proxy"
   allow {
     protocol = "tcp"
@@ -456,12 +442,15 @@ resource "google_compute_firewall" "ui_ilb_firewall_rule" {
   }
   source_ranges = ["0.0.0.0/0"]
   target_tags   = [ local.apigee-mig-proxy, "allow-ssh"]
+  log_config {
+     metadata = "INCLUDE_ALL_METADATA"
+  }
 }
 
 resource "google_compute_firewall" "ui_ilb_allow_proxy_firewall_rule" {
   project     = local.project_id
   name        = "${local.name_prefix}-ui-ilb-allow-proxy-firewall-rule"
-  network     = google_compute_network.ui_ilb_network.id
+  network     = module.alb_vpc_network.network_id
   description = "Allow incoming from Proxy"
   allow {
     protocol = "tcp"
@@ -469,23 +458,29 @@ resource "google_compute_firewall" "ui_ilb_allow_proxy_firewall_rule" {
   }
   source_ranges = [var.ui_ilb_proxy_only_subnetwork_range]
   target_tags   = [local.apigee-mig-proxy, "http-server", "allow-proxy", "load-balanced-backend"]
+  log_config {
+    metadata = "INCLUDE_ALL_METADATA"
+  }
 }
 
 resource "google_compute_firewall" "health_check_firewall_rule" {
   project     = local.project_id
   name        = "${local.name_prefix}-ui-health-check-firewall-rule"
-  network     = google_compute_network.ui_ilb_network.id
+  network     = module.alb_vpc_network.network_id
   description = "Allow health check for apigee"
   allow {
     protocol = "tcp"
   }
   source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
   target_tags   = [local.apigee-mig-proxy, "load-balanced-backend"]
+  log_config {
+    metadata = "INCLUDE_ALL_METADATA"
+  }
 }
 
 # Endpoint attachment in the Cloud Run CSO Service UI project
 resource "google_vpc_access_connector" "ui_vpc_connector" {
-  name   = "cloud-run-connector"
+  name   = "ui-cloud-run-connector"
   region = var.region
   subnet {
     project_id = data.google_project.project.project_id
@@ -501,7 +496,7 @@ resource "google_compute_subnetwork" "ui_apigee_mig" {
   name                     = "${local.ui-apigee-mig}-subnetwork"
   ip_cidr_range            = var.ui_apigee_ip_range
   region                   = var.region
-  network                  = google_compute_network.ui_ilb_network.id
+  network                  = module.alb_vpc_network.network_id
   private_ip_google_access = true
 }
 
@@ -517,7 +512,7 @@ resource "google_compute_instance_template" "ui_apigee_mig" {
     disk_size_gb = 20
   }
   network_interface {
-    network    = google_compute_network.ui_ilb_network.id
+    network    = module.alb_vpc_network.network_id
     subnetwork = google_compute_subnetwork.ui_apigee_mig.id
   }
   service_account {
@@ -535,10 +530,14 @@ resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
   name               = "${local.ui-apigee-mig}-proxy"
   region             = var.region
   base_instance_name = "${local.ui-apigee-mig}-proxy"
-  target_size        = 1
+  target_size        = 2
   version {
     name              = "appserver-canary"
     instance_template = google_compute_instance_template.ui_apigee_mig.self_link_unique
+  }
+  named_port {
+    name = "https"
+    port = 443
   }
   named_port {
     name = "http"

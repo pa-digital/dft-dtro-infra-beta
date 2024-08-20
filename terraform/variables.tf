@@ -204,6 +204,18 @@ variable "serverless_connector_config" {
   }
 }
 
+variable "backend_service_timeout_sec" {
+  type = number
+  description = "the backend service timeout is a request and response timeout for HTTP(S) traffic."
+  default = 302
+}
+
+variable "backend_service_connection_draining_timeout_sec" {
+  type = number
+  description = "Time for which instance will be drained."
+  default = 300
+}
+
 variable "backend_vpc_ip_range" {
   type        = string
   description = "IP range for Backend VPC"
@@ -244,6 +256,12 @@ variable "google_compute_global_address_range" {
   type        = string
   description = "IP range for the Google global address to manage private VPC connection with Apigee"
   default     = "10.9.0.0"
+}
+
+variable "ilb_google_compute_global_address_range" {
+  type        = string
+  description = "IP range for the Internal Regional address to manage private VPC connection with Apigee"
+  default     = "10.70.0.0"
 }
 
 variable "ilb_proxy_only_subnetwork_range" {
