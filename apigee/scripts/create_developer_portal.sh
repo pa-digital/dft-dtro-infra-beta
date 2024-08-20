@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2269,SC2154
 
 # Script Variables
 ORG=$apigee_organisation
@@ -17,9 +18,9 @@ env_name_prefix=$env_name_prefix
 
   # Error checking and handling
   if [ "$RESPONSE" -eq 200 ]; then
-    echo "Developer Portal successfully created in ${ORG}."
+    echo "Developer Portal for ${env_name_prefix^} successfully created in ${ORG}."
   elif [ "$RESPONSE" -eq 409 ]; then
-    echo "Developer Portal already exists in ${ORG}."
+    echo "Developer Portal for ${env_name_prefix^} already exists in ${ORG}."
   else
     echo "Failed to create developer portal in ${ORG}. HTTP response code: $RESPONSE"
   fi

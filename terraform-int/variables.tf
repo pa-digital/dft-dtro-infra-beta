@@ -185,13 +185,13 @@ variable "database_environment_configuration" {
     }
     test = {
       tier                  = "db-custom-2-7680" # vCPU:2  RAM MB:7680
-      disk_size             = 250
-      disk_autoresize_limit = 500
+      disk_size             = 500
+      disk_autoresize_limit = 1000
       max_connections       = 400
     }
     prod = {
       tier                  = "db-custom-16-61440" # vCPU:16  RAM MB:61440
-      disk_size             = 5000
+      disk_size             = 10000
       disk_autoresize_limit = 0 # The default value is 0, which specifies that there is no limit.(https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/sql_database_instance#disk_autoresize_limit)
       max_connections       = 800
     }
@@ -220,91 +220,61 @@ variable "serverless_connector_config" {
 variable "int_backend_vpc_ip_range" {
   type        = string
   description = "IP range for Backend VPC"
-  default     = "11.0.0.0/28"
-}
-
-variable "int_alb_vpc_ip_range" {
-  type        = string
-  description = "IP range for ALB VPC"
-  default     = "11.64.0.0/28"
-}
-
-variable "int_serverless_connector_ip_range" {
-  type        = string
-  description = "IP range for Serverless VPC Access Connector"
-  default     = "11.200.0.0/28" # CIDR block with "/28" netmask is required
+  default     = "10.70.0.0/28"
 }
 
 variable "int_apigee_ip_range" {
   type        = string
   description = "IP range for Apigee"
-  default     = "12.10.0.0/16"
+  default     = "10.80.0.0/16"
 }
 
 variable "int_ui_apigee_ip_range" {
   type        = string
   description = "IP range for Apigee"
-  default     = "13.20.0.0/16"
+  default     = "10.85.0.0/16"
 }
 
-variable "int_google_compute_global_address_range" {
+variable "int_ui_apigee_ip_range_2" {
   type        = string
-  description = "IP range for the Google global address to manage private VPC connection with Apigee"
-  default     = "12.8.0.0"
+  description = "IP range for Apigee"
+  default     = "13.25.0.0/16"
 }
 
 variable "int_ilb_proxy_only_subnetwork_range" {
   type        = string
   description = "IP range for the internal ALB proxy only subnetwork"
-  default     = "12.3.0.0/26"
+  default     = "10.90.0.0/26"
 }
 
 variable "int_ui_ilb_proxy_only_subnetwork_range" {
   type        = string
   description = "IP range for the internal ALB proxy only subnetwork"
-  default     = "13.3.0.0/26"
+  default     = "10.95.0.0/26"
 }
 
 variable "int_ilb_private_subnetwork_range" {
   type        = string
   description = "IP range for internal ALB private subnetwork"
-  default     = "12.2.1.0/24"
+  default     = "10.100.1.0/24"
 }
 
 variable "int_ui_ilb_private_subnetwork_range" {
   type        = string
   description = "IP range for internal ALB private subnetwork"
-  default     = "13.2.1.0/28"
+  default     = "10.105.1.0/28"
 }
 
 variable "int_psc_private_subnetwork_range" {
   type        = string
   description = "IP range for Private Service Connect private subnetwork"
-  default     = "12.20.1.0/24"
+  default     = "10.110.1.0/24"
 }
 
 variable "int_psc_subnetwork_range" {
   type        = string
   description = "IP range for Private Service Connect subnetwork"
-  default     = "12.3.1.0/24"
-}
-
-variable "int_ui_psc_private_subnetwork_range" {
-  type        = string
-  description = "IP range for Private Service Connect private subnetwork"
-  default     = "13.30.1.0/24"
-}
-
-variable "int_ui_psc_subnetwork_range" {
-  type        = string
-  description = "IP range for Private Service Connect subnetwork"
-  default     = "13.4.1.0/28"
-}
-
-variable "int_ui_vpc_connector_range" {
-  type        = string
-  description = "IP range for Private Service Connect private subnetwork"
-  default     = "13.40.1.0/28"
+  default     = "10.115.1.0/24"
 }
 
 variable "google_compute_global_address_prefix_length" {

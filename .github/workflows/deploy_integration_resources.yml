@@ -21,8 +21,8 @@ env:
   TF_VAR_project_id: ${{ vars.GCP_PROJECT_ID_TEST }}
   TF_VAR_organisation: ${{ vars.DFT_ORGANISATION }}
   TF_VAR_organisation_id: ${{ vars.DFT_ORGANISATION_ID }}
-  TF_VAR_execution_service_account: ${{ secrets.EXECUTION_SERVICE_ACCOUNT }}
-  TF_VAR_wip_service_account: ${{ secrets.WIP_SERVICE_ACCOUNT }}
+  TF_VAR_execution_service_account: ${{ secrets.EXECUTION_SERVICE_ACCOUNT_TEST }}
+  TF_VAR_wip_service_account: ${{ secrets.WIP_SERVICE_ACCOUNT_TEST }}
   TF_VAR_access_level_members: ${{ secrets.ACCESS_LEVEL_MEMBERS }}
 
 permissions:
@@ -65,19 +65,16 @@ jobs:
           -backend-config "prefix=terraform/int-state"
 
       - name: Terraform Plan
-        run: terraform plan -input=false -out terraform-plan-gcp
+        run: terraform plan -input=false -out terraform-plan-gcp-int
 
-#      - name: Terraform Apply
-#        run: terraform apply -auto-approve -input=false terraform-plan-gcp
-
-      - name: Terraform Destroy
-        run: terraform apply -destroy -auto-approve
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -input=false terraform-plan-gcp-int
 
   deploy-apigee-proxies-and-portal:
-    name: Deploy GCP Apigee proxies and portal to ${{ inputs.environment }}
+    name: Deploy GCP Apigee proxies and portal to Integration
     if: ${{ inputs.run-apigee }}
-    needs:
-      - deploy-resources
+#    needs:
+#      - deploy-resources
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -100,7 +97,8 @@ jobs:
         run: ./environments/load_environment_variables.sh
         env:
           github_ref: ${{ github.ref }}
-          environment: ${{ env.TF_VAR_integration_prefix }}
+          environment: ${{ env.TF_VAR_environment }}
+          env_name_prefix: ${{ env.TF_VAR_integration_prefix }}
           service_account: ${{ env.TF_VAR_execution_service_account }}
           apigee_organisation: ${{ env.TF_VAR_project_id }}
 
@@ -108,8 +106,8 @@ jobs:
         id: google-auth
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: ${{ secrets.workload_identity_provider }}
-          service_account: ${{ secrets.wip_service_account }}
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_TEST }}
+          service_account: ${{ secrets.WIP_SERVICE_ACCOUNT_TEST }}
           token_format: access_token
 
       - name: Set up ApigeeCLI

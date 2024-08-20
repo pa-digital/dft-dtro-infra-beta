@@ -49,7 +49,7 @@ module "postgres_db" {
     }
   ]
 
-  # Basic, single region backups 
+  # Basic, single region backups
   backup_configuration = {
     enabled                        = true
     location                       = var.region

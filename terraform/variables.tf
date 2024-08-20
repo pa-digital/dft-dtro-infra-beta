@@ -172,13 +172,13 @@ variable "database_environment_configuration" {
     }
     test = {
       tier                  = "db-custom-2-7680" # vCPU:2  RAM MB:7680
-      disk_size             = 250
+      disk_size             = 1000
       disk_autoresize_limit = 500
       max_connections       = 400
     }
     prod = {
       tier                  = "db-custom-16-61440" # vCPU:16  RAM MB:61440
-      disk_size             = 5000
+      disk_size             = 10000
       disk_autoresize_limit = 0 # The default value is 0, which specifies that there is no limit.(https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/sql_database_instance#disk_autoresize_limit)
       max_connections       = 800
     }
@@ -205,15 +205,15 @@ variable "serverless_connector_config" {
 }
 
 variable "backend_service_timeout_sec" {
-  type = number
+  type        = number
   description = "the backend service timeout is a request and response timeout for HTTP(S) traffic."
-  default = 302
+  default     = 302
 }
 
 variable "backend_service_connection_draining_timeout_sec" {
-  type = number
+  type        = number
   description = "Time for which instance will be drained."
-  default = 300
+  default     = 300
 }
 
 variable "backend_vpc_ip_range" {
@@ -285,7 +285,7 @@ variable "ilb_private_subnetwork_range" {
 variable "ui_ilb_private_subnetwork_range" {
   type        = string
   description = "IP range for internal ALB private subnetwork"
- default     = "10.50.1.0/28"
+  default     = "10.50.1.0/28"
 }
 
 variable "psc_private_subnetwork_range" {

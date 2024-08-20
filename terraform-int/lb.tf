@@ -1,7 +1,7 @@
 locals {
-  int-apigee-mig          = "int-apigee-mig"
-  apigee-mig-proxy    = "apigee-mig-proxy"
-  int-ui-apigee-mig       = "int-ui-apigee-mig"
+  int-apigee-mig    = "int-apigee-mig"
+  apigee-mig-proxy  = "apigee-mig-proxy"
+  int-ui-apigee-mig = "int-ui-apigee-mig"
 }
 
 # External Load Balancer for D-TRO
@@ -35,7 +35,7 @@ module "loadbalancer" {
 
       groups = [
         {
-          group           = google_compute_region_instance_group_manager.apigee_mig.instance_group
+          group           = data.terraform_remote_state.primary_default_tfstate.outputs.apigee_mig_instance_group
           max_utilization = var.cpu_max_utilization
         }
       ]
@@ -88,67 +88,6 @@ resource "google_compute_subnetwork" "apigee_mig" {
   region                   = var.region
   network                  = data.google_compute_network.alb_vpc_network.id
   private_ip_google_access = true
-}
-
-resource "google_compute_instance_template" "apigee_mig" {
-  project      = local.project_id
-  name         = "${local.int-apigee-mig}-template"
-  machine_type = var.default_machine_type
-  tags         = ["https-server", local.apigee-mig-proxy, "gke-apigee-proxy"]
-  disk {
-    source_image = "projects/debian-cloud/global/images/family/debian-11"
-    auto_delete  = true
-    boot         = true
-    disk_size_gb = 20
-  }
-  network_interface {
-    network    = data.google_compute_network.alb_vpc_network.id
-    subnetwork = google_compute_subnetwork.apigee_mig.id
-  }
-  service_account {
-    email  = var.execution_service_account
-    scopes = ["cloud-platform"]
-  }
-  metadata = {
-    ENDPOINT           = data.terraform_remote_state.primary_default_tfstate.outputs.apigee_instance_host
-    startup-script-url = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
-  }
-}
-
-resource "google_compute_region_instance_group_manager" "apigee_mig" {
-  project            = local.project_id
-  name               = "${local.int-apigee-mig}-proxy"
-  region             = var.region
-  base_instance_name = "${local.int-apigee-mig}-proxy"
-  target_size        = 2
-  version {
-    name              = "appserver-canary"
-    instance_template = google_compute_instance_template.apigee_mig.self_link_unique
-  }
-  named_port {
-    name = "https"
-    port = 443
-  }
-  named_port {
-    name = "http"
-    port = 80
-  }
-}
-
-resource "google_compute_region_autoscaler" "apigee_autoscaler" {
-  project = local.project_id
-  name    = "${local.int-apigee-mig}-autoscaler"
-  region  = var.region
-  target  = google_compute_region_instance_group_manager.apigee_mig.id
-  # TODO: Assess if these values are sufficient or requires updating
-  autoscaling_policy {
-    max_replicas    = 3
-    min_replicas    = 2
-    cooldown_period = 90
-    cpu_utilization {
-      target = var.cpu_max_utilization
-    }
-  }
 }
 
 # External Load Balancer for CSO Portal UI
@@ -343,7 +282,6 @@ resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
 
 # Internal Load Balancer between Cloud Run CSO UI and Apigee
 # Create a proxy-only subnetwork for internal load balancer
-
 resource "google_compute_network" "ui_ilb_network" {
   project                 = local.project_id
   name                    = "${local.name_prefix}-ui-ilb-network"
@@ -414,7 +352,7 @@ resource "google_compute_region_url_map" "internal_ui_lb_url_map" {
     name            = "${local.name_prefix}-path-matcher"
     default_service = google_compute_region_backend_service.apigee_backend_service.self_link
     path_rule {
-      paths   = ["/dtros/*"] #TODO: Is this correct for DTRO?
+      paths   = ["/dtros/*"]
       service = google_compute_region_backend_service.apigee_backend_service.self_link
     }
   }
@@ -456,6 +394,9 @@ resource "google_compute_firewall" "ui_ilb_firewall_rule" {
   }
   source_ranges = ["0.0.0.0/0"]
   target_tags   = ["allow-ssh", local.apigee-mig-proxy]
+  log_config {
+    metadata = "INCLUDE_ALL_METADATA"
+  }
 }
 
 resource "google_compute_firewall" "ui_ilb_allow_proxy_firewall_rule" {
@@ -469,6 +410,9 @@ resource "google_compute_firewall" "ui_ilb_allow_proxy_firewall_rule" {
   }
   source_ranges = [var.int_ui_ilb_proxy_only_subnetwork_range]
   target_tags   = ["allow-proxy", "load-balanced-backend", local.apigee-mig-proxy]
+  log_config {
+    metadata = "INCLUDE_ALL_METADATA"
+  }
 }
 
 resource "google_compute_firewall" "health_check_firewall_rule" {
@@ -481,11 +425,14 @@ resource "google_compute_firewall" "health_check_firewall_rule" {
   }
   source_ranges = ["130.211.0.0/22", "35.191.0.0/16", "35.235.240.0/20"]
   target_tags   = ["load-balanced-backend", local.apigee-mig-proxy]
+  log_config {
+    metadata = "INCLUDE_ALL_METADATA"
+  }
 }
 
 # Endpoint attachment in the Cloud Run CSO Service UI project
-resource "google_vpc_access_connector" "ui_vpc_connector" {
-  name   = "cloud-run-connector"
+resource "google_vpc_access_connector" "int_ui_vpc_connector" {
+  name   = "${var.integration_prefix}-cloud-run-connector"
   region = var.region
   subnet {
     project_id = data.google_project.project.project_id
@@ -545,6 +492,56 @@ resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
     port = 80
   }
 }
+
+# resource "google_compute_subnetwork" "ui_apigee_mig_2" {
+#   project                  = local.project_id
+#   name                     = "${local.int-ui-apigee-mig}-subnetwork-2"
+#   ip_cidr_range            = var.int_ui_apigee_ip_range_2
+#   region                   = var.region
+#   network                  = google_compute_network.ui_ilb_network.id
+#   private_ip_google_access = true
+# }
+
+# resource "google_compute_instance_template" "ui_apigee_mig_2" {
+#   project      = local.project_id
+#   name         = "${local.int-ui-apigee-mig}-template-2"
+#   machine_type = var.default_machine_type
+#   tags         = ["http-server", local.apigee-mig-proxy, "gke-apigee-proxy"]
+#   disk {
+#     source_image = "projects/debian-cloud/global/images/family/debian-11"
+#     auto_delete  = true
+#     boot         = true
+#     disk_size_gb = 20
+#   }
+#   network_interface {
+#     network    = google_compute_network.ui_ilb_network.id
+#     subnetwork = google_compute_subnetwork.ui_apigee_mig_2.id
+#   }
+#   service_account {
+#     email  = var.execution_service_account
+#     scopes = ["cloud-platform"]
+#   }
+#   metadata = {
+#     ENDPOINT           = data.terraform_remote_state.primary_default_tfstate.outputs.apigee_instance_host
+#     startup-script-url = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
+#   }
+# }
+
+# resource "google_compute_region_instance_group_manager" "ui_apigee_mig_2" {
+#   project            = local.project_id
+#   name               = "${local.int-ui-apigee-mig}-proxy-2"
+#   region             = var.region
+#   base_instance_name = "${local.int-ui-apigee-mig}-proxy-2"
+#   target_size        = 1
+#   version {
+#     name              = "appserver-canary"
+#     instance_template = google_compute_instance_template.ui_apigee_mig_2.self_link_unique
+#   }
+#   named_port {
+#     name = "http"
+#     port = 80
+#   }
+# }
 
 resource "google_compute_region_autoscaler" "ui_apigee_autoscaler" {
   count   = 0
