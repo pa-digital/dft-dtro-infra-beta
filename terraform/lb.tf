@@ -377,7 +377,7 @@ resource "google_compute_forwarding_rule" "ui_ilb_forwarding_rule" {
   port_range            = "80"
   target                = google_compute_region_target_http_proxy.ui_ilb_target_http_proxy.id
   network               = module.alb_vpc_network.network_id
-  subnetwork            = google_compute_subnetwork.proxy_only_ui_subnetwork.id
+  subnetwork            = google_compute_subnetwork.ui_ilb_subnetwork.id
 }
 
 # Create a target HTTP proxy for the URL maps
