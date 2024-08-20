@@ -338,7 +338,7 @@ resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
 ############################################################################
 
 # Internal Load Balancer between Cloud Run Service UI and Apigee
-# Proxy only subnetwork for source address for ui_ilb_subnetwork
+# Proxy only subnetwork for source address of the internal load balancer
 resource "google_compute_subnetwork" "proxy_only_ui_subnetwork" {
   project       = local.project_id
   name          = "${local.name_prefix}-loadbalancer-proxy-only-ui-subnetwork"
@@ -377,7 +377,7 @@ resource "google_compute_forwarding_rule" "ui_ilb_forwarding_rule" {
   port_range            = "80"
   target                = google_compute_region_target_http_proxy.ui_ilb_target_http_proxy.id
   network               = module.alb_vpc_network.network_id
-  subnetwork            = google_compute_subnetwork.ui_ilb_subnetwork.id
+  subnetwork            = google_compute_subnetwork.proxy_only_ui_subnetwork.id
 }
 
 # Create a target HTTP proxy for the URL maps
@@ -386,6 +386,14 @@ resource "google_compute_region_target_http_proxy" "ui_ilb_target_http_proxy" {
   name    = "${local.name_prefix}-ui-http-proxy"
   region  = var.region
   url_map = google_compute_region_url_map.internal_ui_lb_url_map.self_link
+}
+
+resource "google_compute_managed_ssl_certificate" "ilb-cert" {
+  project = local.project_id
+  name    = "${local.name_prefix}-ilb-cert"
+  managed {
+    domains = [var.domain[var.environment]]
+  }
 }
 
 # Create a URL map for the backend services
