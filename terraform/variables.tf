@@ -205,15 +205,15 @@ variable "serverless_connector_config" {
 }
 
 variable "backend_service_timeout_sec" {
-  type = number
+  type        = number
   description = "the backend service timeout is a request and response timeout for HTTP(S) traffic."
-  default = 302
+  default     = 302
 }
 
 variable "backend_service_connection_draining_timeout_sec" {
-  type = number
+  type        = number
   description = "Time for which instance will be drained."
-  default = 300
+  default     = 300
 }
 
 variable "backend_vpc_ip_range" {
@@ -285,7 +285,7 @@ variable "ilb_private_subnetwork_range" {
 variable "ui_ilb_private_subnetwork_range" {
   type        = string
   description = "IP range for internal ALB private subnetwork"
- default     = "10.50.1.0/28"
+  default     = "10.50.1.0/28"
 }
 
 variable "psc_private_subnetwork_range" {

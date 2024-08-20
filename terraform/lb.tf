@@ -1,7 +1,7 @@
 locals {
-  apigee-mig          = "apigee-mig"
-  apigee-mig-proxy    = "apigee-mig-proxy"
-  ui-apigee-mig       = "ui-apigee-mig"
+  apigee-mig       = "apigee-mig"
+  apigee-mig-proxy = "apigee-mig-proxy"
+  ui-apigee-mig    = "ui-apigee-mig"
 }
 
 # External Load Balancer
@@ -398,13 +398,13 @@ resource "google_compute_region_url_map" "internal_ui_lb_url_map" {
 
 # Create a backend service for each Cloud Run service
 resource "google_compute_region_backend_service" "apigee_backend_service" {
-  project               = local.project_id
-  name                  = "${local.apigee-mig}-backend-service"
-  region                = var.region
-  load_balancing_scheme = "INTERNAL_MANAGED"
-  protocol              = "HTTPS"
-  health_checks         = [google_compute_region_health_check.ui_ilb_health_check.id]
-  timeout_sec           = var.backend_service_timeout_sec
+  project                         = local.project_id
+  name                            = "${local.apigee-mig}-backend-service"
+  region                          = var.region
+  load_balancing_scheme           = "INTERNAL_MANAGED"
+  protocol                        = "HTTPS"
+  health_checks                   = [google_compute_region_health_check.ui_ilb_health_check.id]
+  timeout_sec                     = var.backend_service_timeout_sec
   connection_draining_timeout_sec = var.backend_service_connection_draining_timeout_sec
   backend {
     group           = google_compute_region_instance_group_manager.ui_apigee_mig.instance_group
@@ -415,9 +415,9 @@ resource "google_compute_region_backend_service" "apigee_backend_service" {
 }
 
 resource "google_compute_region_health_check" "ui_ilb_health_check" {
-  project = local.project_id
-  name    = "${local.name_prefix}-ui-ilb-health-check"
-  region  = "europe-west1"
+  project             = local.project_id
+  name                = "${local.name_prefix}-ui-ilb-health-check"
+  region              = "europe-west1"
   check_interval_sec  = 30
   timeout_sec         = 10
   healthy_threshold   = 2
@@ -427,7 +427,7 @@ resource "google_compute_region_health_check" "ui_ilb_health_check" {
     request_path = "/healthz/ingress"
   }
   log_config {
-    enable      = true
+    enable = true
   }
 }
 
@@ -441,9 +441,9 @@ resource "google_compute_firewall" "ui_ilb_firewall_rule" {
     ports    = ["22"]
   }
   source_ranges = ["0.0.0.0/0"]
-  target_tags   = [ local.apigee-mig-proxy, "allow-ssh"]
+  target_tags   = [local.apigee-mig-proxy, "allow-ssh"]
   log_config {
-     metadata = "INCLUDE_ALL_METADATA"
+    metadata = "INCLUDE_ALL_METADATA"
   }
 }
 
