@@ -368,22 +368,6 @@ resource "google_compute_address" "ui_ilb_address" {
   purpose      = "SHARED_LOADBALANCER_VIP"
 }
 
-# Create a target HTTP proxy for the URL maps
-resource "google_compute_region_target_http_proxy" "ui_ilb_target_http_proxy" {
-  project = local.project_id
-  name    = "${local.name_prefix}-ui-http-proxy"
-  region  = var.region
-  url_map = google_compute_region_url_map.internal_ui_lb_url_map.self_link
-}
-
-resource "google_compute_managed_ssl_certificate" "ilb-cert" {
-  project = local.project_id
-  name    = "${local.name_prefix}-ilb-cert"
-  managed {
-    domains = [var.domain[var.environment]]
-  }
-}
-
 # Create a URL map for the backend services
 resource "google_compute_region_url_map" "internal_ui_lb_url_map" {
   project         = local.project_id
