@@ -246,18 +246,6 @@ variable "apigee_ip_range" {
   default     = "10.10.0.0/16"
 }
 
-variable "ui_apigee_ip_range" {
-  type        = string
-  description = "IP range for Apigee"
-  default     = "10.60.0.0/16"
-}
-
-variable "ui_apigee_ip_range_2" {
-  type        = string
-  description = "IP range for Apigee"
-  default     = "11.50.0.0/16"
-}
-
 variable "google_compute_global_address_range" {
   type        = string
   description = "IP range for the Google global address to manage private VPC connection with Apigee"
@@ -276,22 +264,10 @@ variable "ilb_proxy_only_subnetwork_range" {
   default     = "10.3.0.0/26"
 }
 
-variable "ui_ilb_proxy_only_subnetwork_range" {
-  type        = string
-  description = "IP range for the internal ALB proxy only subnetwork"
-  default     = "10.30.0.0/26"
-}
-
 variable "ilb_private_subnetwork_range" {
   type        = string
   description = "IP range for internal ALB private subnetwork"
   default     = "10.2.1.0/24"
-}
-
-variable "ui_ilb_private_subnetwork_range" {
-  type        = string
-  description = "IP range for internal ALB private subnetwork"
-  default     = "10.50.1.0/28"
 }
 
 variable "psc_private_subnetwork_range" {
@@ -304,24 +280,6 @@ variable "psc_subnetwork_range" {
   type        = string
   description = "IP range for Private Service Connect subnetwork"
   default     = "10.3.1.0/24"
-}
-
-variable "ui_psc_private_subnetwork_range" {
-  type        = string
-  description = "IP range for Private Service Connect private subnetwork"
-  default     = "10.30.1.0/24"
-}
-
-variable "ui_psc_subnetwork_range" {
-  type        = string
-  description = "IP range for Private Service Connect subnetwork"
-  default     = "10.4.1.0/28"
-}
-
-variable "ui_vpc_connector_range" {
-  type        = string
-  description = "IP range for Private Service Connect private subnetwork"
-  default     = "10.40.1.0/28"
 }
 
 variable "google_compute_global_address_prefix_length" {
