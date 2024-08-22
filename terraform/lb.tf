@@ -336,6 +336,7 @@ resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
 
 ############################################################################
 
+#TODO: TO DELETE - START
 # Internal Load Balancer between Cloud Run Service UI and Apigee
 # Proxy only subnetwork for source address of the internal load balancer
 resource "google_compute_subnetwork" "proxy_only_ui_subnetwork" {
@@ -567,3 +568,4 @@ resource "google_compute_region_autoscaler" "ui_apigee_autoscaler" {
     }
   }
 }
+#TODO: TO DELETE - END

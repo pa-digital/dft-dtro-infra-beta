@@ -105,7 +105,7 @@ module "ui_loadbalancer" {
 
       groups = [
         {
-          group = google_compute_region_network_endpoint_group.cloudrun_neg.id
+          group = google_compute_region_network_endpoint_group.service_ui_serverless_neg.id
         }
       ]
 
