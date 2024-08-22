@@ -337,15 +337,23 @@ resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
 ############################################################################
 
 #TODO: TO DELETE - START
-# Create a private subnetwork to apigee for the forwarding rule
-resource "google_compute_subnetwork" "ui_ilb_subnetwork" {
-  project       = local.project_id
-  name          = "${local.name_prefix}-ui-ilb-subnetwork"
-  ip_cidr_range = var.ui_ilb_private_subnetwork_range
-  region        = var.region
-  network       = module.alb_vpc_network.network_id
-  purpose       = "PRIVATE"
+resource "google_compute_region_health_check" "ui_ilb_health_check" {
+  project             = local.project_id
+  name                = "${local.name_prefix}-ui-ilb-health-check"
+  region              = "europe-west1"
+  check_interval_sec  = 30
+  timeout_sec         = 10
+  healthy_threshold   = 2
+  unhealthy_threshold = 2
+  https_health_check {
+    port         = 443
+    request_path = "/healthz/ingress"
+  }
+  log_config {
+    enable = true
+  }
 }
+# Create a private subnetwork to apigee for the forwarding rule
 
 ####
 
@@ -359,28 +367,4 @@ resource "google_compute_subnetwork" "ui_apigee_mig" {
   private_ip_google_access = true
 }
 
-resource "google_compute_instance_template" "ui_apigee_mig" {
-  project      = local.project_id
-  name         = "${local.ui-apigee-mig}-template"
-  machine_type = var.default_machine_type
-  tags         = ["http-server", local.apigee-mig-proxy, "gke-apigee-proxy"]
-  disk {
-    source_image = "projects/debian-cloud/global/images/family/debian-11"
-    auto_delete  = true
-    boot         = true
-    disk_size_gb = 20
-  }
-  network_interface {
-    network    = module.alb_vpc_network.network_id
-    subnetwork = google_compute_subnetwork.ui_apigee_mig.id
-  }
-  service_account {
-    email  = var.execution_service_account
-    scopes = ["cloud-platform"]
-  }
-  metadata = {
-    ENDPOINT           = google_apigee_instance.apigee_instance.host
-    startup-script-url = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
-  }
-}
 #TODO: TO DELETE - END
