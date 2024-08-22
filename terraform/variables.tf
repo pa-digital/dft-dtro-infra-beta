@@ -68,6 +68,12 @@ variable "dtro_service_image" {
   default     = "dft-dtro-beta"
 }
 
+variable "service_ui_image" {
+  type        = string
+  description = "The name of an image being pushed for CSO Support Service UI."
+  default     = "dft-dtro-ui"
+}
+
 variable "wip_service_account" {
   type        = string
   description = "Service account from Workflow Identity Provider for Terraform to deploy resources."

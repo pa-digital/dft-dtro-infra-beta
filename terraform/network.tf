@@ -37,12 +37,12 @@ resource "google_service_networking_connection" "private_vpc_connection" {
 }
 
 # Serverless network endpoint for Service UI Cloud Run instance
-resource "google_compute_region_network_endpoint_group" "cloudrun_neg" {
-  name                  = "${local.name_prefix}-ui-neg"
+resource "google_compute_region_network_endpoint_group" "service_ui_serverless_neg" {
+  name                  = "${local.name_prefix}-${var.service_ui_image}-serverless-neg"
   network_endpoint_type = "SERVERLESS"
   region                = var.region
   cloud_run {
-    service = "dtro-${var.environment}-dft-dtro-beta"
+    service = local.Service_ui_cloud_run_service_name
   }
 }
 

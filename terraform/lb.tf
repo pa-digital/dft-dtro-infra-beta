@@ -162,7 +162,7 @@ module "ui_loadbalancer" {
 
       groups = [
         {
-          group = google_compute_region_network_endpoint_group.cloudrun_neg.id
+          group = google_compute_region_network_endpoint_group.service_ui_serverless_neg.id
         }
       ]
 
@@ -227,7 +227,6 @@ resource "google_compute_subnetwork" "private_subnetwork" {
   ip_cidr_range = var.ilb_private_subnetwork_range
   region        = var.region
   network       = google_compute_network.psc_network.id
-  purpose       = "PRIVATE"
 }
 
 # Create a backend service for each Cloud Run service
