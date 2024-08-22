@@ -368,14 +368,6 @@ resource "google_compute_address" "ui_ilb_address" {
   purpose      = "SHARED_LOADBALANCER_VIP"
 }
 
-# Create a URL map for the backend services
-resource "google_compute_region_url_map" "internal_ui_lb_url_map" {
-  project         = local.project_id
-  name            = "${local.name_prefix}-ui-url-map"
-  region          = var.region
-  default_service = google_compute_region_backend_service.apigee_backend_service.self_link
-}
-
 # Create a backend service for each Cloud Run service
 resource "google_compute_region_backend_service" "apigee_backend_service" {
   project                         = local.project_id
