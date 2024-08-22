@@ -353,18 +353,4 @@ resource "google_compute_region_health_check" "ui_ilb_health_check" {
     enable = true
   }
 }
-# Create a private subnetwork to apigee for the forwarding rule
-
-####
-
-# Managed Instance Group for Apigee from UI
-resource "google_compute_subnetwork" "ui_apigee_mig" {
-  project                  = local.project_id
-  name                     = "${local.ui-apigee-mig}-subnetwork"
-  ip_cidr_range            = var.ui_apigee_ip_range
-  region                   = var.region
-  network                  = module.alb_vpc_network.network_id
-  private_ip_google_access = true
-}
-
 #TODO: TO DELETE - END
