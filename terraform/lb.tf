@@ -337,18 +337,6 @@ resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
 ############################################################################
 
 #TODO: TO DELETE - START
-# Internal Load Balancer between Cloud Run Service UI and Apigee
-# Proxy only subnetwork for source address of the internal load balancer
-resource "google_compute_subnetwork" "proxy_only_ui_subnetwork" {
-  project       = local.project_id
-  name          = "${local.name_prefix}-loadbalancer-proxy-only-ui-subnetwork"
-  ip_cidr_range = var.ui_ilb_proxy_only_subnetwork_range
-  region        = var.region
-  network       = module.alb_vpc_network.network_id
-  purpose       = "REGIONAL_MANAGED_PROXY"
-  role          = "ACTIVE"
-}
-
 # Create a private subnetwork to apigee for the forwarding rule
 resource "google_compute_subnetwork" "ui_ilb_subnetwork" {
   project       = local.project_id
@@ -357,32 +345,6 @@ resource "google_compute_subnetwork" "ui_ilb_subnetwork" {
   region        = var.region
   network       = module.alb_vpc_network.network_id
   purpose       = "PRIVATE"
-}
-
-resource "google_compute_address" "ui_ilb_address" {
-  project      = local.project_id
-  name         = "${local.name_prefix}-ui-ilb-ip"
-  region       = var.region
-  address_type = "INTERNAL"
-  subnetwork   = google_compute_subnetwork.ui_ilb_subnetwork.id
-  purpose      = "SHARED_LOADBALANCER_VIP"
-}
-
-resource "google_compute_region_health_check" "ui_ilb_health_check" {
-  project             = local.project_id
-  name                = "${local.name_prefix}-ui-ilb-health-check"
-  region              = "europe-west1"
-  check_interval_sec  = 30
-  timeout_sec         = 10
-  healthy_threshold   = 2
-  unhealthy_threshold = 2
-  https_health_check {
-    port         = 443
-    request_path = "/healthz/ingress"
-  }
-  log_config {
-    enable = true
-  }
 }
 
 ####
@@ -419,26 +381,6 @@ resource "google_compute_instance_template" "ui_apigee_mig" {
   metadata = {
     ENDPOINT           = google_apigee_instance.apigee_instance.host
     startup-script-url = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
-  }
-}
-
-resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
-  project            = local.project_id
-  name               = "${local.ui-apigee-mig}-proxy"
-  region             = var.region
-  base_instance_name = "${local.ui-apigee-mig}-proxy"
-  target_size        = 2
-  version {
-    name              = "appserver-canary"
-    instance_template = google_compute_instance_template.ui_apigee_mig.self_link_unique
-  }
-  named_port {
-    name = "https"
-    port = 443
-  }
-  named_port {
-    name = "http"
-    port = 80
   }
 }
 #TODO: TO DELETE - END
