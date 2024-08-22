@@ -409,7 +409,22 @@ resource "google_compute_region_backend_service" "apigee_backend_service" {
     max_utilization = var.cpu_max_utilization
   }
 }
-
+resource "google_compute_region_health_check" "ui_ilb_health_check" {
+  project             = local.project_id
+  name                = "${local.name_prefix}-ui-ilb-health-check"
+  region              = "europe-west1"
+  check_interval_sec  = 30
+  timeout_sec         = 10
+  healthy_threshold   = 2
+  unhealthy_threshold = 2
+  https_health_check {
+    port         = 443
+    request_path = "/healthz/ingress"
+  }
+  log_config {
+    enable = true
+  }
+}
 
 ####
 
