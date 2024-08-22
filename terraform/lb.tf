@@ -333,24 +333,3 @@ resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
   location               = var.region
   service_attachment     = google_compute_service_attachment.psc_attachment.id
 }
-
-############################################################################
-
-#TODO: TO DELETE - START
-resource "google_compute_region_health_check" "ui_ilb_health_check" {
-  project             = local.project_id
-  name                = "${local.name_prefix}-ui-ilb-health-check"
-  region              = "europe-west1"
-  check_interval_sec  = 30
-  timeout_sec         = 10
-  healthy_threshold   = 2
-  unhealthy_threshold = 2
-  https_health_check {
-    port         = 443
-    request_path = "/healthz/ingress"
-  }
-  log_config {
-    enable = true
-  }
-}
-#TODO: TO DELETE - END
