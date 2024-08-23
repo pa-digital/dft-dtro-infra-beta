@@ -343,3 +343,86 @@ resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
   location               = var.region
   service_attachment     = google_compute_service_attachment.psc_attachment.id
 }
+
+resource "google_compute_subnetwork" "proxy_only_ui_subnetwork" {
+  project       = local.project_id
+  name          = "${local.name_prefix}-loadbalancer-proxy-only-ui-subnetwork"
+  ip_cidr_range = var.ui_ilb_proxy_only_subnetwork_range
+  region        = var.region
+  network       = module.alb_vpc_network.network_id
+  purpose       = "REGIONAL_MANAGED_PROXY"
+  role          = "ACTIVE"
+}
+
+# Create a private subnetwork to apigee for the forwarding rule
+resource "google_compute_subnetwork" "ui_ilb_subnetwork" {
+  project       = local.project_id
+  name          = "${local.name_prefix}-ui-ilb-subnetwork"
+  ip_cidr_range = var.ui_ilb_private_subnetwork_range
+  region        = var.region
+  network       = module.alb_vpc_network.network_id
+  purpose       = "PRIVATE"
+}
+
+resource "google_compute_address" "ui_ilb_address" {
+  project      = local.project_id
+  name         = "${local.name_prefix}-ui-ilb-ip"
+  region       = var.region
+  address_type = "INTERNAL"
+  subnetwork   = google_compute_subnetwork.ui_ilb_subnetwork.id
+  purpose      = "SHARED_LOADBALANCER_VIP"
+}
+
+# Create a regional forwarding rule for the internal load balancer
+resource "google_compute_forwarding_rule" "ui_ilb_forwarding_rule" {
+  project               = local.project_id
+  name                  = "${local.name_prefix}-ui-ilb-forwarding-rule"
+  region                = var.region
+  load_balancing_scheme = "INTERNAL_MANAGED"
+  port_range            = "80"
+  target                = google_compute_region_target_http_proxy.ui_ilb_target_http_proxy.id
+  network               = module.alb_vpc_network.network_id
+  subnetwork            = google_compute_subnetwork.ui_ilb_subnetwork.id
+}
+
+# Create a target HTTP proxy for the URL maps
+resource "google_compute_region_target_http_proxy" "ui_ilb_target_http_proxy" {
+  project = local.project_id
+  name    = "${local.name_prefix}-ui-http-proxy"
+  region  = var.region
+  url_map = google_compute_region_url_map.internal_ui_lb_url_map.self_link
+}
+# Create a backend service for each Cloud Run service
+resource "google_compute_region_backend_service" "apigee_backend_service" {
+  project                         = local.project_id
+  name                            = "${local.apigee-mig}-backend-service"
+  region                          = var.region
+  load_balancing_scheme           = "INTERNAL_MANAGED"
+  protocol                        = "HTTPS"
+  health_checks                   = [google_compute_region_health_check.ui_ilb_health_check.id]
+  timeout_sec                     = var.backend_service_timeout_sec
+  connection_draining_timeout_sec = var.backend_service_connection_draining_timeout_sec
+  backend {
+    group           = google_compute_region_instance_group_manager.ui_apigee_mig.instance_group
+    balancing_mode  = "UTILIZATION"
+    capacity_scaler = 1.0
+    max_utilization = var.cpu_max_utilization
+  }
+}
+
+resource "google_compute_region_health_check" "ui_ilb_health_check" {
+  project             = local.project_id
+  name                = "${local.name_prefix}-ui-ilb-health-check"
+  region              = "europe-west1"
+  check_interval_sec  = 30
+  timeout_sec         = 10
+  healthy_threshold   = 2
+  unhealthy_threshold = 2
+  https_health_check {
+    port         = 443
+    request_path = "/healthz/ingress"
+  }
+  log_config {
+    enable = true
+  }
+}
