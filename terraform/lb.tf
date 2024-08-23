@@ -200,14 +200,6 @@ resource "google_compute_global_address" "ui_external_ipv4_address" {
   ip_version = "IPV4"
 }
 
-resource "google_compute_managed_ssl_certificate" "ui-alb-cert" {
-  project = local.project_id
-  name    = "${local.name_prefix}-ui-xlb-cert"
-  managed {
-    domains = [var.domain[var.environment]]
-  }
-}
-
 resource "google_compute_managed_ssl_certificate" "ui-alb-ssl-cert" {
   project = local.project_id
   name    = "${local.name_prefix}-ui-xlb-ssl-cert"
@@ -336,54 +328,6 @@ resource "google_compute_service_attachment" "psc_attachment" {
   target_service        = google_compute_forwarding_rule.internal_lb_forwarding_rule.self_link
 }
 
-# Endpoint attachment in apigee project
-resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
-  org_id                 = google_apigee_organization.apigee_org.id
-  endpoint_attachment_id = "${local.name_prefix}-ep-attach-${var.environment}"
-  location               = var.region
-  service_attachment     = google_compute_service_attachment.psc_attachment.id
-}
-
-resource "google_compute_subnetwork" "proxy_only_ui_subnetwork" {
-  project       = local.project_id
-  name          = "${local.name_prefix}-loadbalancer-proxy-only-ui-subnetwork"
-  ip_cidr_range = var.ui_ilb_proxy_only_subnetwork_range
-  region        = var.region
-  network       = module.alb_vpc_network.network_id
-  purpose       = "REGIONAL_MANAGED_PROXY"
-  role          = "ACTIVE"
-}
-
-# Create a private subnetwork to apigee for the forwarding rule
-resource "google_compute_subnetwork" "ui_ilb_subnetwork" {
-  project       = local.project_id
-  name          = "${local.name_prefix}-ui-ilb-subnetwork"
-  ip_cidr_range = var.ui_ilb_private_subnetwork_range
-  region        = var.region
-  network       = module.alb_vpc_network.network_id
-  purpose       = "PRIVATE"
-}
-
-resource "google_compute_address" "ui_ilb_address" {
-  project      = local.project_id
-  name         = "${local.name_prefix}-ui-ilb-ip"
-  region       = var.region
-  address_type = "INTERNAL"
-  subnetwork   = google_compute_subnetwork.ui_ilb_subnetwork.id
-  purpose      = "SHARED_LOADBALANCER_VIP"
-}
-
-# Create a regional forwarding rule for the internal load balancer
-resource "google_compute_forwarding_rule" "ui_ilb_forwarding_rule" {
-  project               = local.project_id
-  name                  = "${local.name_prefix}-ui-ilb-forwarding-rule"
-  region                = var.region
-  load_balancing_scheme = "INTERNAL_MANAGED"
-  port_range            = "80"
-  target                = google_compute_region_target_http_proxy.ui_ilb_target_http_proxy.id
-  network               = module.alb_vpc_network.network_id
-  subnetwork            = google_compute_subnetwork.ui_ilb_subnetwork.id
-}
 
 # Create a target HTTP proxy for the URL maps
 resource "google_compute_region_target_http_proxy" "ui_ilb_target_http_proxy" {
