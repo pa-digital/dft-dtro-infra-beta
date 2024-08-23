@@ -413,24 +413,6 @@ resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
 }
 
 
-# Create a backend service for each Cloud Run service
-resource "google_compute_region_backend_service" "apigee_backend_service" {
-  project                         = local.project_id
-  name                            = "${local.apigee-mig}-backend-service"
-  region                          = var.region
-  load_balancing_scheme           = "INTERNAL_MANAGED"
-  protocol                        = "HTTPS"
-  health_checks                   = [google_compute_region_health_check.ui_ilb_health_check.id]
-  timeout_sec                     = var.backend_service_timeout_sec
-  connection_draining_timeout_sec = var.backend_service_connection_draining_timeout_sec
-  backend {
-    group           = google_compute_region_instance_group_manager.ui_apigee_mig.instance_group
-    balancing_mode  = "UTILIZATION"
-    capacity_scaler = 1.0
-    max_utilization = var.cpu_max_utilization
-  }
-}
-
 resource "google_compute_region_health_check" "ui_ilb_health_check" {
   project             = local.project_id
   name                = "${local.name_prefix}-ui-ilb-health-check"
