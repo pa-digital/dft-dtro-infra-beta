@@ -328,8 +328,28 @@ resource "google_compute_service_attachment" "psc_attachment" {
   target_service        = google_compute_forwarding_rule.internal_lb_forwarding_rule.self_link
 }
 
+# Endpoint attachment in apigee project
+resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
+  org_id                 = google_apigee_organization.apigee_org.id
+  endpoint_attachment_id = "${local.name_prefix}-ep-attach-${var.environment}"
+  location               = var.region
+  service_attachment     = google_compute_service_attachment.psc_attachment.id
+}
 
+
+#####################
+#TODO delete below here
 # Create a target HTTP proxy for the URL maps
+resource "google_compute_subnetwork" "proxy_only_ui_subnetwork" {
+  project       = local.project_id
+  name          = "${local.name_prefix}-loadbalancer-proxy-only-ui-subnetwork"
+  ip_cidr_range = var.ui_ilb_proxy_only_subnetwork_range
+  region        = var.region
+  network       = module.alb_vpc_network.network_id
+  purpose       = "REGIONAL_MANAGED_PROXY"
+  role          = "ACTIVE"
+}
+
 resource "google_compute_region_target_http_proxy" "ui_ilb_target_http_proxy" {
   project = local.project_id
   name    = "${local.name_prefix}-ui-http-proxy"
@@ -395,6 +415,16 @@ resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
     name = "http"
     port = 80
   }
+}
+resource "google_compute_forwarding_rule" "ui_ilb_forwarding_rule" {
+  project               = local.project_id
+  name                  = "${local.name_prefix}-ui-ilb-forwarding-rule"
+  region                = var.region
+  load_balancing_scheme = "INTERNAL_MANAGED"
+  port_range            = "80"
+  target                = google_compute_region_target_http_proxy.ui_ilb_target_http_proxy.id
+  network               = module.alb_vpc_network.network_id
+  subnetwork            = google_compute_subnetwork.ui_ilb_subnetwork.id
 }
 
 # Create a backend service for each Cloud Run service
