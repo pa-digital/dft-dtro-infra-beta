@@ -358,12 +358,6 @@ resource "google_compute_subnetwork" "ui_ilb_subnetwork" {
   purpose       = "PRIVATE"
 }
 
-resource "google_compute_region_target_http_proxy" "ui_ilb_target_http_proxy" {
-  project = local.project_id
-  name    = "${local.name_prefix}-ui-http-proxy"
-  region  = var.region
-  url_map = google_compute_region_url_map.internal_ui_lb_url_map.self_link
-}
 # Create a URL map for the backend services
 resource "google_compute_region_url_map" "internal_ui_lb_url_map" {
   project         = local.project_id
@@ -423,16 +417,6 @@ resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
     name = "http"
     port = 80
   }
-}
-resource "google_compute_forwarding_rule" "ui_ilb_forwarding_rule" {
-  project               = local.project_id
-  name                  = "${local.name_prefix}-ui-ilb-forwarding-rule"
-  region                = var.region
-  load_balancing_scheme = "INTERNAL_MANAGED"
-  port_range            = "80"
-  target                = google_compute_region_target_http_proxy.ui_ilb_target_http_proxy.id
-  network               = module.alb_vpc_network.network_id
-  subnetwork            = google_compute_subnetwork.ui_ilb_subnetwork.id
 }
 
 # Create a backend service for each Cloud Run service
