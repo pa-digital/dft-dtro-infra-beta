@@ -399,6 +399,59 @@ resource "google_compute_region_url_map" "internal_ui_lb_url_map" {
   region          = var.region
   default_service = google_compute_region_backend_service.apigee_backend_service.self_link
 }
+resource "google_compute_subnetwork" "ui_apigee_mig" {
+  project                  = local.project_id
+  name                     = "${local.ui-apigee-mig}-subnetwork"
+  ip_cidr_range            = var.ui_apigee_ip_range
+  region                   = var.region
+  network                  = module.alb_vpc_network.network_id
+  private_ip_google_access = true
+}
+
+resource "google_compute_instance_template" "ui_apigee_mig" {
+  project      = local.project_id
+  name         = "${local.ui-apigee-mig}-template"
+  machine_type = var.default_machine_type
+  tags         = ["http-server", local.apigee-mig-proxy, "gke-apigee-proxy"]
+  disk {
+    source_image = "projects/debian-cloud/global/images/family/debian-11"
+    auto_delete  = true
+    boot         = true
+    disk_size_gb = 20
+  }
+  network_interface {
+    network    = module.alb_vpc_network.network_id
+    subnetwork = google_compute_subnetwork.ui_apigee_mig.id
+  }
+  service_account {
+    email  = var.execution_service_account
+    scopes = ["cloud-platform"]
+  }
+  metadata = {
+    ENDPOINT           = google_apigee_instance.apigee_instance.host
+    startup-script-url = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
+  }
+}
+
+resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
+  project            = local.project_id
+  name               = "${local.ui-apigee-mig}-proxy"
+  region             = var.region
+  base_instance_name = "${local.ui-apigee-mig}-proxy"
+  target_size        = 2
+  version {
+    name              = "appserver-canary"
+    instance_template = google_compute_instance_template.ui_apigee_mig.self_link_unique
+  }
+  named_port {
+    name = "https"
+    port = 443
+  }
+  named_port {
+    name = "http"
+    port = 80
+  }
+}
 
 # Create a backend service for each Cloud Run service
 resource "google_compute_region_backend_service" "apigee_backend_service" {
