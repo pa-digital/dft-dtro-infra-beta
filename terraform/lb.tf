@@ -16,9 +16,10 @@ module "loadbalancer" {
 
   backends = {
     dtro = {
-      description          = "${var.dtro_service_image} service"
-      protocol             = "HTTPS"
-      port_name            = "https"
+      description = "${var.dtro_service_image} service"
+      protocol    = "HTTPS"
+      port_name   = "https"
+      #       security_policy      = module.dtro_cloud_armor.policy.self_link
       security_policy      = ""
       edge_security_policy = ""
       timeout_sec          = 302
@@ -159,6 +160,7 @@ module "ui_loadbalancer" {
       description = "D-TRO CSO Service UI"
       timeout_sec = 302
       enable_cdn  = false
+      #       security_policy      = module.service_ui_cloud_armor.policy.self_link
 
       groups = [
         {
@@ -196,14 +198,6 @@ resource "google_compute_global_address" "ui_external_ipv4_address" {
   project    = local.project_id
   name       = "${local.name_prefix}-ui-xlb-ipv4-address"
   ip_version = "IPV4"
-}
-
-resource "google_compute_managed_ssl_certificate" "ui-alb-cert" {
-  project = local.project_id
-  name    = "${local.name_prefix}-ui-xlb-cert"
-  managed {
-    domains = [var.domain[var.environment]]
-  }
 }
 
 resource "google_compute_managed_ssl_certificate" "ui-alb-ssl-cert" {
