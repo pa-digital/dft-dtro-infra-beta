@@ -336,34 +336,3 @@ resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
   service_attachment     = google_compute_service_attachment.psc_attachment.id
 }
 
-
-#####################
-#TODO delete below here
-# Create a target HTTP proxy for the URL maps
-resource "google_compute_subnetwork" "proxy_only_ui_subnetwork" {
-  project       = local.project_id
-  name          = "${local.name_prefix}-loadbalancer-proxy-only-ui-subnetwork"
-  ip_cidr_range = var.ui_ilb_proxy_only_subnetwork_range
-  region        = var.region
-  network       = module.alb_vpc_network.network_id
-  purpose       = "REGIONAL_MANAGED_PROXY"
-  role          = "ACTIVE"
-}
-resource "google_compute_subnetwork" "ui_ilb_subnetwork" {
-  project       = local.project_id
-  name          = "${local.name_prefix}-ui-ilb-subnetwork"
-  ip_cidr_range = var.ui_ilb_private_subnetwork_range
-  region        = var.region
-  network       = module.alb_vpc_network.network_id
-  purpose       = "PRIVATE"
-}
-
-resource "google_compute_subnetwork" "ui_apigee_mig" {
-  project                  = local.project_id
-  name                     = "${local.ui-apigee-mig}-subnetwork"
-  ip_cidr_range            = var.ui_apigee_ip_range
-  region                   = var.region
-  network                  = module.alb_vpc_network.network_id
-  private_ip_google_access = true
-}
-
