@@ -57,10 +57,15 @@ variable "domain" {
   }
 }
 
-variable "dtro_service_domain" {
-  type        = string
-  description = "Name of the domain where the DTRO is published"
-  default     = "dtro.dft.gov.uk"
+variable "ui_domain" {
+  type        = map(string)
+  description = "Name of the domain where the Service UI is published"
+  default = {
+    dev  = "dtro-ui-integration.dft.gov.uk"
+    test = "dtro-ui-integration.dft.gov.uk"
+    int  = "dtro-ui-integration.dft.gov.uk"
+    prod = "dtro-ui-integration.dft.gov.uk"
+  }
 }
 
 variable "application_name" {

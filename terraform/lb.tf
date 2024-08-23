@@ -202,7 +202,7 @@ resource "google_compute_managed_ssl_certificate" "ui-alb-cert" {
   project = local.project_id
   name    = "${local.name_prefix}-ui-xlb-cert"
   managed {
-    domains = [var.domain[var.environment]]
+    domains = [var.ui_domain[var.environment]]
   }
 }
 
