@@ -392,6 +392,14 @@ resource "google_compute_region_target_http_proxy" "ui_ilb_target_http_proxy" {
   region  = var.region
   url_map = google_compute_region_url_map.internal_ui_lb_url_map.self_link
 }
+# Create a URL map for the backend services
+resource "google_compute_region_url_map" "internal_ui_lb_url_map" {
+  project         = local.project_id
+  name            = "${local.name_prefix}-ui-url-map"
+  region          = var.region
+  default_service = google_compute_region_backend_service.apigee_backend_service.self_link
+}
+
 # Create a backend service for each Cloud Run service
 resource "google_compute_region_backend_service" "apigee_backend_service" {
   project                         = local.project_id
