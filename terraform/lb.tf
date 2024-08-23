@@ -358,13 +358,6 @@ resource "google_compute_subnetwork" "ui_ilb_subnetwork" {
   purpose       = "PRIVATE"
 }
 
-# Create a URL map for the backend services
-resource "google_compute_region_url_map" "internal_ui_lb_url_map" {
-  project         = local.project_id
-  name            = "${local.name_prefix}-ui-url-map"
-  region          = var.region
-  default_service = google_compute_region_backend_service.apigee_backend_service.self_link
-}
 resource "google_compute_subnetwork" "ui_apigee_mig" {
   project                  = local.project_id
   name                     = "${local.ui-apigee-mig}-subnetwork"
@@ -419,6 +412,7 @@ resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
   }
 }
 
+
 # Create a backend service for each Cloud Run service
 resource "google_compute_region_backend_service" "apigee_backend_service" {
   project                         = local.project_id
@@ -430,7 +424,7 @@ resource "google_compute_region_backend_service" "apigee_backend_service" {
   timeout_sec                     = var.backend_service_timeout_sec
   connection_draining_timeout_sec = var.backend_service_connection_draining_timeout_sec
   backend {
-    group           = google_compute_region_instance_group_manager.ui_apigee_mig.instance_group
+    group           = google_compute_region_instance_group_manager.ui_apigee_mig2.instance_group
     balancing_mode  = "UTILIZATION"
     capacity_scaler = 1.0
     max_utilization = var.cpu_max_utilization
