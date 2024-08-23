@@ -200,6 +200,14 @@ resource "google_compute_global_address" "ui_external_ipv4_address" {
   ip_version = "IPV4"
 }
 
+resource "google_compute_managed_ssl_certificate" "ui-alb-cert" {
+  project = local.project_id
+  name    = "${local.name_prefix}-ui-xlb-cert"
+  managed {
+    domains = [var.domain[var.environment]]
+  }
+}
+
 resource "google_compute_managed_ssl_certificate" "ui-alb-ssl-cert" {
   project = local.project_id
   name    = "${local.name_prefix}-ui-xlb-ssl-cert"
