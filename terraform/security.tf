@@ -32,7 +32,7 @@ module "service_ui_cloud_armor" {
   log_level                            = "NORMAL"
 
   pre_configured_rules            = {}
-  security_rules                  = {}
+  security_rules                  = {} #TODO: Update this with whitelist IP address for DfT network and CSO's IP
   custom_rules                    = {}
   threat_intelligence_rules       = {}
   adaptive_protection_auto_deploy = { "enable" : false }
