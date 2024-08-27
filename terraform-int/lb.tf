@@ -141,6 +141,14 @@ resource "google_compute_global_address" "ui_external_ipv4_address" {
   ip_version = "IPV4"
 }
 
+resource "google_compute_managed_ssl_certificate" "ui-alb-cert" {
+  project = local.project_id
+  name    = "${local.name_prefix}-ui-xlb-cert"
+  managed {
+    domains = [var.domain[var.environment]]
+  }
+}
+
 resource "google_compute_managed_ssl_certificate" "ui-alb-ssl-cert" {
   project = local.project_id
   name    = "${local.name_prefix}-ui-xlb-ssl-cert"
@@ -307,26 +315,6 @@ resource "google_compute_subnetwork" "ui_ilb_subnetwork" {
   region        = var.region
   network       = google_compute_network.ui_ilb_network.id
   purpose       = "PRIVATE"
-}
-
-# Create a URL map for the backend services
-resource "google_compute_region_url_map" "internal_ui_lb_url_map" {
-  project         = local.project_id
-  name            = "${local.name_prefix}-ui-url-map"
-  region          = var.region
-  default_service = google_compute_region_backend_service.apigee_backend_service.self_link
-  host_rule {
-    hosts        = ["*"]
-    path_matcher = "${local.name_prefix}-path-matcher"
-  }
-  path_matcher {
-    name            = "${local.name_prefix}-path-matcher"
-    default_service = google_compute_region_backend_service.apigee_backend_service.self_link
-    path_rule {
-      paths   = ["/dtros/*"]
-      service = google_compute_region_backend_service.apigee_backend_service.self_link
-    }
-  }
 }
 
 # Create a backend service for each Cloud Run service
