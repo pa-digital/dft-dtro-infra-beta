@@ -285,25 +285,3 @@ resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
   location               = var.region
   service_attachment     = google_compute_service_attachment.psc_attachment.id
 }
-
-############################################################################
-## TODO Delete below here
-# Internal Load Balancer between Cloud Run CSO UI and Apigee
-# Create a proxy-only subnetwork for internal load balancer
-resource "google_compute_network" "ui_ilb_network" {
-  project                 = local.project_id
-  name                    = "${local.name_prefix}-ui-ilb-network"
-  auto_create_subnetworks = false
-}
-
-####
-
-# Managed Instance Group for Apigee from UI
-resource "google_compute_subnetwork" "ui_apigee_mig" {
-  project                  = local.project_id
-  name                     = "${local.int-ui-apigee-mig}-subnetwork"
-  ip_cidr_range            = var.int_ui_apigee_ip_range
-  region                   = var.region
-  network                  = google_compute_network.ui_ilb_network.id
-  private_ip_google_access = true
-}
