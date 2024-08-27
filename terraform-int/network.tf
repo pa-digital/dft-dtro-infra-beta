@@ -2,6 +2,15 @@ locals {
   serverless_connector_subnet_name = "serverless-connector-subnet-int"
 }
 
+resource "google_compute_region_network_endpoint_group" "cloudrun_neg" {
+  name                  = "${local.name_prefix}-ui-neg"
+  network_endpoint_type = "SERVERLESS"
+  region                = var.region
+  cloud_run {
+    service = "dtro-${var.environment}-dft-dtro-beta"
+  }
+}
+
 # Serverless network endpoint for Service UI Cloud Run instance
 resource "google_compute_region_network_endpoint_group" "service_ui_serverless_neg" {
   name                  = "${local.name_prefix}-${var.service_ui_image}-serverless-neg"
