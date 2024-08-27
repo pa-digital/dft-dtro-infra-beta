@@ -429,7 +429,7 @@ resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
   target_size        = 1
   version {
     name              = "appserver-canary"
-    instance_template = google_compute_instance_template.ui_apiee_mig.self_link_unique
+    instance_template = google_compute_instance_template.ui_apigee_mig.self_link_unique
   }
   named_port {
     name = "http"

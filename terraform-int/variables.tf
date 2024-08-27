@@ -96,10 +96,10 @@ variable "dtro_service_image" {
   default     = "dft-dtro-beta"
 }
 
-variable "tag" {
+variable "service_ui_image" {
   type        = string
-  description = "The tag of the image to run."
-  default     = "latest"
+  description = "The name of an image being pushed for CSO Support Service UI."
+  default     = "dft-dtro-ui"
 }
 
 variable "cloud_run_max_concurrency" {
