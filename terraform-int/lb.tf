@@ -296,38 +296,6 @@ resource "google_compute_network" "ui_ilb_network" {
   auto_create_subnetworks = false
 }
 
-# Proxy only subnetwork for source address for ui_ilb_subnetwork
-resource "google_compute_subnetwork" "proxy_only_ui_subnetwork" {
-  project       = local.project_id
-  name          = "${local.name_prefix}-loadbalancer-proxy-only-ui-subnetwork"
-  ip_cidr_range = var.int_ui_ilb_proxy_only_subnetwork_range
-  region        = var.region
-  network       = google_compute_network.ui_ilb_network.id
-  purpose       = "REGIONAL_MANAGED_PROXY"
-  role          = "ACTIVE"
-}
-
-# Create a private subnetwork to apigee for the forwarding rule
-resource "google_compute_subnetwork" "ui_ilb_subnetwork" {
-  project       = local.project_id
-  name          = "${local.name_prefix}-ui-ilb-subnetwork"
-  ip_cidr_range = var.int_ui_ilb_private_subnetwork_range
-  region        = var.region
-  network       = google_compute_network.ui_ilb_network.id
-  purpose       = "PRIVATE"
-}
-
-resource "google_compute_region_health_check" "ui_ilb_health_check" {
-  project = local.project_id
-  name    = "${local.name_prefix}-ui-ilb-health-check"
-  region  = "europe-west1"
-  http_health_check {
-    port_specification = "USE_SERVING_PORT"
-  }
-}
-
-
-
 ####
 
 # Managed Instance Group for Apigee from UI
@@ -362,21 +330,5 @@ resource "google_compute_instance_template" "ui_apigee_mig" {
   metadata = {
     ENDPOINT           = data.terraform_remote_state.primary_default_tfstate.outputs.apigee_instance_host
     startup-script-url = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
-  }
-}
-
-resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
-  project            = local.project_id
-  name               = "${local.int-ui-apigee-mig}-proxy"
-  region             = var.region
-  base_instance_name = "${local.int-ui-apigee-mig}-proxy"
-  target_size        = 1
-  version {
-    name              = "appserver-canary"
-    instance_template = google_compute_instance_template.ui_apigee_mig.self_link_unique
-  }
-  named_port {
-    name = "http"
-    port = 80
   }
 }
