@@ -2,15 +2,6 @@ locals {
   serverless_connector_subnet_name = "serverless-connector-subnet-int"
 }
 
-resource "google_compute_region_network_endpoint_group" "cloudrun_neg" {
-  name                  = "${local.name_prefix}-ui-neg"
-  network_endpoint_type = "SERVERLESS"
-  region                = var.region
-  cloud_run {
-    service = "dtro-${var.environment}-dft-dtro-beta"
-  }
-}
-
 # Serverless network endpoint for Service UI Cloud Run instance
 resource "google_compute_region_network_endpoint_group" "service_ui_serverless_neg" {
   name                  = "${local.name_prefix}-${var.service_ui_image}-serverless-neg"
@@ -81,10 +72,9 @@ resource "google_compute_region_network_endpoint_group" "publish_service_serverl
 # Manage access policy
 module "org_policy" {
   #   count = var.integration_prefix == "" ? 1 : 0
-  count   = 0
-  source  = "terraform-google-modules/vpc-service-controls/google"
-  version = "6.0.0"
-  #   parent_id   = data.google_organization.organisation.org_id
+  count       = 0
+  source      = "terraform-google-modules/vpc-service-controls/google"
+  version     = "6.0.0"
   parent_id   = var.organisation_id
   policy_name = "${local.name_prefix}-vpc-sc-policy"
 }

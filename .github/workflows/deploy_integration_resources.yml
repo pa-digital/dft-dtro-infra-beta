@@ -67,8 +67,8 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -input=false -out terraform-plan-gcp-int
 
-      - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false terraform-plan-gcp-int
+#      - name: Terraform Apply
+#        run: terraform apply -auto-approve -input=false terraform-plan-gcp-int
 
   deploy-apigee-proxies-and-portal:
     name: Deploy GCP Apigee proxies and portal to Integration

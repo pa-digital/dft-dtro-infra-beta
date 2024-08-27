@@ -16,9 +16,10 @@ module "loadbalancer" {
 
   backends = {
     dtro = {
-      description          = "${var.dtro_service_image} service"
-      protocol             = "HTTPS"
-      port_name            = "https"
+      description = "${var.dtro_service_image} service"
+      protocol    = "HTTPS"
+      port_name   = "https"
+      #       security_policy      = module.dtro_cloud_armor.policy.self_link
       security_policy      = ""
       edge_security_policy = ""
       timeout_sec          = 302
@@ -102,6 +103,7 @@ module "ui_loadbalancer" {
       description = "D-TRO CSO Service UI"
       timeout_sec = 302
       enable_cdn  = false
+      #       security_policy      = module.service_ui_cloud_armor.policy.self_link
 
       groups = [
         {

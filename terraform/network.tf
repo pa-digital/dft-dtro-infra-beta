@@ -46,15 +46,6 @@ resource "google_compute_region_network_endpoint_group" "service_ui_serverless_n
   }
 }
 
-resource "google_compute_region_network_endpoint_group" "cloudrun_neg" {
-  name                  = "${local.name_prefix}-ui-neg"
-  network_endpoint_type = "SERVERLESS"
-  region                = var.region
-  cloud_run {
-    service = "dtro-${var.environment}-dft-dtro-beta"
-  }
-}
-
 #Backend VPC
 module "backend_vpc_network" {
   source  = "terraform-google-modules/network/google"
@@ -114,10 +105,9 @@ resource "google_compute_region_network_endpoint_group" "publish_service_serverl
 ## VPC Service Control
 # Manage access policy
 module "org_policy" {
-  count   = 0
-  source  = "terraform-google-modules/vpc-service-controls/google"
-  version = "6.0.0"
-  #   parent_id   = data.google_organization.organisation.org_id
+  count       = 0
+  source      = "terraform-google-modules/vpc-service-controls/google"
+  version     = "6.0.0"
   parent_id   = var.organisation_id
   policy_name = "${local.name_prefix}-vpc-sc-policy"
 }
