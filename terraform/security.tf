@@ -22,7 +22,7 @@ module "service_ui_cloud_armor" {
   source = "GoogleCloudPlatform/cloud-armor/google"
 
   project_id                           = local.project_id
-  name                                 = "${local.name_prefix}-service-UI-security-policy"
+  name                                 = "${local.name_prefix}-service-ui-security-policy"
   description                          = "Cloud Armor security policy for Service UI"
   default_rule_action                  = "allow"
   type                                 = "CLOUD_ARMOR"
