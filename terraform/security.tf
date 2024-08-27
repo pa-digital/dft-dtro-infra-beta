@@ -1,5 +1,4 @@
 module "dtro_cloud_armor" {
-  count  = 0
   source = "GoogleCloudPlatform/cloud-armor/google"
 
   project_id                           = local.project_id
@@ -20,7 +19,6 @@ module "dtro_cloud_armor" {
 }
 
 module "service_ui_cloud_armor" {
-  count  = 0
   source = "GoogleCloudPlatform/cloud-armor/google"
 
   project_id                           = local.project_id
