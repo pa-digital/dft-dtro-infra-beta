@@ -287,7 +287,7 @@ resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
 }
 
 ############################################################################
-
+## TODO Delete below here
 # Internal Load Balancer between Cloud Run CSO UI and Apigee
 # Create a proxy-only subnetwork for internal load balancer
 resource "google_compute_network" "ui_ilb_network" {
@@ -327,16 +327,7 @@ resource "google_compute_address" "ui_ilb_address" {
 }
 
 # Create a regional forwarding rule for the internal load balancer
-resource "google_compute_forwarding_rule" "ui_ilb_forwarding_rule" {
-  project               = local.project_id
-  name                  = "${local.name_prefix}-ui-ilb-forwarding-rule"
-  region                = var.region
-  load_balancing_scheme = "INTERNAL_MANAGED"
-  port_range            = "80"
-  target                = google_compute_region_target_http_proxy.ui_ilb_target_http_proxy.id
-  network               = google_compute_network.ui_ilb_network.id
-  subnetwork            = google_compute_subnetwork.ui_ilb_subnetwork.id
-}
+
 
 # Create a target HTTP proxy for the URL maps
 resource "google_compute_region_target_http_proxy" "ui_ilb_target_http_proxy" {
@@ -391,62 +382,7 @@ resource "google_compute_region_health_check" "ui_ilb_health_check" {
   }
 }
 
-resource "google_compute_firewall" "ui_ilb_firewall_rule" {
-  project     = local.project_id
-  name        = "${local.name_prefix}-ui-ilb-firewall-rule"
-  network     = google_compute_network.ui_ilb_network.id
-  description = "Allow incoming from Cloud Run on ssh to Apigee Proxy"
-  allow {
-    protocol = "tcp"
-    ports    = ["22"]
-  }
-  source_ranges = ["0.0.0.0/0"]
-  target_tags   = ["allow-ssh", local.apigee-mig-proxy]
-  log_config {
-    metadata = "INCLUDE_ALL_METADATA"
-  }
-}
 
-resource "google_compute_firewall" "ui_ilb_allow_proxy_firewall_rule" {
-  project     = local.project_id
-  name        = "${local.name_prefix}-ui-ilb-allow-proxy-firewall-rule"
-  network     = google_compute_network.ui_ilb_network.id
-  description = "Allow incoming from Proxy"
-  allow {
-    protocol = "tcp"
-    ports    = ["80", "443", "8080"]
-  }
-  source_ranges = [var.int_ui_ilb_proxy_only_subnetwork_range]
-  target_tags   = ["allow-proxy", "load-balanced-backend", local.apigee-mig-proxy]
-  log_config {
-    metadata = "INCLUDE_ALL_METADATA"
-  }
-}
-
-resource "google_compute_firewall" "health_check_firewall_rule" {
-  project     = local.project_id
-  name        = "${local.name_prefix}-ui-health-check-firewall-rule"
-  network     = google_compute_network.ui_ilb_network.id
-  description = "Allow health check for apigee"
-  allow {
-    protocol = "tcp"
-  }
-  source_ranges = ["130.211.0.0/22", "35.191.0.0/16", "35.235.240.0/20"]
-  target_tags   = ["load-balanced-backend", local.apigee-mig-proxy]
-  log_config {
-    metadata = "INCLUDE_ALL_METADATA"
-  }
-}
-
-# Endpoint attachment in the Cloud Run CSO Service UI project
-resource "google_vpc_access_connector" "int_ui_vpc_connector" {
-  name   = "${var.integration_prefix}-cloud-run-connector"
-  region = var.region
-  subnet {
-    project_id = data.google_project.project.project_id
-    name       = google_compute_subnetwork.ui_ilb_subnetwork.name
-  }
-}
 
 ####
 
@@ -493,7 +429,7 @@ resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
   target_size        = 1
   version {
     name              = "appserver-canary"
-    instance_template = google_compute_instance_template.ui_apigee_mig.self_link_unique
+    instance_template = google_compute_instance_template.ui_apiee_mig.self_link_unique
   }
   named_port {
     name = "http"
@@ -550,19 +486,3 @@ resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
 #     port = 80
 #   }
 # }
-
-resource "google_compute_region_autoscaler" "ui_apigee_autoscaler" {
-  count   = 0
-  project = local.project_id
-  name    = "${local.int-ui-apigee-mig}-autoscaler"
-  region  = var.region
-  target  = google_compute_region_instance_group_manager.ui_apigee_mig.id
-  autoscaling_policy {
-    max_replicas    = 3
-    min_replicas    = 2
-    cooldown_period = 90
-    cpu_utilization {
-      target = var.cpu_max_utilization
-    }
-  }
-}
