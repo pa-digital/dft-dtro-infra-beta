@@ -141,14 +141,6 @@ resource "google_compute_global_address" "ui_external_ipv4_address" {
   ip_version = "IPV4"
 }
 
-resource "google_compute_managed_ssl_certificate" "ui-alb-cert" {
-  project = local.project_id
-  name    = "${local.name_prefix}-ui-xlb-cert"
-  managed {
-    domains = [var.domain[var.environment]]
-  }
-}
-
 resource "google_compute_managed_ssl_certificate" "ui-alb-ssl-cert" {
   project = local.project_id
   name    = "${local.name_prefix}-ui-xlb-ssl-cert"
@@ -317,26 +309,6 @@ resource "google_compute_subnetwork" "ui_ilb_subnetwork" {
   purpose       = "PRIVATE"
 }
 
-resource "google_compute_address" "ui_ilb_address" {
-  project      = local.project_id
-  name         = "${local.name_prefix}-ui-ilb-ip"
-  region       = var.region
-  address_type = "INTERNAL"
-  subnetwork   = google_compute_subnetwork.ui_ilb_subnetwork.id
-  purpose      = "SHARED_LOADBALANCER_VIP"
-}
-
-# Create a regional forwarding rule for the internal load balancer
-
-
-# Create a target HTTP proxy for the URL maps
-resource "google_compute_region_target_http_proxy" "ui_ilb_target_http_proxy" {
-  project = local.project_id
-  name    = "${local.name_prefix}-ui-http-proxy"
-  region  = var.region
-  url_map = google_compute_region_url_map.internal_ui_lb_url_map.self_link
-}
-
 # Create a URL map for the backend services
 resource "google_compute_region_url_map" "internal_ui_lb_url_map" {
   project         = local.project_id
@@ -436,53 +408,3 @@ resource "google_compute_region_instance_group_manager" "ui_apigee_mig" {
     port = 80
   }
 }
-
-# resource "google_compute_subnetwork" "ui_apigee_mig_2" {
-#   project                  = local.project_id
-#   name                     = "${local.int-ui-apigee-mig}-subnetwork-2"
-#   ip_cidr_range            = var.int_ui_apigee_ip_range_2
-#   region                   = var.region
-#   network                  = google_compute_network.ui_ilb_network.id
-#   private_ip_google_access = true
-# }
-
-# resource "google_compute_instance_template" "ui_apigee_mig_2" {
-#   project      = local.project_id
-#   name         = "${local.int-ui-apigee-mig}-template-2"
-#   machine_type = var.default_machine_type
-#   tags         = ["http-server", local.apigee-mig-proxy, "gke-apigee-proxy"]
-#   disk {
-#     source_image = "projects/debian-cloud/global/images/family/debian-11"
-#     auto_delete  = true
-#     boot         = true
-#     disk_size_gb = 20
-#   }
-#   network_interface {
-#     network    = google_compute_network.ui_ilb_network.id
-#     subnetwork = google_compute_subnetwork.ui_apigee_mig_2.id
-#   }
-#   service_account {
-#     email  = var.execution_service_account
-#     scopes = ["cloud-platform"]
-#   }
-#   metadata = {
-#     ENDPOINT           = data.terraform_remote_state.primary_default_tfstate.outputs.apigee_instance_host
-#     startup-script-url = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
-#   }
-# }
-
-# resource "google_compute_region_instance_group_manager" "ui_apigee_mig_2" {
-#   project            = local.project_id
-#   name               = "${local.int-ui-apigee-mig}-proxy-2"
-#   region             = var.region
-#   base_instance_name = "${local.int-ui-apigee-mig}-proxy-2"
-#   target_size        = 1
-#   version {
-#     name              = "appserver-canary"
-#     instance_template = google_compute_instance_template.ui_apigee_mig_2.self_link_unique
-#   }
-#   named_port {
-#     name = "http"
-#     port = 80
-#   }
-# }
