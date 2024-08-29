@@ -24,11 +24,11 @@ jobs:
         uses: trstringer/manual-approval@v1
         with:
           secret: ${{ github.TOKEN }}
-          approvers: VinP-PA
+          approvers: VinP-PA #TODO: Update when full list is available
           minimum-approvals: 1
           issue-title: "Deploying ${{steps.releasev.outputs.RELEASE}} to Prod"
           issue-body: "Approving this issue will deploy release version '${{steps.releasev.outputs.RELEASE}}' to the Production environment."
-          exclude-workflow-initiator-as-approver: false #TODO: Must be set to true
+          exclude-workflow-initiator-as-approver: true
 
   terraform-deploy-production:
     name: Terraform - Deploy to Production
@@ -36,30 +36,16 @@ jobs:
     needs:
       - wait-for-approval
     secrets:
-      workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
-      wip_service_account: ${{ secrets.WIP_SERVICE_ACCOUNT }}
-      execution_service_account: ${{ secrets.EXECUTION_SERVICE_ACCOUNT }}
+      workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_PROD }}
+      wip_service_account: ${{ secrets.WIP_SERVICE_ACCOUNT_PROD }}
+      execution_service_account: ${{ secrets.EXECUTION_SERVICE_ACCOUNT_PROD }}
       dft_organisation: ${{ secrets.DFT_ORGANISATION }}
       dft_organisation_id: ${{ secrets.DFT_ORGANISATION_ID }}
       access_level_members: ${{ secrets.ACCESS_LEVEL_MEMBERS }}
     with:
-      gcp-project-id: ${{ vars.GCP_PROJECT_ID_DEV }}
+      gcp-project-id: ${{ vars.GCP_PROJECT_ID_PROD }}
       gcp-region: ${{ vars.DEFAULT_GCP_REGION }}
-      environment: dev
+      environment: prod
       run-terraform: true
-      run-apigee: false #TODO: Default value when no major endpoint or OAuth changes have been made
-  #      run-apigee: true
-#    secrets:
-#      workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_PROD }}
-#      wip_service_account: ${{ secrets.WIP_SERVICE_ACCOUNT_PROD }}
-#      execution_service_account: ${{ secrets.EXECUTION_SERVICE_ACCOUNT_PROD }}
-#      dft_organisation: ${{ secrets.DFT_ORGANISATION }}
-#      dft_organisation_id: ${{ secrets.DFT_ORGANISATION_ID }}
-#      access_level_members: ${{ secrets.ACCESS_LEVEL_MEMBERS }}
-#    with:
-#      gcp-project-id: ${{ vars.GCP_PROJECT_ID_PROD }}
-#      gcp-region: ${{ vars.DEFAULT_GCP_REGION }}
-#      environment: dev
-#      run-terraform: true
 #      run-apigee: false #TODO: Default value when no major endpoint or OAuth changes have been made
-#  #      run-apigee: true
+      run-apigee: true
