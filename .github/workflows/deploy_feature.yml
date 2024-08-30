@@ -3,6 +3,11 @@ name: Deploy Feature
 on:
   workflow_dispatch:
     inputs:
+      deploy-to-test:
+        type: boolean
+        description: Deploy D-TRO application to Test Environment?
+        required: false
+        default: false
       run-terraform:
         type: boolean
         description: Run terraform?
@@ -16,7 +21,8 @@ on:
 
 jobs:
   deploy-feature-dev:
-    name: Deploy Feature Branch
+    if: ${{ ! inputs.deploy-to-test }}
+    name: Deploy Feature Branch to Dev
     uses: ./.github/workflows/deploy_resources.yml
     secrets:
       workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
@@ -34,21 +40,22 @@ jobs:
       run-terraform: ${{ inputs.run-terraform }}
       run-apigee: ${{ inputs.run-apigee }}
 
-#  deploy-feature-test:
-#    name: Deploy Feature Branch
-#    uses: ./.github/workflows/deploy_resources.yml
-#    secrets:
-#      workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_TEST }}
-#      wip_service_account: ${{ secrets.WIP_SERVICE_ACCOUNT_TEST }}
-#      execution_service_account: ${{ secrets.EXECUTION_SERVICE_ACCOUNT_TEST }}
-#      dft_organisation: ${{ secrets.DFT_ORGANISATION }}
-#      dft_organisation_id: ${{ secrets.DFT_ORGANISATION_ID }}
-#      access_level_members: ${{ secrets.ACCESS_LEVEL_MEMBERS }}
-#    with:
-#      gcp-project-id: ${{ vars.GCP_PROJECT_ID_TEST }}
-#      gcp-region: ${{ vars.DEFAULT_GCP_REGION }}
-#      environment: test
-#      #      do-validation-checks: true
-#      checkov-skip-check: ${{ vars.CHECKOV_SKIP_CHECK }}
-#      run-terraform: ${{ inputs.run-terraform }}
-#      run-apigee: ${{ inputs.run-apigee }}
+  deploy-feature-test:
+    if: ${{ inputs.deploy-to-test }}
+    name: Deploy Feature Branch to Test
+    uses: ./.github/workflows/deploy_resources.yml
+    secrets:
+      workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_TEST }}
+      wip_service_account: ${{ secrets.WIP_SERVICE_ACCOUNT_TEST }}
+      execution_service_account: ${{ secrets.EXECUTION_SERVICE_ACCOUNT_TEST }}
+      dft_organisation: ${{ secrets.DFT_ORGANISATION }}
+      dft_organisation_id: ${{ secrets.DFT_ORGANISATION_ID }}
+      access_level_members: ${{ secrets.ACCESS_LEVEL_MEMBERS }}
+    with:
+      gcp-project-id: ${{ vars.GCP_PROJECT_ID_TEST }}
+      gcp-region: ${{ vars.DEFAULT_GCP_REGION }}
+      environment: test
+      #      do-validation-checks: true
+      checkov-skip-check: ${{ vars.CHECKOV_SKIP_CHECK }}
+      run-terraform: ${{ inputs.run-terraform }}
+      run-apigee: ${{ inputs.run-apigee }}
