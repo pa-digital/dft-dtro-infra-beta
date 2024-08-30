@@ -109,7 +109,7 @@ module "org_policy" {
   source      = "terraform-google-modules/vpc-service-controls/google"
   version     = "6.0.0"
   parent_id   = var.organisation_id
-  policy_name = "${local.name_prefix}-vpc-sc-policy"
+  policy_name = "${local.name_prefix}-vpc-sc-org-policy"
 }
 
 module "access_level_members" {
@@ -117,7 +117,7 @@ module "access_level_members" {
   source  = "terraform-google-modules/vpc-service-controls/google//modules/access_level"
   version = "6.0.0"
   policy  = module.org_policy.policy_id
-  name    = "dtro_env_access_members"
+  name    = "${local.name_prefix}-access-level-members"
   members = ["serviceAccount:${var.wip_service_account}", "user:${var.access_level_members}"]
 }
 
@@ -137,7 +137,7 @@ module "dtro_regular_service_perimeter" {
   source         = "terraform-google-modules/vpc-service-controls/google//modules/regular_service_perimeter"
   version        = "6.0.0"
   policy         = module.org_policy[0].policy_id
-  perimeter_name = "dtro_regular_service_perimeter"
+  perimeter_name = "${local.name_prefix}-regular-service-perimeter"
   description    = "Perimeter shielding DTRO project ${null_resource.wait_for_members.id}"
   #   resources           = [data.google_project.project.number]
   #   access_levels       = [module.access_level_members[0].name]
