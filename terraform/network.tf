@@ -105,7 +105,7 @@ resource "google_compute_region_network_endpoint_group" "publish_service_serverl
 ## VPC Service Control
 # Manage access policy
 module "org_policy" {
-  count       = 0
+  #   count       = 0
   source      = "terraform-google-modules/vpc-service-controls/google"
   version     = "6.0.0"
   parent_id   = var.organisation_id
@@ -113,7 +113,7 @@ module "org_policy" {
 }
 
 module "access_level_members" {
-  count   = 0
+  #   count   = 0
   source  = "terraform-google-modules/vpc-service-controls/google//modules/access_level"
   version = "6.0.0"
   policy  = module.org_policy[0].policy_id
@@ -124,7 +124,7 @@ module "access_level_members" {
 #  According to the docs(https://github.com/terraform-google-modules/terraform-google-vpc-service-controls?tab=readme-ov-file#known-limitations),
 #  there may be a delay between a successful response and the change taking effect.
 resource "null_resource" "wait_for_members" {
-  count = 0
+  #   count = 0
   provisioner "local-exec" {
     command = "sleep 60"
   }
@@ -133,13 +133,16 @@ resource "null_resource" "wait_for_members" {
 
 # Regular perimeter: Regular service perimeters protect services on the projects they contain.
 module "dtro_regular_service_perimeter" {
-  count                       = 0
-  source                      = "terraform-google-modules/vpc-service-controls/google//modules/regular_service_perimeter"
-  version                     = "6.0.0"
-  policy                      = module.org_policy[0].policy_id
-  perimeter_name              = "dtro_regular_service_perimeter"
-  description                 = "Perimeter shielding DTRO project"
-  resources                   = [data.google_project.project.number]
-  access_levels               = [module.access_level_members[0].name]
-  restricted_services_dry_run = ["apigee.googleapis.com", "artifactregistry.googleapis.com", "bigquery.googleapis.com", "certificatemanager.googleapis.com", "clouddeploy.googleapis.com", "cloudresourcemanager.googleapis.com", "compute.googleapis.com", "iam.googleapis.com", "iamcredentials.googleapis.com", "logging.googleapis.com", "networkmanagement.googleapis.com", "run.googleapis.com", "secretmanager.googleapis.com", "servicenetworking.googleapis.com", "sourcerepo.googleapis.com", "sql-component.googleapis.com", "sqladmin.googleapis.com", "sts.googleapis.com", "storage-component.googleapis.com", "storage.googleapis.com", "vpcaccess.googleapis.com"]
+  count          = 0
+  source         = "terraform-google-modules/vpc-service-controls/google//modules/regular_service_perimeter"
+  version        = "6.0.0"
+  policy         = module.org_policy[0].policy_id
+  perimeter_name = "dtro_regular_service_perimeter"
+  description    = "Perimeter shielding DTRO project ${null_resource.wait_for_members.id}"
+  #   resources           = [data.google_project.project.number]
+  #   access_levels       = [module.access_level_members[0].name]
+  #   restricted_services = ["apigee.googleapis.com", "artifactregistry.googleapis.com", "bigquery.googleapis.com", "certificatemanager.googleapis.com", "cloudbuild.googleapis.com", "clouddeploy.googleapis.com", "cloudresourcemanager.googleapis.com", "compute.googleapis.com", "iap.googleapis.com", "iam.googleapis.com", "iamcredentials.googleapis.com", "logging.googleapis.com", "networkmanagement.googleapis.com", "osconfig.googleapis.com", "run.googleapis.com", "secretmanager.googleapis.com", "servicenetworking.googleapis.com", "sourcerepo.googleapis.com", "sql-component.googleapis.com", "sqladmin.googleapis.com", "sts.googleapis.com", "storage-component.googleapis.com", "storage.googleapis.com", "websecurityscanner.googleapis.com", "vpcaccess.googleapis.com"]
+  resources_dry_run           = [data.google_project.project.number]
+  access_levels_dry_run       = [module.access_level_members[0].name]
+  restricted_services_dry_run = ["apigee.googleapis.com", "artifactregistry.googleapis.com", "bigquery.googleapis.com", "certificatemanager.googleapis.com", "cloudbuild.googleapis.com", "clouddeploy.googleapis.com", "cloudresourcemanager.googleapis.com", "compute.googleapis.com", "iap.googleapis.com", "iam.googleapis.com", "iamcredentials.googleapis.com", "logging.googleapis.com", "networkmanagement.googleapis.com", "osconfig.googleapis.com", "run.googleapis.com", "secretmanager.googleapis.com", "servicenetworking.googleapis.com", "sourcerepo.googleapis.com", "sql-component.googleapis.com", "sqladmin.googleapis.com", "sts.googleapis.com", "storage-component.googleapis.com", "storage.googleapis.com", "websecurityscanner.googleapis.com", "vpcaccess.googleapis.com"]
 }
