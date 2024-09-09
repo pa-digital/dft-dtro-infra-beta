@@ -138,7 +138,7 @@ module "dtro_regular_service_perimeter" {
   version        = "6.0.0"
   policy         = module.org_policy[0].policy_id
   perimeter_name = "${local.name_prefix}-regular-service-perimeter"
-  description    = "Perimeter shielding DTRO project ${null_resource.wait_for_members.id}" #"Perimeter shielding DTRO project ${null_resource.wait_for_members.id}"
+  description    = "Perimeter shielding DTRO project" #"Perimeter shielding DTRO project ${null_resource.wait_for_members.id}"
   #   resources           = [data.google_project.project.number]
   #   access_levels       = [module.access_level_members[0].name]
   #   restricted_services = ["apigee.googleapis.com", "artifactregistry.googleapis.com", "bigquery.googleapis.com", "certificatemanager.googleapis.com", "cloudbuild.googleapis.com", "clouddeploy.googleapis.com", "cloudresourcemanager.googleapis.com", "compute.googleapis.com", "iap.googleapis.com", "iam.googleapis.com", "iamcredentials.googleapis.com", "logging.googleapis.com", "networkmanagement.googleapis.com", "osconfig.googleapis.com", "run.googleapis.com", "secretmanager.googleapis.com", "servicenetworking.googleapis.com", "sourcerepo.googleapis.com", "sql-component.googleapis.com", "sqladmin.googleapis.com", "sts.googleapis.com", "storage-component.googleapis.com", "storage.googleapis.com", "websecurityscanner.googleapis.com", "vpcaccess.googleapis.com"]
