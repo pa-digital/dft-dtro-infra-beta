@@ -37,3 +37,9 @@ module "service_ui_cloud_armor" {
   threat_intelligence_rules       = {}
   adaptive_protection_auto_deploy = { "enable" : false }
 }
+
+resource "google_iap_brand" "project_brand" {
+  support_email     = var.iap_support_email
+  application_title = "${local.name_prefix}-IAP"
+  project           = local.project_id
+}

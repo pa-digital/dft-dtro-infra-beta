@@ -105,7 +105,7 @@ resource "google_compute_region_network_endpoint_group" "publish_service_serverl
 ## VPC Service Control
 # Manage access policy
 module "org_policy" {
-  #   count       = 0
+  count       = 0
   source      = "terraform-google-modules/vpc-service-controls/google"
   version     = "6.0.0"
   parent_id   = var.organisation_id
@@ -113,7 +113,7 @@ module "org_policy" {
 }
 
 module "access_level_members" {
-  #   count   = 0
+  count   = 0
   source  = "terraform-google-modules/vpc-service-controls/google//modules/access_level"
   version = "6.0.0"
   policy  = module.org_policy.policy_id
