@@ -39,7 +39,7 @@ module "service_ui_cloud_armor" {
 }
 
 resource "google_iap_brand" "project_brand" {
-  support_email     = var.iap_support_email
+  support_email     = var.execution_service_account
   application_title = "${local.name_prefix}-IAP"
   project           = local.project_id
 }

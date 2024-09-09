@@ -76,13 +76,6 @@ variable "default_machine_type" {
   default     = "e2-micro"
 }
 
-
-variable "iap_support_email" {
-  type        = string
-  description = "Default group email"
-  default     = "dtr-cso@dft.gov.uk"
-}
-
 ###### VPC and networking ######
 variable "serverless_connector_config" {
   type = object({
