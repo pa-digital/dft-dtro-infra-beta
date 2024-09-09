@@ -116,7 +116,7 @@ module "access_level_members" {
   count   = 0
   source  = "terraform-google-modules/vpc-service-controls/google//modules/access_level"
   version = "6.0.0"
-  policy  = module.org_policy.policy_id
+  policy  = module.org_policy[0].policy_id
   name    = "${local.name_prefix}-access-level-members"
   members = ["serviceAccount:${var.wip_service_account}", "user:${var.access_level_members}"]
 }
