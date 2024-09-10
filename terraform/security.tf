@@ -38,8 +38,8 @@ module "service_ui_cloud_armor" {
   adaptive_protection_auto_deploy = { "enable" : false }
 }
 
-resource "google_iap_brand" "project_brand" {
-  support_email     = var.execution_service_account
-  application_title = "${local.name_prefix}-IAP"
-  project           = local.project_id
-}
+# resource "google_iap_brand" "project_brand" {
+#   support_email     = var.execution_service_account
+#   application_title = "${local.name_prefix}-IAP"
+#   project           = local.project_id
+# }

@@ -28,7 +28,7 @@ jobs:
           minimum-approvals: 1
           issue-title: "Deploying Infrastructure version ${{steps.releasev.outputs.RELEASE}} to Prod"
           issue-body: "Approving this issue will deploy Infrastructure release version '${{steps.releasev.outputs.RELEASE}}' to the Production environment."
-          exclude-workflow-initiator-as-approver: true
+          exclude-workflow-initiator-as-approver: false
 
   terraform-deploy-production:
     name: Terraform - Deploy to Production
@@ -47,5 +47,5 @@ jobs:
       gcp-region: ${{ vars.DEFAULT_GCP_REGION }}
       environment: prod
       run-terraform: true
-#      run-apigee: false #TODO: Default value when no major endpoint or OAuth changes have been made
-      run-apigee: true
+      run-apigee: false #TODO: Default value when no major endpoint or OAuth changes have been made
+#      run-apigee: true
