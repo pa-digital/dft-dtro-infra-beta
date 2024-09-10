@@ -166,7 +166,7 @@ jobs:
         run: chmod +x scripts/*
 
       - name: Create Developer Portal
-        if: ${{ inputs.environment != 'prod' }}
+#        if: ${{ inputs.environment != 'prod' }}
         run: scripts/create_developer_portal.sh ${{ steps.google-auth.outputs.access_token }}
 
       - name: Create API bundle
