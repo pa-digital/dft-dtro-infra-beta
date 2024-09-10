@@ -63,8 +63,6 @@ jobs:
   terraform-deploy-production:
     name: Terraform - Deploy to Production
     uses: ./.github/workflows/deploy_resources.yml
-    needs:
-      - wait-for-approval
     secrets:
       workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_PROD }}
       wip_service_account: ${{ secrets.WIP_SERVICE_ACCOUNT_PROD }}
