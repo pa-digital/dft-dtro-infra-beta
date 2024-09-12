@@ -105,7 +105,7 @@ resource "google_compute_region_network_endpoint_group" "publish_service_serverl
 ## VPC Service Control
 # Manage access policy
 module "org_policy" {
-  count       = 0
+  #   count       = 0
   source      = "terraform-google-modules/vpc-service-controls/google"
   version     = "6.0.0"
   parent_id   = var.organisation_id
@@ -113,10 +113,10 @@ module "org_policy" {
 }
 
 module "access_level_members" {
-  count   = 0
+  #   count   = 0
   source  = "terraform-google-modules/vpc-service-controls/google//modules/access_level"
   version = "6.0.0"
-  policy  = module.org_policy[0].policy_id
+  policy  = module.org_policy.policy_id
   name    = "${local.name_prefix}-access-level-members"
   members = ["serviceAccount:${var.wip_service_account}", "user:${var.access_level_members}"]
 }
@@ -136,7 +136,7 @@ module "dtro_regular_service_perimeter" {
   count          = 0
   source         = "terraform-google-modules/vpc-service-controls/google//modules/regular_service_perimeter"
   version        = "6.0.0"
-  policy         = module.org_policy[0].policy_id
+  policy         = module.org_policy.policy_id
   perimeter_name = "${local.name_prefix}-regular-service-perimeter"
   description    = "Perimeter shielding DTRO project" #"Perimeter shielding DTRO project ${null_resource.wait_for_members.id}"
   #   resources           = [data.google_project.project.number]
