@@ -24,7 +24,7 @@ module "service_ui_cloud_armor" {
   project_id                           = local.project_id
   name                                 = "${local.name_prefix}-service-ui-security-policy"
   description                          = "Cloud Armor security policy for Service UI"
-  default_rule_action                  = "allow"
+  default_rule_action                  = "deny(403)"
   type                                 = "CLOUD_ARMOR"
   layer_7_ddos_defense_enable          = true
   layer_7_ddos_defense_rule_visibility = "STANDARD"
@@ -56,12 +56,12 @@ module "service_ui_cloud_armor" {
       description   = "Allow access from home"
       src_ip_ranges = ["192.168.1.0/24"]
     }
-    "deny_everything_else" = {
-      action        = "deny(403)"
-      priority      = 200
-      description   = "Deny everything else"
-      src_ip_ranges = ["*"]
-    }
+    #     "deny_everything_else" = {
+    #       action        = "deny(403)"
+    #       priority      = 200
+    #       description   = "Deny everything else"
+    #       src_ip_ranges = ["*"]
+    #     }
   }
 
   pre_configured_rules            = {}
