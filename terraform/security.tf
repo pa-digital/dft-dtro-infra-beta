@@ -40,19 +40,19 @@ module "service_ui_cloud_armor" {
     }
     "allow_pa_addresses" = {
       action        = "allow"
-      priority      = 100
+      priority      = 60
       description   = "Allow access from PA offices"
       src_ip_ranges = ["12.226.4.157/32", "72.43.134.135/32", "77.233.248.46/32", "80.169.67.48/32", "80.169.67.56/32", "194.75.196.200/32", "194.75.196.216/32", "207.242.146.189/32", "217.38.8.142/32"]
     }
-    "allow_devices_in_pa_offices" = {
+    "allow_non_pa_devices_from_pa_offices" = {
       action        = "allow"
-      priority      = 101
+      priority      = 70
       description   = "Allow access from non-PA devices from PA offices"
       src_ip_ranges = ["137.220.80.0/16", "165.225.17.0/16", "165.225.81.0/16", "178.239.194.0/16"]
     }
     "all_home_addresses" = {
       action        = "allow"
-      priority      = 150
+      priority      = 80
       description   = "Allow access from home"
       src_ip_ranges = ["192.168.1.0/16"]
     }
