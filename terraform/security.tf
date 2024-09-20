@@ -54,7 +54,7 @@ module "service_ui_cloud_armor" {
       action        = "allow"
       priority      = 80
       description   = "Allow access from home"
-      src_ip_ranges = ["192.168.1.0/16"]
+      src_ip_ranges = ["192.168.1.0/24"]
     }
     "deny_everything_else" = {
       action        = "deny(403)"
