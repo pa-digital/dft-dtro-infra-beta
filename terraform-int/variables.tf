@@ -311,3 +311,27 @@ variable "postgres_use_ssl" {
   description = "Whether or not to use SSL for the connection"
   default     = "true"
 }
+
+variable "gmh_src_ip_ranges" {
+  type        = list(string)
+  description = "IP range for GMH"
+  default     = ["147.161.225.0/24", "167.98.253.0/24", "172.16.15.0/24"]
+}
+
+variable "pa_src_ip_ranges" {
+  type        = list(string)
+  description = "IP range for GMH"
+  default     = ["12.226.4.157/32", "72.43.134.135/32", "77.233.248.46/32", "80.169.67.48/32", "80.169.67.56/32", "194.75.196.200/32", "194.75.196.216/32", "207.242.146.189/32", "217.38.8.142/32"]
+}
+
+variable "non_pa_src_ip_ranges" {
+  type        = list(string)
+  description = "IP range for GMH"
+  default     = ["137.220.80.0/24", "165.225.17.0/24", "165.225.81.0/24", "178.239.194.0/24"]
+}
+
+variable "homesrc_ip_ranges" {
+  type        = list(string)
+  description = "IP range for GMH"
+  default     = ["192.168.1.0/24"]
+}
