@@ -31,15 +31,41 @@ module "service_ui_cloud_armor" {
   json_parsing                         = "STANDARD"
   log_level                            = "NORMAL"
 
+  security_rules = {
+    "allow_gmh_addresses" = {
+      action        = "allow"
+      priority      = 50
+      description   = "Allow access from Great Minster House"
+      src_ip_ranges = ["147.161.224.0/16", "147.161.225.0/16", "167.98.253.0/16", "80.169.67.0/16", "172.16.15.0/16"] # TODO: Parameterise this so its different for each env.
+    }
+    "allow_pa_addresses" = {
+      action        = "allow"
+      priority      = 100
+      description   = "Allow access from PA offices"
+      src_ip_ranges = ["80.169.67.48/32", "80.169.67.56/32", "72.43.134.135/32", "194.75.196.200/32", "194.75.196.216/32", "12.226.4.157/32", "77.233.248.46/32", "217.38.8.142/32", "207.242.146.189/32"]
+    }
+    "allow_devices_in_pa_offices" = {
+      action        = "allow"
+      priority      = 101
+      description   = "Allow access from non-PA devices from PA offices"
+      src_ip_ranges = ["137.220.80.0/16", "147.161.224.0/16", "147.161.225.0/16", "165.225.17.0/16", "165.225.81.0/16", "178.239.194.0/16"]
+    }
+    "all_home_addresses" = {
+      action        = "allow"
+      priority      = 150
+      description   = "Allow access from home"
+      src_ip_ranges = ["80.169.67.0/16", ]
+    }
+    "deny_everything_else" = {
+      action        = "deny(403)"
+      priority      = 200
+      description   = "Deny everything else"
+      src_ip_ranges = ["*"]
+    }
+  }
+
   pre_configured_rules            = {}
-  security_rules                  = {} #TODO: Update this with whitelist IP address for DfT network and CSO's IP
   custom_rules                    = {}
   threat_intelligence_rules       = {}
   adaptive_protection_auto_deploy = { "enable" : false }
 }
-
-# resource "google_iap_brand" "project_brand" {
-#   support_email     = var.execution_service_account
-#   application_title = "${local.name_prefix}-IAP"
-#   project           = local.project_id
-# }
