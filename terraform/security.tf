@@ -36,7 +36,7 @@ module "service_ui_cloud_armor" {
       action        = "allow"
       priority      = 50
       description   = "Allow access from Great Minster House"
-      src_ip_ranges = ["147.161.225.0/16", "167.98.253.0/16", "172.16.15.0/16"] # TODO: Parameterise this so its different for each env.
+      src_ip_ranges = ["147.161.225.0/24", "167.98.253.0/24", "172.16.15.0/24"] # TODO: Parameterise this so its different for each env.
     }
     "allow_pa_addresses" = {
       action        = "allow"
@@ -48,7 +48,7 @@ module "service_ui_cloud_armor" {
       action        = "allow"
       priority      = 70
       description   = "Allow access from non-PA devices from PA offices"
-      src_ip_ranges = ["137.220.80.0/16", "165.225.17.0/16", "165.225.81.0/16", "178.239.194.0/16"]
+      src_ip_ranges = ["137.220.80.0/24", "165.225.17.0/24", "165.225.81.0/24", "178.239.194.0/24"]
     }
     "all_home_addresses" = {
       action        = "allow"
