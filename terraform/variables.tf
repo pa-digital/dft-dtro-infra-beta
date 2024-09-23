@@ -306,18 +306,18 @@ variable "gmh_src_ip_ranges" {
 
 variable "pa_src_ip_ranges" {
   type        = list(string)
-  description = "IP range for GMH"
+  description = "IP range for PA offices"
   default     = ["12.226.4.157/32", "72.43.134.135/32", "77.233.248.46/32", "80.169.67.48/32", "80.169.67.56/32", "194.75.196.200/32", "194.75.196.216/32", "207.242.146.189/32", "217.38.8.142/32"]
 }
 
 variable "non_pa_src_ip_ranges" {
   type        = list(string)
-  description = "IP range for GMH"
+  description = "IP range for devices in PA offices"
   default     = ["137.220.80.0/24", "165.225.17.0/24", "165.225.81.0/24", "178.239.194.0/24"]
 }
 
 variable "homesrc_ip_ranges" {
   type        = list(string)
-  description = "IP range for GMH"
+  description = "IP range from home location"
   default     = ["192.168.1.0/24"]
 }
