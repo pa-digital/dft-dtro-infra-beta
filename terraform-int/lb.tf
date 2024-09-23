@@ -257,7 +257,7 @@ resource "google_compute_network" "psc_network" {
 
 resource "google_compute_firewall" "psc_network" {
   name    = "${local.name_prefix}-psc-network-firewall"
-  network = google_compute_network.default.self_link
+  network = google_compute_network.psc_network.self_link
 
   allow {
     protocol = "icmp"

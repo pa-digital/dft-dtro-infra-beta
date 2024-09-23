@@ -116,8 +116,9 @@ resource "google_compute_instance_template" "apigee_mig" {
     scopes = ["cloud-platform"]
   }
   metadata = {
-    ENDPOINT           = google_apigee_instance.apigee_instance.host
-    startup-script-url = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
+    block-project-ssh-keys = true
+    ENDPOINT               = google_apigee_instance.apigee_instance.host
+    startup-script-url     = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
   }
 }
 
@@ -309,6 +310,19 @@ resource "google_compute_network" "psc_network" {
   project                 = local.project_id
   name                    = "${local.name_prefix}-psc-network"
   auto_create_subnetworks = false
+}
+
+resource "google_compute_firewall" "psc_network" {
+  name    = "${local.name_prefix}-psc-network-firewall"
+  network = google_compute_network.psc_network.self_link
+
+  allow {
+    protocol = "icmp"
+  }
+  allow {
+    protocol = "tcp"
+    ports    = ["80", "443", "8080"]
+  }
 }
 
 resource "google_compute_subnetwork" "psc_private_subnetwork" {
