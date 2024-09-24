@@ -24,7 +24,7 @@ module "service_ui_cloud_armor" {
   project_id                           = local.project_id
   name                                 = "${local.name_prefix}-service-ui-security-policy"
   description                          = "Cloud Armor security policy for Service UI"
-  default_rule_action                  = "allow"
+  default_rule_action                  = "deny(403)"
   type                                 = "CLOUD_ARMOR"
   layer_7_ddos_defense_enable          = true
   layer_7_ddos_defense_rule_visibility = "STANDARD"
