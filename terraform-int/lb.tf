@@ -88,12 +88,6 @@ resource "google_compute_subnetwork" "apigee_mig" {
   region                   = var.region
   network                  = data.google_compute_network.alb_vpc_network.id
   private_ip_google_access = true
-
-  log_config {
-    aggregation_interval = "INTERVAL_10_MIN"
-    flow_sampling        = 0.5
-    metadata             = "INCLUDE_ALL_METADATA"
-  }
 }
 
 # External Load Balancer for CSO Portal UI
@@ -169,12 +163,6 @@ resource "google_compute_subnetwork" "proxy_only_subnetwork" {
   purpose                  = "INTERNAL_HTTPS_LOAD_BALANCER"
   role                     = "ACTIVE"
   private_ip_google_access = true
-
-  log_config {
-    aggregation_interval = "INTERVAL_10_MIN"
-    flow_sampling        = 0.5
-    metadata             = "INCLUDE_ALL_METADATA"
-  }
 }
 
 # Create a private subnetwork for the forwarding rule
