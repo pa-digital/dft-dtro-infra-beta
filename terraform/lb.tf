@@ -110,8 +110,9 @@ resource "google_compute_instance_template" "apigee_mig" {
     scopes = ["cloud-platform"]
   }
   metadata = {
-    ENDPOINT           = google_apigee_instance.apigee_instance.host
-    startup-script-url = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
+    block-project-ssh-keys = true
+    ENDPOINT               = google_apigee_instance.apigee_instance.host
+    startup-script-url     = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
   }
 }
 
@@ -146,7 +147,68 @@ resource "google_compute_region_autoscaler" "apigee_autoscaler" {
     }
   }
 }
+#########################################
 
+# resource "google_compute_instance_template" "apigee_mig2" {
+#   project      = local.project_id
+#   name         = "${local.apigee-mig}-template2"
+#   machine_type = var.default_machine_type
+#   tags         = ["https-server", local.apigee-mig-proxy, "gke-apigee-proxy"]
+#   disk {
+#     source_image = "projects/debian-cloud/global/images/family/debian-11"
+#     auto_delete  = true
+#     boot         = true
+#     disk_size_gb = 20
+#   }
+#   network_interface {
+#     network    = module.alb_vpc_network.network_id
+#     subnetwork = google_compute_subnetwork.apigee_mig.id
+#   }
+#   service_account {
+#     email  = var.execution_service_account
+#     scopes = ["cloud-platform"]
+#   }
+#   metadata = {
+#     block-project-ssh-keys = true
+#     ENDPOINT               = google_apigee_instance.apigee_instance.host
+#     startup-script-url     = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
+#   }
+# }
+
+# resource "google_compute_region_instance_group_manager" "apigee_mig2" {
+#   project            = local.project_id
+#   name               = "${local.apigee-mig}-proxy2"
+#   region             = var.region
+#   base_instance_name = "${local.apigee-mig}-proxy2"
+#   target_size        = 2
+#   version {
+#     name              = "appserver-canary"
+#     instance_template = google_compute_instance_template.apigee_mig2.self_link_unique
+#   }
+#   named_port {
+#     name = "https"
+#     port = 443
+#   }
+# }
+
+# resource "google_compute_region_autoscaler" "apigee_autoscaler2" {
+#   project = local.project_id
+#   name    = "${local.apigee-mig}-autoscaler2"
+#   region  = var.region
+#   target  = google_compute_region_instance_group_manager.apigee_mig2.id
+#   # TODO: Assess if these values are sufficient or requires updating
+#   autoscaling_policy {
+#     max_replicas    = 3
+#     min_replicas    = 2
+#     cooldown_period = 90
+#     cpu_utilization {
+#       target = var.cpu_max_utilization
+#     }
+#   }
+# }
+
+
+#########################################
 # External Load Balancer for CSO Portal UI
 module "ui_loadbalancer" {
   source  = "GoogleCloudPlatform/lb-http/google//modules/serverless_negs"
@@ -212,22 +274,30 @@ resource "google_compute_managed_ssl_certificate" "ui-alb-ssl-cert" {
 # Internal Load Balancer between Apigee and Cloud Run
 # Create a proxy-only subnetwork for internal load balancer
 resource "google_compute_subnetwork" "proxy_only_subnetwork" {
-  project       = local.project_id
-  name          = "${local.name_prefix}-loadbalancer-proxy-only-subnetwork"
-  ip_cidr_range = var.ilb_proxy_only_subnetwork_range
-  region        = var.region
-  network       = google_compute_network.psc_network.id
-  purpose       = "INTERNAL_HTTPS_LOAD_BALANCER"
-  role          = "ACTIVE"
+  project                  = local.project_id
+  name                     = "${local.name_prefix}-loadbalancer-proxy-only-subnetwork"
+  ip_cidr_range            = var.ilb_proxy_only_subnetwork_range
+  region                   = var.region
+  network                  = google_compute_network.psc_network.id
+  purpose                  = "INTERNAL_HTTPS_LOAD_BALANCER"
+  role                     = "ACTIVE"
+  private_ip_google_access = true
 }
 
 # Create a private subnetwork for the forwarding rule
 resource "google_compute_subnetwork" "private_subnetwork" {
-  project       = local.project_id
-  name          = "${local.name_prefix}-forward-rule-private-subnetwork"
-  ip_cidr_range = var.ilb_private_subnetwork_range
-  region        = var.region
-  network       = google_compute_network.psc_network.id
+  project                  = local.project_id
+  name                     = "${local.name_prefix}-forward-rule-private-subnetwork"
+  ip_cidr_range            = var.ilb_private_subnetwork_range
+  region                   = var.region
+  network                  = google_compute_network.psc_network.id
+  private_ip_google_access = true
+
+  log_config {
+    aggregation_interval = "INTERVAL_10_MIN"
+    flow_sampling        = 0.5
+    metadata             = "INCLUDE_ALL_METADATA"
+  }
 }
 
 # Create a backend service for each Cloud Run service
@@ -292,21 +362,35 @@ resource "google_compute_network" "psc_network" {
 }
 
 resource "google_compute_subnetwork" "psc_private_subnetwork" {
-  project       = local.project_id
-  name          = "${local.name_prefix}psc-private-subnetwork"
-  ip_cidr_range = var.psc_private_subnetwork_range
-  region        = var.region
-  network       = google_compute_network.psc_network.id
-  purpose       = "PRIVATE"
+  project                  = local.project_id
+  name                     = "${local.name_prefix}psc-private-subnetwork"
+  ip_cidr_range            = var.psc_private_subnetwork_range
+  region                   = var.region
+  network                  = google_compute_network.psc_network.id
+  purpose                  = "PRIVATE"
+  private_ip_google_access = true
+
+  log_config {
+    aggregation_interval = "INTERVAL_10_MIN"
+    flow_sampling        = 0.5
+    metadata             = "INCLUDE_ALL_METADATA"
+  }
 }
 
 resource "google_compute_subnetwork" "psc_subnetwork" {
-  project       = local.project_id
-  name          = "${local.name_prefix}-psc-subnetwork"
-  ip_cidr_range = var.psc_subnetwork_range
-  region        = var.region
-  network       = google_compute_network.psc_network.id
-  purpose       = "PRIVATE_SERVICE_CONNECT"
+  project                  = local.project_id
+  name                     = "${local.name_prefix}-psc-subnetwork"
+  ip_cidr_range            = var.psc_subnetwork_range
+  region                   = var.region
+  network                  = google_compute_network.psc_network.id
+  purpose                  = "PRIVATE_SERVICE_CONNECT"
+  private_ip_google_access = true
+
+  log_config {
+    aggregation_interval = "INTERVAL_10_MIN"
+    flow_sampling        = 0.5
+    metadata             = "INCLUDE_ALL_METADATA"
+  }
 }
 
 resource "google_compute_address" "psc_address" {
@@ -334,4 +418,3 @@ resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
   location               = var.region
   service_attachment     = google_compute_service_attachment.psc_attachment.id
 }
-
