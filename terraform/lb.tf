@@ -110,9 +110,8 @@ resource "google_compute_instance_template" "apigee_mig" {
     scopes = ["cloud-platform"]
   }
   metadata = {
-    block-project-ssh-keys = true
-    ENDPOINT               = google_apigee_instance.apigee_instance.host
-    startup-script-url     = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
+    ENDPOINT           = google_apigee_instance.apigee_instance.host
+    startup-script-url = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
   }
 }
 
@@ -132,21 +131,21 @@ resource "google_compute_region_instance_group_manager" "apigee_mig" {
   }
 }
 
-resource "google_compute_region_autoscaler" "apigee_autoscaler" {
-  project = local.project_id
-  name    = "${local.apigee-mig}-autoscaler"
-  region  = var.region
-  target  = google_compute_region_instance_group_manager.apigee_mig.id
-  # TODO: Assess if these values are sufficient or requires updating
-  autoscaling_policy {
-    max_replicas    = 3
-    min_replicas    = 2
-    cooldown_period = 90
-    cpu_utilization {
-      target = var.cpu_max_utilization
-    }
-  }
-}
+# resource "google_compute_region_autoscaler" "apigee_autoscaler" {
+#   project = local.project_id
+#   name    = "${local.apigee-mig}-autoscaler"
+#   region  = var.region
+#   target  = google_compute_region_instance_group_manager.apigee_mig.id
+#   # TODO: Assess if these values are sufficient or requires updating
+#   autoscaling_policy {
+#     max_replicas    = 3
+#     min_replicas    = 2
+#     cooldown_period = 90
+#     cpu_utilization {
+#       target = var.cpu_max_utilization
+#     }
+#   }
+# }
 #########################################
 
 resource "google_compute_instance_template" "apigee_mig2" {
