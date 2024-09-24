@@ -116,21 +116,21 @@ resource "google_compute_instance_template" "apigee_mig" {
   }
 }
 
-resource "google_compute_region_instance_group_manager" "apigee_mig" {
-  project            = local.project_id
-  name               = "${local.apigee-mig}-proxy"
-  region             = var.region
-  base_instance_name = "${local.apigee-mig}-proxy"
-  target_size        = 2
-  version {
-    name              = "appserver-canary"
-    instance_template = google_compute_instance_template.apigee_mig.self_link_unique
-  }
-  named_port {
-    name = "https"
-    port = 443
-  }
-}
+# resource "google_compute_region_instance_group_manager" "apigee_mig" {
+#   project            = local.project_id
+#   name               = "${local.apigee-mig}-proxy"
+#   region             = var.region
+#   base_instance_name = "${local.apigee-mig}-proxy"
+#   target_size        = 2
+#   version {
+#     name              = "appserver-canary"
+#     instance_template = google_compute_instance_template.apigee_mig.self_link_unique
+#   }
+#   named_port {
+#     name = "https"
+#     port = 443
+#   }
+# }
 
 # resource "google_compute_region_autoscaler" "apigee_autoscaler" {
 #   project = local.project_id
