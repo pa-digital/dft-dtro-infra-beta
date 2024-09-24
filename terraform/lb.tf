@@ -35,7 +35,7 @@ module "loadbalancer" {
 
       groups = [
         {
-          group           = google_compute_region_instance_group_manager.apigee_mig.instance_group
+          group           = google_compute_region_instance_group_manager.apigee_mig2.instance_group
           max_utilization = var.cpu_max_utilization
         }
       ]
@@ -110,9 +110,9 @@ resource "google_compute_instance_template" "apigee_mig" {
     scopes = ["cloud-platform"]
   }
   metadata = {
-    block-project-ssh-keys = true
-    ENDPOINT               = google_apigee_instance.apigee_instance.host
-    startup-script-url     = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
+    #     block-project-ssh-keys = true
+    ENDPOINT           = google_apigee_instance.apigee_instance.host
+    startup-script-url = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
   }
 }
 
@@ -149,63 +149,63 @@ resource "google_compute_region_autoscaler" "apigee_autoscaler" {
 }
 #########################################
 
-# resource "google_compute_instance_template" "apigee_mig2" {
-#   project      = local.project_id
-#   name         = "${local.apigee-mig}-template2"
-#   machine_type = var.default_machine_type
-#   tags         = ["https-server", local.apigee-mig-proxy, "gke-apigee-proxy"]
-#   disk {
-#     source_image = "projects/debian-cloud/global/images/family/debian-11"
-#     auto_delete  = true
-#     boot         = true
-#     disk_size_gb = 20
-#   }
-#   network_interface {
-#     network    = module.alb_vpc_network.network_id
-#     subnetwork = google_compute_subnetwork.apigee_mig.id
-#   }
-#   service_account {
-#     email  = var.execution_service_account
-#     scopes = ["cloud-platform"]
-#   }
-#   metadata = {
-#     block-project-ssh-keys = true
-#     ENDPOINT               = google_apigee_instance.apigee_instance.host
-#     startup-script-url     = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
-#   }
-# }
+resource "google_compute_instance_template" "apigee_mig2" {
+  project      = local.project_id
+  name         = "${local.apigee-mig}-template2"
+  machine_type = var.default_machine_type
+  tags         = ["https-server", local.apigee-mig-proxy, "gke-apigee-proxy"]
+  disk {
+    source_image = "projects/debian-cloud/global/images/family/debian-11"
+    auto_delete  = true
+    boot         = true
+    disk_size_gb = 20
+  }
+  network_interface {
+    network    = module.alb_vpc_network.network_id
+    subnetwork = google_compute_subnetwork.apigee_mig.id
+  }
+  service_account {
+    email  = var.execution_service_account
+    scopes = ["cloud-platform"]
+  }
+  metadata = {
+    block-project-ssh-keys = true
+    ENDPOINT               = google_apigee_instance.apigee_instance.host
+    startup-script-url     = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
+  }
+}
 
-# resource "google_compute_region_instance_group_manager" "apigee_mig2" {
-#   project            = local.project_id
-#   name               = "${local.apigee-mig}-proxy2"
-#   region             = var.region
-#   base_instance_name = "${local.apigee-mig}-proxy2"
-#   target_size        = 2
-#   version {
-#     name              = "appserver-canary"
-#     instance_template = google_compute_instance_template.apigee_mig2.self_link_unique
-#   }
-#   named_port {
-#     name = "https"
-#     port = 443
-#   }
-# }
+resource "google_compute_region_instance_group_manager" "apigee_mig2" {
+  project            = local.project_id
+  name               = "${local.apigee-mig}-proxy2"
+  region             = var.region
+  base_instance_name = "${local.apigee-mig}-proxy2"
+  target_size        = 2
+  version {
+    name              = "appserver-canary"
+    instance_template = google_compute_instance_template.apigee_mig2.self_link_unique
+  }
+  named_port {
+    name = "https"
+    port = 443
+  }
+}
 
-# resource "google_compute_region_autoscaler" "apigee_autoscaler2" {
-#   project = local.project_id
-#   name    = "${local.apigee-mig}-autoscaler2"
-#   region  = var.region
-#   target  = google_compute_region_instance_group_manager.apigee_mig2.id
-#   # TODO: Assess if these values are sufficient or requires updating
-#   autoscaling_policy {
-#     max_replicas    = 3
-#     min_replicas    = 2
-#     cooldown_period = 90
-#     cpu_utilization {
-#       target = var.cpu_max_utilization
-#     }
-#   }
-# }
+resource "google_compute_region_autoscaler" "apigee_autoscaler2" {
+  project = local.project_id
+  name    = "${local.apigee-mig}-autoscaler2"
+  region  = var.region
+  target  = google_compute_region_instance_group_manager.apigee_mig2.id
+  # TODO: Assess if these values are sufficient or requires updating
+  autoscaling_policy {
+    max_replicas    = 3
+    min_replicas    = 2
+    cooldown_period = 90
+    cpu_utilization {
+      target = var.cpu_max_utilization
+    }
+  }
+}
 
 
 #########################################
