@@ -110,8 +110,9 @@ resource "google_compute_instance_template" "apigee_mig" {
     scopes = ["cloud-platform"]
   }
   metadata = {
-    ENDPOINT           = google_apigee_instance.apigee_instance.host
-    startup-script-url = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
+    block-project-ssh-keys = true
+    ENDPOINT               = google_apigee_instance.apigee_instance.host
+    startup-script-url     = "gs://apigee-5g-saas/apigee-envoy-proxy-release/latest/conf/startup-script.sh"
   }
 }
 
@@ -147,6 +148,7 @@ resource "google_compute_region_autoscaler" "apigee_autoscaler" {
   }
 }
 
+#########################################
 # External Load Balancer for CSO Portal UI
 module "ui_loadbalancer" {
   source  = "GoogleCloudPlatform/lb-http/google//modules/serverless_negs"
@@ -212,22 +214,30 @@ resource "google_compute_managed_ssl_certificate" "ui-alb-ssl-cert" {
 # Internal Load Balancer between Apigee and Cloud Run
 # Create a proxy-only subnetwork for internal load balancer
 resource "google_compute_subnetwork" "proxy_only_subnetwork" {
-  project       = local.project_id
-  name          = "${local.name_prefix}-loadbalancer-proxy-only-subnetwork"
-  ip_cidr_range = var.ilb_proxy_only_subnetwork_range
-  region        = var.region
-  network       = google_compute_network.psc_network.id
-  purpose       = "INTERNAL_HTTPS_LOAD_BALANCER"
-  role          = "ACTIVE"
+  project                  = local.project_id
+  name                     = "${local.name_prefix}-loadbalancer-proxy-only-subnetwork"
+  ip_cidr_range            = var.ilb_proxy_only_subnetwork_range
+  region                   = var.region
+  network                  = google_compute_network.psc_network.id
+  purpose                  = "INTERNAL_HTTPS_LOAD_BALANCER"
+  role                     = "ACTIVE"
+  private_ip_google_access = true
 }
 
 # Create a private subnetwork for the forwarding rule
 resource "google_compute_subnetwork" "private_subnetwork" {
-  project       = local.project_id
-  name          = "${local.name_prefix}-forward-rule-private-subnetwork"
-  ip_cidr_range = var.ilb_private_subnetwork_range
-  region        = var.region
-  network       = google_compute_network.psc_network.id
+  project                  = local.project_id
+  name                     = "${local.name_prefix}-forward-rule-private-subnetwork"
+  ip_cidr_range            = var.ilb_private_subnetwork_range
+  region                   = var.region
+  network                  = google_compute_network.psc_network.id
+  private_ip_google_access = true
+
+  log_config {
+    aggregation_interval = "INTERVAL_10_MIN"
+    flow_sampling        = 0.5
+    metadata             = "INCLUDE_ALL_METADATA"
+  }
 }
 
 # Create a backend service for each Cloud Run service
@@ -292,21 +302,35 @@ resource "google_compute_network" "psc_network" {
 }
 
 resource "google_compute_subnetwork" "psc_private_subnetwork" {
-  project       = local.project_id
-  name          = "${local.name_prefix}psc-private-subnetwork"
-  ip_cidr_range = var.psc_private_subnetwork_range
-  region        = var.region
-  network       = google_compute_network.psc_network.id
-  purpose       = "PRIVATE"
+  project                  = local.project_id
+  name                     = "${local.name_prefix}psc-private-subnetwork"
+  ip_cidr_range            = var.psc_private_subnetwork_range
+  region                   = var.region
+  network                  = google_compute_network.psc_network.id
+  purpose                  = "PRIVATE"
+  private_ip_google_access = true
+
+  log_config {
+    aggregation_interval = "INTERVAL_10_MIN"
+    flow_sampling        = 0.5
+    metadata             = "INCLUDE_ALL_METADATA"
+  }
 }
 
 resource "google_compute_subnetwork" "psc_subnetwork" {
-  project       = local.project_id
-  name          = "${local.name_prefix}-psc-subnetwork"
-  ip_cidr_range = var.psc_subnetwork_range
-  region        = var.region
-  network       = google_compute_network.psc_network.id
-  purpose       = "PRIVATE_SERVICE_CONNECT"
+  project                  = local.project_id
+  name                     = "${local.name_prefix}-psc-subnetwork"
+  ip_cidr_range            = var.psc_subnetwork_range
+  region                   = var.region
+  network                  = google_compute_network.psc_network.id
+  purpose                  = "PRIVATE_SERVICE_CONNECT"
+  private_ip_google_access = true
+
+  log_config {
+    aggregation_interval = "INTERVAL_10_MIN"
+    flow_sampling        = 0.5
+    metadata             = "INCLUDE_ALL_METADATA"
+  }
 }
 
 resource "google_compute_address" "psc_address" {
@@ -334,4 +358,3 @@ resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
   location               = var.region
   service_attachment     = google_compute_service_attachment.psc_attachment.id
 }
-

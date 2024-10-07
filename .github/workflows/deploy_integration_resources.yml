@@ -17,6 +17,7 @@ env:
   TF_VAR_tf_state_bucket: dft-d-tro-terraform-test
   TF_VAR_environment: test
   TF_VAR_integration_prefix: int
+  do-validation-checks: true
   TF_VAR_region: ${{ vars.DEFAULT_GCP_REGION }}
   TF_VAR_project_id: ${{ vars.GCP_PROJECT_ID_TEST }}
   TF_VAR_organisation: ${{ vars.DFT_ORGANISATION }}
@@ -57,6 +58,22 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Format
+        if: ${{ env.do-validation-checks }}
+        run: terraform fmt -check -recursive
+
+      - name: terraform validate
+        if: ${{ env.do-validation-checks }}
+        uses: dflook/terraform-validate@v1
+
+      - name: Checkov GitHub Action355
+        if: ${{ env.do-validation-checks }}
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          skip_check: ${{ vars.CHECKOV_SKIP_CHECK }}
+          output_format: github_failed_only
+          output_file_path: console
 
       - name: Terraform Init
         run: |
