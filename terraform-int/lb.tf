@@ -40,12 +40,6 @@ module "loadbalancer" {
         }
       ]
 
-      iap_config = {
-        enable               = false
-        oauth2_client_id     = ""
-        oauth2_client_secret = ""
-      }
-
       log_config = {
         enable      = false
         sample_rate = null
@@ -109,12 +103,6 @@ module "ui_loadbalancer" {
           group = google_compute_region_network_endpoint_group.service_ui_serverless_neg.id
         }
       ]
-
-      iap_config = {
-        enable               = false
-        oauth2_client_id     = ""
-        oauth2_client_secret = ""
-      }
 
       log_config = {
         enable      = false
