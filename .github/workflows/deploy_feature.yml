@@ -53,6 +53,8 @@ jobs:
       dft_organisation: ${{ secrets.DFT_ORGANISATION }}
       dft_organisation_id: ${{ secrets.DFT_ORGANISATION_ID }}
       access_level_members: ${{ secrets.ACCESS_LEVEL_MEMBERS }}
+      iap_client_id: ${{ secrets.IAP_CLIENT_ID_TEST }}
+      iap_client_secret: ${{ secrets.IAP_CLIENT_SECRET_TEST }}
     with:
       gcp-project-id: ${{ vars.GCP_PROJECT_ID_TEST }}
       gcp-region: ${{ vars.DEFAULT_GCP_REGION }}
