@@ -108,6 +108,17 @@ variable "access_level_members" {
   description = "Users to be part of the Access Context Manager"
 }
 
+###### IAP ######
+variable "iap_config_client_id" {
+  type        = string
+  description = "Client ID for Identity-Aware Proxy"
+}
+
+variable "iap_config_client_secret" {
+  type        = string
+  description = "Client secret for Identity-Aware Proxy"
+}
+
 ###### IP ranges ######
 variable "allowed_ips" {
   description = "IPs permitted to access the prototype"
@@ -301,7 +312,7 @@ variable "postgres_use_ssl" {
 variable "gmh_src_ip_ranges" {
   type        = list(string)
   description = "IP range for GMH"
-  default     = ["147.161.225.0/24", "167.98.253.0/24", "172.16.15.0/24"]
+  default     = ["147.161.224.0/24", "147.161.225.0/24", "167.98.253.0/24", "172.16.15.0/24"]
 }
 
 variable "pa_src_ip_ranges" {
