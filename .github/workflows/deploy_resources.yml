@@ -14,6 +14,10 @@ on:
         required: true
       access_level_members:
         required: true
+      iap_client_id:
+        required: true
+      iap_client_secret:
+        required: true
     inputs:
       gcp-project-id:
         type: string
@@ -53,6 +57,8 @@ env:
   TF_VAR_execution_service_account: ${{ secrets.execution_service_account }}
   TF_VAR_wip_service_account: ${{ secrets.wip_service_account }}
   TF_VAR_access_level_members: ${{ secrets.access_level_members }}
+  TF_VAR_iap_config_client_id: ${{ secrets.iap_client_id }}
+  TF_VAR_iap_config_client_secret: ${{ secrets.iap_client_secret }}
 
 permissions:
   contents: read

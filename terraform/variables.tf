@@ -108,6 +108,17 @@ variable "access_level_members" {
   description = "Users to be part of the Access Context Manager"
 }
 
+###### IAP ######
+variable "iap_config_client_id" {
+  type        = string
+  description = "Client ID for Identity-Aware Proxy"
+}
+
+variable "iap_config_client_secret" {
+  type        = string
+  description = "Client secret for Identity-Aware Proxy"
+}
+
 ###### IP ranges ######
 variable "allowed_ips" {
   description = "IPs permitted to access the prototype"

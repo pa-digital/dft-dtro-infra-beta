@@ -40,6 +40,10 @@ module "loadbalancer" {
         }
       ]
 
+      iap_config = {
+        enable = false
+      }
+
       log_config = {
         enable      = false
         sample_rate = null
@@ -163,11 +167,11 @@ module "ui_loadbalancer" {
         }
       ]
 
-      #       iap_config = {
-      #         enable               = true
-      #         oauth2_client_id     = ""
-      #         oauth2_client_secret = ""
-      #       }
+      iap_config = {
+        enable               = true
+        oauth2_client_id     = var.iap_config_client_id
+        oauth2_client_secret = var.iap_config_client_secret
+      }
 
       log_config = {
         enable      = false

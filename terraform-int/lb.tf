@@ -111,9 +111,9 @@ module "ui_loadbalancer" {
       ]
 
       iap_config = {
-        enable               = false
-        oauth2_client_id     = ""
-        oauth2_client_secret = ""
+        enable               = true
+        oauth2_client_id     = var.iap_config_client_id
+        oauth2_client_secret = var.iap_config_client_secret
       }
 
       log_config = {
