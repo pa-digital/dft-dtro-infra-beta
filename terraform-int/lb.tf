@@ -300,3 +300,16 @@ resource "google_apigee_endpoint_attachment" "apigee_endpoint_attachment" {
   location               = var.region
   service_attachment     = google_compute_service_attachment.psc_attachment.id
 }
+
+resource "google_apigee_target_server" "apigee_target_server" {
+  name        = "${local.name_prefix}-target-server"
+  description = "D-TRO ${var.environment} Apigee Target Server"
+  protocol    = "HTTP"
+  host        = google_apigee_endpoint_attachment.apigee_endpoint_attachment.host
+  port        = 80
+  env_id      = google_apigee_environment.apigee_env.id
+  s_sl_info {
+    enabled                  = false
+    ignore_validation_errors = true
+  }
+}
