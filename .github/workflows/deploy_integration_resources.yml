@@ -92,8 +92,8 @@ jobs:
   deploy-apigee-proxies-and-portal:
     name: Deploy GCP Apigee proxies and portal to Integration
     if: ${{ inputs.run-apigee }}
-#    needs:
-#      - deploy-resources
+    needs:
+      - deploy-resources
     runs-on: ubuntu-latest
     permissions:
       id-token: write
