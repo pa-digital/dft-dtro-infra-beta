@@ -78,6 +78,12 @@ resource "google_compute_managed_ssl_certificate" "alb-cert" {
   }
 }
 
+resource "google_compute_ssl_policy" "ssl-policy" {
+  name            = "${local.name_prefix}-ssl-policy"
+  profile         = "MODERN"
+  min_tls_version = "TLS_1_2"
+}
+
 # Managed Instance Group for Apigee
 resource "google_compute_subnetwork" "apigee_mig" {
   project                  = local.project_id
