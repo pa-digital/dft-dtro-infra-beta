@@ -59,9 +59,9 @@ module "loadbalancer" {
   ssl_certificates                = [google_compute_managed_ssl_certificate.alb-cert.id]
   managed_ssl_certificate_domains = []
   create_url_map                  = true
-  ssl_policy                      = google_compute_ssl_policy.ssl_policy.self_link
+  #   ssl_policy                      = google_compute_ssl_policy.ssl_policy.self_link
 
-  depends_on = [google_compute_global_address.external_ipv4_address, google_compute_managed_ssl_certificate.alb-cert, google_compute_ssl_policy.ssl_policy]
+  depends_on = [google_compute_global_address.external_ipv4_address, google_compute_managed_ssl_certificate.alb-cert]
 }
 
 # Create IPV4 HTTPS IP Address
@@ -79,11 +79,11 @@ resource "google_compute_managed_ssl_certificate" "alb-cert" {
   }
 }
 
-resource "google_compute_ssl_policy" "ssl_policy" {
-  name            = "${local.name_prefix}-ssl-policy"
-  profile         = "MODERN"
-  min_tls_version = "TLS_1_2"
-}
+# resource "google_compute_ssl_policy" "ssl_policy" {
+#   name            = "${local.name_prefix}-ssl-policy"
+#   profile         = "MODERN"
+#   min_tls_version = "TLS_1_2"
+# }
 
 # Managed Instance Group for Apigee
 resource "google_compute_subnetwork" "apigee_mig" {
