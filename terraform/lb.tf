@@ -195,8 +195,9 @@ module "ui_loadbalancer" {
   ssl_certificates                = [google_compute_managed_ssl_certificate.ui-alb-ssl-cert.id]
   managed_ssl_certificate_domains = []
   create_url_map                  = true
+  ssl_policy                      = google_compute_ssl_policy.ui_ssl_policy.self_link
 
-  depends_on = [google_compute_global_address.ui_external_ipv4_address, google_compute_managed_ssl_certificate.ui-alb-ssl-cert]
+  depends_on = [google_compute_global_address.ui_external_ipv4_address, google_compute_managed_ssl_certificate.ui-alb-ssl-cert, google_compute_ssl_policy.ui_ssl_policy]
 }
 
 # Create IPV4 HTTPS IP Address for the UI
@@ -212,6 +213,12 @@ resource "google_compute_managed_ssl_certificate" "ui-alb-ssl-cert" {
   managed {
     domains = [var.ui_domain[var.environment]]
   }
+}
+
+resource "google_compute_ssl_policy" "ui_ssl_policy" {
+  name            = "${local.name_prefix}-ui-xlb-ssl-policy"
+  profile         = "MODERN"
+  min_tls_version = "TLS_1_2"
 }
 
 ############################################################################
