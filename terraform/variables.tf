@@ -330,5 +330,5 @@ variable "non_pa_src_ip_ranges" {
 variable "home_src_ip_ranges" {
   type        = list(string)
   description = "IP range from home location"
-  default     = ["165.225.80.0/24", "192.168.1.0/24"]
+  default     = ["152.37.65.0/24", "165.225.80.0/24", "192.168.1.0/24"]
 }
