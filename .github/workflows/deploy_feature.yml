@@ -32,13 +32,13 @@ jobs:
       access_level_members: ${{ secrets.ACCESS_LEVEL_MEMBERS }}
       iap_client_id: ${{ secrets.IAP_CLIENT_ID_PROD }}
       iap_client_secret: ${{ secrets.IAP_CLIENT_SECRET_PROD }}
-      with:
-        gcp-project-id: ${{ vars.GCP_PROJECT_ID_PROD }}
-        gcp-region: ${{ vars.DEFAULT_GCP_REGION }}
-        environment: prod
-        do-validation-checks: false
-        run-terraform: true
-        run-apigee: false #TODO: Default value when no major endpoint or OAuth changes have been made
+    with:
+      gcp-project-id: ${{ vars.GCP_PROJECT_ID_PROD }}
+      gcp-region: ${{ vars.DEFAULT_GCP_REGION }}
+      environment: prod
+      do-validation-checks: false
+      run-terraform: true
+      run-apigee: false #TODO: Default value when no major endpoint or OAuth changes have been made
 #        run-apigee: true
 
 #  deploy-feature-dev:
