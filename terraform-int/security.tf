@@ -54,7 +54,7 @@ module "service_ui_cloud_armor" {
       action        = "allow"
       priority      = 80
       description   = "Allow access from home"
-      src_ip_ranges = var.homesrc_ip_ranges
+      src_ip_ranges = var.home_src_ip_ranges
     }
   }
   pre_configured_rules            = {}

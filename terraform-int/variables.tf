@@ -341,8 +341,8 @@ variable "non_pa_src_ip_ranges" {
   default     = ["137.220.80.0/24", "165.225.17.0/24", "165.225.81.0/24", "178.239.194.0/24"]
 }
 
-variable "homesrc_ip_ranges" {
+variable "home_src_ip_ranges" {
   type        = list(string)
   description = "IP range from home location"
-  default     = ["192.168.1.0/24"]
+  default     = ["165.225.80.0/24", "192.168.1.0/24"]
 }
