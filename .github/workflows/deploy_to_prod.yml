@@ -49,5 +49,5 @@ jobs:
       gcp-region: ${{ vars.DEFAULT_GCP_REGION }}
       environment: prod
       run-terraform: true
-      run-apigee: false #TODO: Default value when no major endpoint or OAuth changes have been made
-#      run-apigee: true
+#      run-apigee: false #TODO: Default value when no major endpoint or OAuth changes have been made
+      run-apigee: true
