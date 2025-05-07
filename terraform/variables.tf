@@ -265,10 +265,10 @@ variable "database_environment_configuration" {
       max_connections       = 100
     }
     test = {
-      tier                  = "db-custom-2-7680" # vCPU:2  RAM MB:7680
-      disk_size             = 1000
-      disk_autoresize_limit = 500
-      max_connections       = 400
+      tier                  = "db-custom-16-61440" # vCPU:16  RAM MB:61440
+      disk_size             = 10000
+      disk_autoresize_limit = 0 # The default value is 0, which specifies that there is no limit.(https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/sql_database_instance#disk_autoresize_limit)
+      max_connections       = 800
     }
     prod = {
       tier                  = "db-custom-16-61440" # vCPU:16  RAM MB:61440
